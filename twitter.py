@@ -2,16 +2,30 @@
 
 import jamo
 import konlpy
-from morph_analyzer import IgnoredToken, AnnotatedToken, \
-                           create_particle_token, create_ending_token, \
-                           create_service_token, \
-                           MorphAnalyzer
+from morph_analyzer import *
 
 productive_pos = frozenset(['VerbPrefix', 'Verb', 'Determiner', 'NounPrefix', 'Adjective', 'Noun', 'Adverb'])
 
 non_productive_pos = frozenset(['Punctuation', 'Exclamation', 'KoreanParticle', 'Josa', 'Alpha', 'Conjunction', 'Number', 'Foreign'])
 
 ignored_pos = ['Punctuation', 'Alpha', 'Number', 'Foreign']
+
+pos_name = {
+    'Verb'       : POS_VERB,
+    'VerbPrefix' : POS_VERB,
+    'NounPrefix' : POS_NOUN,
+    'Determiner' : POS_DETERMINER,
+    'Adjective'  : POS_ADJECTIVE,
+    'Noun'       : POS_NOUN,
+    'Adverb'     : POS_ADVERB,
+    'Exclamation' : POS_INTERJECTION,
+    'KoreanParticle' : POS_PARTICLE,
+    'Josa'           : POS_PARTICLE,
+    'Conjunction'    : POS_CONJUNCTIVE,
+    'Number'      : POS_NUMBER,
+    'Suffix'      : POS_SUFFIX
+}
+
 
 def is_ignored(pos):
     return pos in ignored_pos
@@ -84,7 +98,7 @@ class TwitterAnalyzer(MorphAnalyzer):
                 obj = AnnotatedToken(text=word,
                         dictionary_form=dictionary_form,
                         definition = self.get_definition(dictionary_form, pos),
-                        pos = pos
+                        pos = pos_name.get(pos, pos)
                         )
 
             current_pos += len(word)

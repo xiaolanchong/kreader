@@ -16,6 +16,12 @@
    
 }
 
+.popup_part_of_speech
+{
+   font-size: smaller;
+   font-style: italic;
+}
+
 .defined_word:hover
 {
   background-color: #D4BC6A;

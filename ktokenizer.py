@@ -15,7 +15,7 @@ class Whitespace:
         return {'class' : WORD_WHITESPACE}
 
     def __repr__(self):
-        return ' '
+        return '_'
 
 class Paragraph:
     def __init__(self):
@@ -25,7 +25,7 @@ class Paragraph:
         return {'class' : WORD_PARAGRAPH}
 
     def __repr__(self):
-        return ' P'
+        return '_P'
 
 class KTokenizer:
     TWITTER = 1

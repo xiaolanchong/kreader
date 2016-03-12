@@ -9,23 +9,16 @@ WORD_PARAGRAPH = 4
 
 POS_NOUN = 'n'
 POS_VERB = 'v'
-POS_ADJ = 'adj'
-POS_ADV = 'adv'
+POS_ADJECTIVE = 'adj'
+POS_ADVERB = 'adv'
 POS_PARTICLE = 'prt'
-POS_ENDING = 'end'
-POS_AUX = 'aux'
-
-#Token = namedtuple('Token', ['word', 'dictionary_form', 'pos']) # dictionary_form is None for word not to look up
-
-"""
-class Token:
-    def __init__(self):
-        pass
-
-    def serialize(self, lookup_func):
-        raise NotImplementedError()
-
-"""
+POS_ENDING = 'end'   # adj -> adv, verb inflection
+POS_AUXILIARY = 'aux'
+POS_DETERMINER = 'det'  # prenoun, modifier
+POS_INTERJECTION = 'int'
+POS_CONJUNCTIVE = 'conj'
+POS_NUMBER = 'num'
+POS_SUFFIX = 'sfx'  # noun suffix: 적
 
 def create_service_token(token_type, text, pos_name, dict_lookup_func):
     if dict_lookup_func and len(text) > 1:

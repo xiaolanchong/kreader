@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import os.path
 import unittest
 import sys
@@ -12,7 +13,8 @@ sys.path.append(os.path.abspath('..'))
 
 from ktokenizer import KTokenizer, Whitespace as WS
 from morph_analyzer import AnnotatedToken as AT, IgnoredToken as IT, \
-                           create_ending_token, create_particle_token, ParticleToken as PT
+                           create_ending_token, create_particle_token, ParticleToken as PT, \
+                           POS_NOUN, POS_VERB, POS_ADJECTIVE, POS_SUFFIX
 from sajeon import Sajeon
 
 def to_str(tokens):
@@ -28,7 +30,7 @@ class TestTokenizerWithDictionary(unittest.TestCase):
         text = '4번지에'#'프리벳가 4번지에 살고'
         res = self.tokenizer.parse(text)
         expected = [IT('4'),
-                    AT(text='번지', dictionary_form='번지', definition='(番地) Area of land', pos='Noun'),
+                    AT(text='번지', dictionary_form='번지', definition='(番地) Area of land', pos=POS_NOUN),
                     create_particle_token('에', None)
                     ]
         self.assertEqual(to_str(res), to_str(expected))
@@ -38,37 +40,37 @@ class TestTokenizerWithDictionary(unittest.TestCase):
         res = self.tokenizer.parse(text)
         #pprint.pprint(res)
         expected = \
-        [AT(text='살', dictionary_form='살', definition='Years old', pos='Noun'),
+        [AT(text='살', dictionary_form='살', definition='Years old', pos=POS_NOUN),
          create_particle_token('고', None),
          WS(),
-         AT(text='있는', dictionary_form='있다', definition='To be', pos='Adjective'),
+         AT(text='있는', dictionary_form='있다', definition='To be', pos=POS_ADJECTIVE),
          WS(),
-         AT(text='더즐리', dictionary_form='더즐리', definition='', pos='Noun'),
+         AT(text='더즐리', dictionary_form='더즐리', definition='', pos=POS_NOUN),
          WS(),
-         AT(text='부부', dictionary_form='부부', definition='(夫婦) Man and wife', pos='Noun'),
+         AT(text='부부', dictionary_form='부부', definition='(夫婦) Man and wife', pos=POS_NOUN),
          create_particle_token('는', None),
          WS(),
-         AT(text='자신', dictionary_form='자신', definition='(自身) one’s own self, one`s own body', pos='Noun'),
-         AT(text='들', dictionary_form='들', definition='and so on and so forth, etcaetera', pos='Suffix'),
+         AT(text='자신', dictionary_form='자신', definition='(自身) one’s own self, one`s own body', pos=POS_NOUN),
+         AT(text='들', dictionary_form='들', definition='and so on and so forth, etcaetera', pos=POS_SUFFIX),
          create_particle_token('이', None),
          WS(),
-         AT(text='정상', dictionary_form='정상', definition='(頂上) The top, summit', pos='Noun'),
-         AT(text='적', dictionary_form='적', definition='The enemy', pos='Suffix'),
+         AT(text='정상', dictionary_form='정상', definition='(頂上) The top, summit', pos=POS_NOUN),
+         AT(text='적', dictionary_form='적', definition='The enemy', pos=POS_SUFFIX),
          PT(text='이라는', definition='that which'),
          WS(),
-         AT(text='것', dictionary_form='것', definition='A thing or  an object', pos='Noun'),
+         AT(text='것', dictionary_form='것', definition='A thing or  an object', pos=POS_NOUN),
          create_particle_token('을', None),
          WS(),
-         AT(text='아주', dictionary_form='아주', definition='Extremely', pos='Noun'),
+         AT(text='아주', dictionary_form='아주', definition='Extremely', pos=POS_NOUN),
          WS(),
-         AT(text='자랑', dictionary_form='자랑', definition='Pride', pos='Noun'),
+         AT(text='자랑', dictionary_form='자랑', definition='Pride', pos=POS_NOUN),
          create_particle_token('스럽게', None),
          WS(),
          AT(text='여기는', dictionary_form='여기다',
-            definition='Think, consider as; to think, consider/estimate sth as sth else', pos='Verb'),
+            definition='Think, consider as; to think, consider/estimate sth as sth else', pos=POS_VERB),
          WS(),
-         AT(text='사람', dictionary_form='사람', definition='Person', pos='Noun'),
-         AT(text='들이었', dictionary_form='들이다', definition='spend (노력 따위를)', pos='Verb'),
+         AT(text='사람', dictionary_form='사람', definition='Person', pos=POS_NOUN),
+         AT(text='들이었', dictionary_form='들이다', definition='spend (노력 따위를)', pos=POS_VERB),
          create_ending_token('다', None),
          IT('.')]
         self.assertEqual(to_str(res), to_str(expected))

@@ -15,6 +15,8 @@ from ktokenizer import KTokenizer, Whitespace as WS
 from morph_analyzer import IgnoredToken as IT, AnnotatedToken as AT, \
                            create_particle_token, create_ending_token
 
+from morph_analyzer import POS_NOUN, POS_VERB, POS_ADJECTIVE
+
 def to_str(tokens):
     return [repr(token) for token in tokens]
 
@@ -27,11 +29,11 @@ class TestTokenizer(unittest.TestCase):
     def testTokenize(self):
         text = '프리벳가 4번지에'
         res = self.tokenizer.parse(text)
-        expected = [AT(text='프리벳', dictionary_form='프리벳', pos='Noun'),
+        expected = [AT(text='프리벳', dictionary_form='프리벳', pos=POS_NOUN),
                     create_particle_token('가', None),
                     WS(),
                     IT('4'),
-                    AT(text='번지', dictionary_form='번지', pos='Noun'),
+                    AT(text='번지', dictionary_form='번지', pos=POS_NOUN),
                     create_particle_token('에', None)
                     ]
         self.assertEquals(to_str(expected), to_str(res))
@@ -52,27 +54,27 @@ class TestTokenizer(unittest.TestCase):
     def testNormalized(self):
         text = '살고 있는 더즐리'
         res = self.tokenizer.parse(text)
-        expected = [AT(text='살', dictionary_form='살', definition='', pos='Noun'),
+        expected = [AT(text='살', dictionary_form='살', definition='', pos=POS_NOUN),
                     create_particle_token('고', None),
                     WS(),
-                    AT(text='있는', dictionary_form='있다', definition='', pos='Adjective'),
+                    AT(text='있는', dictionary_form='있다', definition='', pos=POS_ADJECTIVE),
                     WS(),
-                    AT(text='더즐리', dictionary_form='더즐리', definition='', pos='Noun')
+                    AT(text='더즐리', dictionary_form='더즐리', definition='', pos=POS_NOUN)
                     ]
         self.assertEquals(to_str(expected), to_str(res))
 
     def testNormalized2(self):
         text = '제 1장 살아남은 아이'
         res = self.tokenizer.parse(text)
-        expected = [AT(text='제', dictionary_form='제', pos='Noun'),
+        expected = [AT(text='제', dictionary_form='제', pos=POS_NOUN),
                     WS(),
                     IT('1'),
-                    AT(text='장', dictionary_form='장', pos='Noun'),
+                    AT(text='장', dictionary_form='장', pos=POS_NOUN),
                     WS(),
-                    AT(text='살아남', dictionary_form='살아나다', pos='Verb'),
+                    AT(text='살아남', dictionary_form='살아나다', pos=POS_VERB),
                     create_ending_token('은', None),
                     WS(),
-                    AT(text='아이', dictionary_form='아이', pos='Noun')]
+                    AT(text='아이', dictionary_form='아이', pos=POS_NOUN)]
         self.assertEquals(to_str(expected), to_str(res))
 
 if __name__ == '__main__':
