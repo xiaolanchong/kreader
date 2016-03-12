@@ -1,0 +1,31 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Annotated text</title>
+    
+    <link rel="stylesheet" type="text/css" href="static/kreader.css"  />
+    <link rel="stylesheet" type="text/css" href="static/tooltipster.css" />
+	<link rel="stylesheet" type="text/css" href="static/themes/tooltipster-light.css" />
+	
+    <script type="text/javascript" src="scripts/jquery-1.12.1.min.js"></script>
+	<script type="text/javascript" src="scripts/jquery.tooltipster.min.js"></script>
+	<script type="text/javascript" src="scripts/kreader.js"></script>
+	
+    <script type="text/javascript">
+		$(document).ready(function() {
+			var annotated_text = {{ text }};
+			annotate(annotated_text)
+		});
+    </script>
+
+  </head>
+  
+   <body>
+     <h1>Annotated text</h1>
+     <div class="main_panel"> </div>
+	 <div id="popup_div" class="popup_msg"></div> 
+   </body>
+
+</html>

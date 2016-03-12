@@ -1,0 +1,28 @@
+
+.main_panel
+{
+}
+
+.popup_defined_word 
+{
+   font-weight: bold;
+   margin-bottom : 5px;
+   margin-top : 5px;
+   padding-bottom : 5px;
+}
+
+.popup_definition
+{
+   
+}
+
+.defined_word:hover
+{
+  background-color: #D4BC6A;
+  cursor: pointer;
+}
+
+.word_without_definition:hover
+{
+  background-color: #FFEBAA;
+}
