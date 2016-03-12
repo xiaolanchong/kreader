@@ -10,8 +10,13 @@ import time
 import html.parser
 sys.path.append(os.path.abspath('..'))
 
-from ktokenizer import KTokenizer, AnnotatedToken as AT, IgnoredToken as IT, Whitespace as WS
+from ktokenizer import KTokenizer, Whitespace as WS
+from morph_analyzer import AnnotatedToken as AT, IgnoredToken as IT, \
+                           create_ending_token, create_particle_token, ParticleToken as PT
 from sajeon import Sajeon
+
+def to_str(tokens):
+    return [repr(token) for token in tokens]
 
 class TestTokenizerWithDictionary(unittest.TestCase):
     def setUp(self):
@@ -23,49 +28,50 @@ class TestTokenizerWithDictionary(unittest.TestCase):
         text = '4번지에'#'프리벳가 4번지에 살고'
         res = self.tokenizer.parse(text)
         expected = [IT('4'),
-                    AT('번지', '번지', '(番地) Area of land'),
-                    AT('에', '에', 'Josa')
+                    AT(text='번지', dictionary_form='번지', definition='(番地) Area of land', pos='Noun'),
+                    create_particle_token('에', None)
                     ]
-        self.assertEqual(repr(res), repr(expected))
+        self.assertEqual(to_str(res), to_str(expected))
 
     def testTokenizeComplex(self):
         text = '살고 있는 더즐리 부부는 자신들이 정상적이라는 것을 아주 자랑스럽게 여기는 사람들이었다.'
         res = self.tokenizer.parse(text)
         #pprint.pprint(res)
         expected = \
-        [AT('살', '살', 'Years old'),
-         AT('고', '고', 'Josa'),
+        [AT(text='살', dictionary_form='살', definition='Years old', pos='Noun'),
+         create_particle_token('고', None),
          WS(),
-         AT('있는', '있다', 'To be'),
+         AT(text='있는', dictionary_form='있다', definition='To be', pos='Adjective'),
          WS(),
-         AT('더즐리', '더즐리', None),
+         AT(text='더즐리', dictionary_form='더즐리', definition='', pos='Noun'),
          WS(),
-         AT('부부', '부부', '(夫婦) Man and wife'),
-         AT('는', '는', 'Josa'),
+         AT(text='부부', dictionary_form='부부', definition='(夫婦) Man and wife', pos='Noun'),
+         create_particle_token('는', None),
          WS(),
-         AT('자신', '자신', '(自身) one’s own self, one`s own body'),
-         AT('들', '들', 'and so on and so forth, etcaetera'),
-         AT('이', '이', 'Josa'),
+         AT(text='자신', dictionary_form='자신', definition='(自身) one’s own self, one`s own body', pos='Noun'),
+         AT(text='들', dictionary_form='들', definition='and so on and so forth, etcaetera', pos='Suffix'),
+         create_particle_token('이', None),
          WS(),
-         AT('정상', '정상', '(頂上) The top, summit'),
-         AT('적', '적', 'The enemy'),
-         AT('이라는', '이라는', 'Josa'),
+         AT(text='정상', dictionary_form='정상', definition='(頂上) The top, summit', pos='Noun'),
+         AT(text='적', dictionary_form='적', definition='The enemy', pos='Suffix'),
+         PT(text='이라는', definition='that which'),
          WS(),
-         AT('것', '것', 'A thing or  an object'),
-         AT('을', '을', 'Josa'),
+         AT(text='것', dictionary_form='것', definition='A thing or  an object', pos='Noun'),
+         create_particle_token('을', None),
          WS(),
-         AT('아주', '아주', 'Extremely'),
+         AT(text='아주', dictionary_form='아주', definition='Extremely', pos='Noun'),
          WS(),
-         AT('자랑', '자랑', 'Pride'),
-         AT('스럽게', '스럽게', 'Josa'),
+         AT(text='자랑', dictionary_form='자랑', definition='Pride', pos='Noun'),
+         create_particle_token('스럽게', None),
          WS(),
-         AT('여기는', '여기다', 'Think, consider as; to think, consider/estimate sth as sth else'),
+         AT(text='여기는', dictionary_form='여기다',
+            definition='Think, consider as; to think, consider/estimate sth as sth else', pos='Verb'),
          WS(),
-         AT('사람', '사람', 'Person'),
-         AT('들이었', '들이다', 'spend (노력 따위를)'),
-         IT('다'),
+         AT(text='사람', dictionary_form='사람', definition='Person', pos='Noun'),
+         AT(text='들이었', dictionary_form='들이다', definition='spend (노력 따위를)', pos='Verb'),
+         create_ending_token('다', None),
          IT('.')]
-        self.assertEqual(repr(res), repr(expected))
+        self.assertEqual(to_str(res), to_str(expected))
 
 
 if __name__ == '__main__':

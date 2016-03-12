@@ -2,7 +2,10 @@
 
 import jamo
 import konlpy
-from morph_analyzer import Token, MorphAnalyzer
+from morph_analyzer import IgnoredToken, AnnotatedToken, \
+                           create_particle_token, create_ending_token, \
+                           create_service_token, \
+                           MorphAnalyzer
 
 productive_pos = frozenset(['VerbPrefix', 'Verb', 'Determiner', 'NounPrefix', 'Adjective', 'Noun', 'Adverb'])
 
@@ -19,6 +22,7 @@ def do_words_suit(a, b):
 
     a_letters = jamo.decompose(a[0])
     b_letters = jamo.decompose(b[0])
+    # skip dummy initial
     if a_letters[0] == 'ᄋ' and b_letters[0] == 'ᄋ':
         return a_letters[1] == b_letters[1]
     else:
@@ -46,8 +50,9 @@ def get_word_to_stem_pairs(words, stems):
     return res
 
 class TwitterAnalyzer(MorphAnalyzer):
-    def __init__(self):
+    def __init__(self, dict_lookup_func):
         self.parser = konlpy.tag.Twitter()
+        self.dict_lookup_func = dict_lookup_func if dict_lookup_func else lambda x: ''
 
     def parse(self, text):
         tokens = self.parser.pos(text, norm=False, stem=False)
@@ -66,18 +71,28 @@ class TwitterAnalyzer(MorphAnalyzer):
                 current_pos += 1
                 skipped_chars += 1
 
-            #if skipped_chars:
-            #    out.append(Whitespace()) # convert all ws symbols to a space
-
             dictionary_form = words_to_stems[index][1]
-            obj = Token(word=word,
-                        dictionary_form=dictionary_form if not is_ignored(pos) else None,
-                        pos = pos if pos in non_productive_pos else None
+
+            if is_ignored(pos):
+                obj = IgnoredToken(word)
+            elif pos == 'Josa':
+                obj = create_particle_token(word, self.dict_lookup_func)
+            elif pos == 'Eomi':
+                obj = create_ending_token(word, self.dict_lookup_func)
+            else:
+                definition = self.get_definition(dictionary_form, pos)
+                obj = AnnotatedToken(text=word,
+                        dictionary_form=dictionary_form,
+                        definition = self.get_definition(dictionary_form, pos),
+                        pos = pos
                         )
 
             current_pos += len(word)
             out.append(obj)
         return out
+
+    def get_definition(self, dictionary_form, pos):
+        return self.dict_lookup_func(dictionary_form)
 
 def test_twitter_output():
     #text = '그는 목이 거의 없을 정도로 살이 뒤룩뒤룩 찐 몸집이 큰 사내로, 코밑에는 커다란 콧수염을 기르고 있었다.'

@@ -8,8 +8,6 @@ from sajeon import Sajeon
 env = Environment(loader=PackageLoader('main', 'templates'))
 template = env.get_template('kreader.htm')
 
-
-
 def get_data(ktokenizer):
     text_objs = []
     with open('hp1_full.txt', encoding='utf8') as f:

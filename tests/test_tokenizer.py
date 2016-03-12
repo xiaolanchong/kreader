@@ -11,46 +11,69 @@ import time
 import html.parser
 sys.path.append(os.path.abspath('..'))
 
-from ktokenizer import KTokenizer, IgnoredToken as IT, AnnotatedToken as AT, Whitespace as WS
+from ktokenizer import KTokenizer, Whitespace as WS
+from morph_analyzer import IgnoredToken as IT, AnnotatedToken as AT, \
+                           create_particle_token, create_ending_token
+
+def to_str(tokens):
+    return [repr(token) for token in tokens]
 
 class TestTokenizer(unittest.TestCase):
     def setUp(self):
-        self.tokenizer = KTokenizer()
+        self.tokenizer = KTokenizer(None, KTokenizer.TWITTER)
+        self.tokenizer_mecab = KTokenizer(None, KTokenizer.MECAB)
         self.maxDiff = None
 
     def testTokenize(self):
         text = '프리벳가 4번지에'
         res = self.tokenizer.parse(text)
-        expected = [AT('프리벳', '프리벳', None),
-                    AT('가', '가', 'Josa'),
+        expected = [AT(text='프리벳', dictionary_form='프리벳', pos='Noun'),
+                    create_particle_token('가', None),
                     WS(),
                     IT('4'),
-                    AT('번지', '번지', None),
-                    AT('에', '에', 'Josa')
+                    AT(text='번지', dictionary_form='번지', pos='Noun'),
+                    create_particle_token('에', None)
                     ]
-        self.assertEquals(repr(expected), repr(res))
+        self.assertEquals(to_str(expected), to_str(res))
+
+    def testTokenizeMecab(self):
+        text = '프리벳가 4번지에'
+        res = self.tokenizer_mecab.parse(text)
+        expected = [AT(text='프리', dictionary_form='프리', pos='NNG'),
+                    AT(text='벳', dictionary_form='벳', pos='NNG'),
+                    AT(text='가', dictionary_form='가', pos='XSN'),
+                    WS(),
+                    IT('4'),
+                    AT(text='번지', dictionary_form='번지', pos='NNG'),
+                    create_particle_token('에', None)
+                    ]
+        self.assertEquals(to_str(expected), to_str(res))
 
     def testNormalized(self):
         text = '살고 있는 더즐리'
         res = self.tokenizer.parse(text)
-        expected = [AT('살', '살', None),
-                    AT('고', '고', 'Josa'),
+        expected = [AT(text='살', dictionary_form='살', definition='', pos='Noun'),
+                    create_particle_token('고', None),
                     WS(),
-                    AT('있는', '있다', None),
+                    AT(text='있는', dictionary_form='있다', definition='', pos='Adjective'),
                     WS(),
-                    AT('더즐리', '더즐리', None)
+                    AT(text='더즐리', dictionary_form='더즐리', definition='', pos='Noun')
                     ]
-        self.assertEquals(repr(expected), repr(res))
+        self.assertEquals(to_str(expected), to_str(res))
 
     def testNormalized2(self):
         text = '제 1장 살아남은 아이'
         res = self.tokenizer.parse(text)
-        expected = [AT('제', '제', None), WS(), IT('1'), AT('장', '장', None), WS(),
-                    AT('살아남', '살아나다', None),
-                    IT('은'), # must be AT('은', '은', 'Josa'), Twitter ignores it!
+        expected = [AT(text='제', dictionary_form='제', pos='Noun'),
                     WS(),
-                    AT('아이', '아이', None)]
-        self.assertEquals(repr(expected), repr(res))
+                    IT('1'),
+                    AT(text='장', dictionary_form='장', pos='Noun'),
+                    WS(),
+                    AT(text='살아남', dictionary_form='살아나다', pos='Verb'),
+                    create_ending_token('은', None),
+                    WS(),
+                    AT(text='아이', dictionary_form='아이', pos='Noun')]
+        self.assertEquals(to_str(expected), to_str(res))
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestTokenizer)
