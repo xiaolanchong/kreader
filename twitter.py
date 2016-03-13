@@ -23,7 +23,8 @@ pos_name = {
     'Josa'           : POS_PARTICLE,
     'Conjunction'    : POS_CONJUNCTIVE,
     'Number'      : POS_NUMBER,
-    'Suffix'      : POS_SUFFIX
+    'Suffix'      : POS_SUFFIX,
+    'PreEomi'     : POS_ENDING,
 }
 
 
@@ -52,7 +53,7 @@ def get_word_to_stem_pairs(words, stems):
         if index_stems < len(stems):
             stem = stems[index_stems]
         else:
-            print(index_stems, stems)
+            print('Stem index is out of range', index_stems, stems)
             res.append((word, no_stem))
             continue
 

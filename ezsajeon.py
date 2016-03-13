@@ -2,7 +2,8 @@
 
 import os.path
 
-class Sajeon:
+# ezcorean dictionary
+class EzSajeon:
     def __init__(self):
         self.dict = {}
         path = os.path.join(os.path.dirname(__file__),'ezcorean_2cols.tsv')

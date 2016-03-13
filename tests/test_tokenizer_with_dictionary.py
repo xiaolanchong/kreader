@@ -75,6 +75,23 @@ class TestTokenizerWithDictionary(unittest.TestCase):
          IT('.')]
         self.assertEqual(to_str(res), to_str(expected))
 
+    def testDeconjugation(self):
+        text = '무관해 보였다'
+        res = self.tokenizer.parse(text)
+        expected = \
+            [AT(text='무관', dictionary_form='무관', definition='(無關) irrelevance', pos=POS_NOUN),
+             create_particle_token('해', None),
+             WS(),
+             AT(text='보였', dictionary_form='보이다', definition='to appear as sth, like sth', pos=POS_VERB),
+             create_ending_token('다', None)
+             ]
+        self.assertEqual(to_str(res), to_str(expected))
+
+    def testSerialize(self):
+        token = AT(text='보였', dictionary_form='보이다', definition='to appear as sth, like sth', pos=POS_VERB)
+        res = token.jsonify()
+        self.assertEqual(res, '')
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestTokenizerWithDictionary)
