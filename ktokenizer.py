@@ -32,6 +32,7 @@ class KTokenizer:
     MECAB = 2
 
     def __init__(self, dict_lookup_func=None, parser=TWITTER):
+        self.debug_mode = False
         self.dict_lookup_func = dict_lookup_func
 
         if   parser == KTokenizer.TWITTER:
@@ -47,7 +48,8 @@ class KTokenizer:
         except Exception as e:
             logging.exception(e)
             logging.error('Error on parsing text: ' + text)
-            #raise
+            if self.debug_mode:
+                raise
             return IgnoredToken(text)
 
         out = []

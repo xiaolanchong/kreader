@@ -257,7 +257,7 @@ class DictFileReader(object):
         result = list()
         indexes = self._dict_index.get_index_by_word(word)
         if indexes == False:
-            return False
+            return []
         sametypesequence = self._dict_ifo.get_ifo("sametypesequence")
         for index in indexes:
             self._offset = index[0]

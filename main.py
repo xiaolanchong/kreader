@@ -3,14 +3,14 @@
 from jinja2 import Environment, PackageLoader
 import json
 from ktokenizer import KTokenizer, Paragraph
-from sajeon import Sajeon
+from ezsajeon import EzSajeon
 
 env = Environment(loader=PackageLoader('main', 'templates'))
 template = env.get_template('kreader.htm')
 
 def get_data(ktokenizer):
     text_objs = []
-    with open('hp1_full.txt', encoding='utf8') as f:
+    with open('hp1_1.txt', encoding='utf8') as f:
         for line in f.readlines():
             line_objs = ktokenizer.parse(line)
 
@@ -29,8 +29,8 @@ def get_test_data(ktokenizer):
     return ktokenizer.parse(source)
 
 def main():
-    sajeon = Sajeon()
-    ktokenizer = KTokenizer(sajeon.get_definition)
+    ezsajeon = EzSajeon()
+    ktokenizer = KTokenizer(ezsajeon.get_definition)
 
     text_objs = get_data(ktokenizer)
     #text_objs = get_test_data(ktokenizer)
