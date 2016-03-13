@@ -4,7 +4,7 @@ import os.path
 from stardict import DictFileReader, IfoFileReader, IdxFileReader
 
 class StardictSajeon:
-    def __init__(self):
+    def __init__(self, dict_dir, ):
         dict_dir = r'c:\tools\_lang\GoldenDict\content\stardict-KoreanEnglishDic-2.4.2'
 
         ifo_file = os.path.join(dict_dir, "KoreanEnglishDic.ifo")
@@ -39,14 +39,17 @@ def test_output():
 
     article_with_sample = ss.get_definition('번지', True)
     print(article_with_sample)
+    print('-' * 25)
 
     article_no_sample = ss.get_definition('번지', False)
     print(article_no_sample)
+    print('-' * 25)
 
     article_no_sample = ss.get_definition('번번번번번지', False)
     print(article_no_sample)
+    print('-' * 25)
 
-    article_with_sample = ss.get_definition('살', True)
+    article_with_sample = ss.get_definition('적', True)
     print(article_with_sample)
     open('testzzzz.txt', mode='w', encoding='utf8').write(article_with_sample)
 

@@ -15,7 +15,7 @@ function add_word(word_info) {
 	   var word = word_info['text']
 	   
 	   var definition = word_info['def'];
-	   var dictionary_form = word_info.get('dict_form', word);
+	   var dictionary_form = word_info['dict_form'] ? word_info['dict_form'] : word;
 	   var part_of_speech = word_info['pos'];
 	   if(part_of_speech) {
 	      definition = '<span class="popup_part_of_speech">(' + part_of_speech + ') </span>' + definition;

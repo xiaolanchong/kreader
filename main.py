@@ -22,18 +22,11 @@ def get_data(ktokenizer):
 
     return [obj.jsonify() for obj in text_objs]
 
-
-def get_test_data(ktokenizer):
-    source = '프리벳가 4번지에 살고 있는 더즐리 부부는 자신들이 정상적이라는 ' \
-             '것을 아주 자랑스럽게 여기는 사람들이었다.'
-    return ktokenizer.parse(source)
-
 def main():
     ezsajeon = EzSajeon()
     ktokenizer = KTokenizer(ezsajeon.get_definition)
 
     text_objs = get_data(ktokenizer)
-    #text_objs = get_test_data(ktokenizer)
     html = template.render(text=json.dumps(text_objs, sort_keys=True, indent=3))
     with open('index.htm', mode='w', encoding='utf8') as f:
         f.write(html)

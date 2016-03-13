@@ -99,7 +99,7 @@ class TestTokenizerWithDictionary(unittest.TestCase):
                      'def' : 'to appear as sth, like sth'}
         self.assertEqual(res, expected)
 
-    def testTokenizeComplex(self):
+    def testTokenizeKorEngDictionary(self):
         text = '살고 있는 더즐리 부부는 자신들이 정상적이라는 것을 아주 자랑스럽게 여기는 사람들이었다.'
         res = self.tokenizer_sd.parse(text)
         #pprint.pprint(res)
@@ -114,11 +114,11 @@ class TestTokenizerWithDictionary(unittest.TestCase):
          AT(text='부부', dictionary_form='부부', definition='부부 [夫婦] husband and wife; man and wife[woman]; a (married) couple; a (wedded) pair.', pos=POS_NOUN),
          create_particle_token('는', None),
          WS(),
-         AT(text='자신', dictionary_form='자신', definition='(自身) one’s own self, one`s own body', pos=POS_NOUN),
-         AT(text='들', dictionary_form='들', definition='and so on and so forth, etcaetera', pos=POS_SUFFIX),
+         AT(text='자신', dictionary_form='자신', definition='자신 [自身] (one\'s) self; oneself.', pos=POS_NOUN),
+         AT(text='들', dictionary_form='들', definition='들1 a field; [전답] the fields; [평야] a plain.', pos=POS_SUFFIX),
          create_particle_token('이', None),
          WS(),
-         AT(text='정상', dictionary_form='정상', definition='(頂上) The top, summit', pos=POS_NOUN),
+         AT(text='정상', dictionary_form='정상', definition='정상 [正常] normality; <美> normalcy.', pos=POS_NOUN),
          AT(text='적', dictionary_form='적', definition='The enemy', pos=POS_SUFFIX),
          PT(text='이라는', definition='that which'),
          WS(),

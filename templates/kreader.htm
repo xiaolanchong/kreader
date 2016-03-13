@@ -5,17 +5,17 @@
     
     <title>Annotated text</title>
     
-    <link rel="stylesheet" type="text/css" href="static/kreader.css"  />
-    <link rel="stylesheet" type="text/css" href="static/tooltipster.css" />
-	<link rel="stylesheet" type="text/css" href="static/themes/tooltipster-light.css" />
+    <link rel="stylesheet" type="text/css" href="static/styles/kreader.css"  />
+    <link rel="stylesheet" type="text/css" href="static/styles/tooltipster.css" />
+	<link rel="stylesheet" type="text/css" href="static/styles/themes/tooltipster-light.css" />
 	
-    <script type="text/javascript" src="scripts/jquery-1.12.1.min.js"></script>
-	<script type="text/javascript" src="scripts/jquery.tooltipster.min.js"></script>
-	<script type="text/javascript" src="scripts/kreader.js"></script>
+    <script type="text/javascript" src="static/scripts/jquery-1.12.1.min.js"></script>
+	<script type="text/javascript" src="static/scripts/jquery.tooltipster.min.js"></script>
+	<script type="text/javascript" src="static/scripts/kreader.js"></script>
 	
     <script type="text/javascript">
 		$(document).ready(function() {
-			var annotated_text = {{ text }};
+			var annotated_text = {{ text|tojson|safe }};
 			annotate(annotated_text)
 		});
     </script>
