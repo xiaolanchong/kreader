@@ -1,4 +1,5 @@
 
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -14,9 +15,11 @@
 	<script type="text/javascript" src="static/scripts/kreader.js"></script>
 	
     <script type="text/javascript">
+	    var global_glossary = {{ glossary|tojson|safe }};
+		
 		$(document).ready(function() {
-			var annotated_text = {{ text|tojson|safe }};
-			annotate(annotated_text)
+			var tokens = {{ tokens|tojson|safe }};
+			annotate(tokens)
 		});
     </script>
 

@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath('..'))
 from ktokenizer import KTokenizer, Whitespace as WS
 from morph_analyzer import AnnotatedToken as AT, IgnoredToken as IT, \
                            create_ending_token, create_particle_token, ParticleToken as PT, \
-                           POS_NOUN, POS_VERB, POS_ADJECTIVE, POS_SUFFIX
+                           POS_NOUN, POS_VERB, POS_ADJECTIVE, POS_SUFFIX, POS_AUXILIARY, POS_ADVERB
 from ezsajeon import EzSajeon
 from stardictsajeon import StardictSajeon
 
@@ -29,68 +29,74 @@ class TestTokenizerWithDictionary(unittest.TestCase):
         self.tokenizer.debug_mode = True
         self.tokenizer_sd = KTokenizer(self.stardict.get_definition)
         self.tokenizer_sd.debug_mode = True
+
+        self.tokenizer_mecab = KTokenizer(self.ezdict.get_definition, KTokenizer.MECAB)
         self.maxDiff = None
 
     def testTokenizeOneWord(self):
         text = '4번지에'#'프리벳가 4번지에 살고'
         res = self.tokenizer.parse(text)
         expected = [IT('4'),
-                    AT(text='번지', dictionary_form='번지', definition='(番地) Area of land', pos=POS_NOUN),
+                    AT(text='번지', dictionary_form='번지', definition='', pos=POS_NOUN),
                     create_particle_token('에', None)
                     ]
         self.assertEqual(to_str(res), to_str(expected))
 
+        lookedup_words = {
+            '번지' : '(番地) Area of land',
+        }
+
+        self.assertEqual(lookedup_words, self.tokenizer.get_lookedup_words())
+
     def testTokenizeComplex(self):
-        text = '살고 있는 더즐리 부부는 자신들이 정상적이라는 것을 아주 자랑스럽게 여기는 사람들이었다.'
+        text = '살고 있는 더즐리 부부는 자신들.'
         res = self.tokenizer.parse(text)
         #pprint.pprint(res)
         expected = \
-        [AT(text='살', dictionary_form='살', definition='Years old', pos=POS_NOUN),
+        [AT(text='살', dictionary_form='살', definition='', pos=POS_NOUN),
          create_particle_token('고', None),
          WS(),
-         AT(text='있는', dictionary_form='있다', definition='To be', pos=POS_ADJECTIVE),
+         AT(text='있는', dictionary_form='있다', definition='', pos=POS_ADJECTIVE),
          WS(),
          AT(text='더즐리', dictionary_form='더즐리', definition='', pos=POS_NOUN),
          WS(),
-         AT(text='부부', dictionary_form='부부', definition='(夫婦) Man and wife', pos=POS_NOUN),
+         AT(text='부부', dictionary_form='부부', definition='', pos=POS_NOUN),
          create_particle_token('는', None),
          WS(),
-         AT(text='자신', dictionary_form='자신', definition='(自身) one’s own self, one`s own body', pos=POS_NOUN),
-         AT(text='들', dictionary_form='들', definition='and so on and so forth, etcaetera', pos=POS_SUFFIX),
-         create_particle_token('이', None),
-         WS(),
-         AT(text='정상', dictionary_form='정상', definition='(頂上) The top, summit', pos=POS_NOUN),
-         AT(text='적', dictionary_form='적', definition='The enemy', pos=POS_SUFFIX),
-         PT(text='이라는', definition='that which'),
-         WS(),
-         AT(text='것', dictionary_form='것', definition='A thing or  an object', pos=POS_NOUN),
-         create_particle_token('을', None),
-         WS(),
-         AT(text='아주', dictionary_form='아주', definition='Extremely', pos=POS_NOUN),
-         WS(),
-         AT(text='자랑', dictionary_form='자랑', definition='Pride', pos=POS_NOUN),
-         create_particle_token('스럽게', None),
-         WS(),
-         AT(text='여기는', dictionary_form='여기다',
-            definition='Think, consider as; to think, consider/estimate sth as sth else', pos=POS_VERB),
-         WS(),
-         AT(text='사람', dictionary_form='사람', definition='Person', pos=POS_NOUN),
-         AT(text='들이었', dictionary_form='들이다', definition='spend (노력 따위를)', pos=POS_VERB),
-         create_ending_token('다', None),
+         AT(text='자신', dictionary_form='자신', definition='', pos=POS_NOUN),
+         AT(text='들', dictionary_form='들', definition='', pos=POS_SUFFIX),
          IT('.')]
         self.assertEqual(to_str(res), to_str(expected))
+
+        lookedup_words = {
+            '살' : 'tine\nflesh,muscle\nYears old',
+            '있다' : 'keep\nlie\nTo be\nTo be',
+            '부부' : 'man\n(夫婦) Man and wife',
+            '자신' : '(自信) Self-confidence\n(自身) one’s own self, one`s own body',
+            '들' : 'a field, plains, an opening\nand so on and so forth, etcaetera',
+            '더즐리' : ''
+        }
+
+        self.assertEqual(lookedup_words, self.tokenizer.get_lookedup_words())
 
     def testDeconjugation(self):
         text = '무관해 보였다'
         res = self.tokenizer.parse(text)
         expected = \
-            [AT(text='무관', dictionary_form='무관', definition='(無關) irrelevance', pos=POS_NOUN),
+            [AT(text='무관', dictionary_form='무관', definition='', pos=POS_NOUN),
              create_particle_token('해', None),
              WS(),
-             AT(text='보였', dictionary_form='보이다', definition='to appear as sth, like sth', pos=POS_VERB),
+             AT(text='보였', dictionary_form='보이다', definition='', pos=POS_VERB),
              create_ending_token('다', None)
              ]
         self.assertEqual(to_str(res), to_str(expected))
+
+        lookedup_words = {
+            '무관' : '(武官) a military officer\n(無關) irrelevance',
+            '보이다' : 'see,catch sight of\nshow,let see\nto appear as sth, like sth'
+        }
+
+        self.assertEqual(lookedup_words, self.tokenizer.get_lookedup_words())
 
     def testSerialize(self):
         token = AT(text='보였', dictionary_form='보이다', definition='to appear as sth, like sth', pos=POS_VERB)
@@ -100,45 +106,72 @@ class TestTokenizerWithDictionary(unittest.TestCase):
         self.assertEqual(res, expected)
 
     def testTokenizeKorEngDictionary(self):
-        text = '살고 있는 더즐리 부부는 자신들이 정상적이라는 것을 아주 자랑스럽게 여기는 사람들이었다.'
+        text = '살고 있는 더즐리 부부는 자신들.'
         res = self.tokenizer_sd.parse(text)
         #pprint.pprint(res)
         expected = \
-        [AT(text='살', dictionary_form='살', definition='살11 (뼈를 둘러싼) flesh.', pos=POS_NOUN),
+        [AT(text='살', dictionary_form='살', definition='', pos=POS_NOUN),
          create_particle_token('고', None),
          WS(),
-         AT(text='있는', dictionary_form='있다', definition='있다1 [위치하다] be; be situated; <美> be located; stand(건물 등이); lie(도시 등이); run(산맥·강이).', pos=POS_ADJECTIVE),
+         AT(text='있는', dictionary_form='있다', definition='', pos=POS_ADJECTIVE),
          WS(),
          AT(text='더즐리', dictionary_form='더즐리', definition='', pos=POS_NOUN),
          WS(),
-         AT(text='부부', dictionary_form='부부', definition='부부 [夫婦] husband and wife; man and wife[woman]; a (married) couple; a (wedded) pair.', pos=POS_NOUN),
+         AT(text='부부', dictionary_form='부부', definition='', pos=POS_NOUN),
          create_particle_token('는', None),
          WS(),
-         AT(text='자신', dictionary_form='자신', definition='자신 [自身] (one\'s) self; oneself.', pos=POS_NOUN),
-         AT(text='들', dictionary_form='들', definition='들1 a field; [전답] the fields; [평야] a plain.', pos=POS_SUFFIX),
-         create_particle_token('이', None),
-         WS(),
-         AT(text='정상', dictionary_form='정상', definition='정상 [正常] normality; <美> normalcy.', pos=POS_NOUN),
-         AT(text='적', dictionary_form='적', definition='The enemy', pos=POS_SUFFIX),
-         PT(text='이라는', definition='that which'),
-         WS(),
-         AT(text='것', dictionary_form='것', definition='A thing or  an object', pos=POS_NOUN),
-         create_particle_token('을', None),
-         WS(),
-         AT(text='아주', dictionary_form='아주', definition='Extremely', pos=POS_NOUN),
-         WS(),
-         AT(text='자랑', dictionary_form='자랑', definition='Pride', pos=POS_NOUN),
-         create_particle_token('스럽게', None),
-         WS(),
-         AT(text='여기는', dictionary_form='여기다',
-            definition='Think, consider as; to think, consider/estimate sth as sth else', pos=POS_VERB),
-         WS(),
-         AT(text='사람', dictionary_form='사람', definition='Person', pos=POS_NOUN),
-         AT(text='들이었', dictionary_form='들이다', definition='spend (노력 따위를)', pos=POS_VERB),
-         create_ending_token('다', None),
+         AT(text='자신', dictionary_form='자신', definition='', pos=POS_NOUN),
+         AT(text='들', dictionary_form='들', definition='', pos=POS_SUFFIX),
          IT('.')]
 
         self.assertEqual(to_str(res), to_str(expected))
+
+        lookedup_words = {
+            '살' : '살11 (뼈를 둘러싼) flesh.',
+            '있다' : '있다1 [위치하다] be; be situated; <美> be located; stand(건물 등이); lie(도시 등이); run(산맥·강이).',
+            '부부' : '부부 [夫婦] husband and wife; man and wife[woman]; a (married) couple; a (wedded) pair.',
+            '들' : '들1 a field; [전답] the fields; [평야] a plain.',
+            '자신' : '자신 [自身] (one\'s) self; oneself.',
+            '더즐리': ''
+        }
+
+        self.assertEqual(lookedup_words, self.tokenizer_sd.get_lookedup_words())
+
+    def testMekabTokenizer(self):
+        text = '살고 있는 더즐리 부부는 자신들.'
+        res = self.tokenizer_mecab.parse(text)
+        #pprint.pprint(res)
+        expected = \
+        [AT(text='살', dictionary_form='살다', definition='', pos=POS_VERB),
+         create_ending_token('고', None),
+         WS(),
+         AT(text='있', dictionary_form='있다', definition='', pos=POS_AUXILIARY),
+         create_ending_token('는', None),
+         WS(),
+         AT(text='더', dictionary_form='더', pos=POS_ADVERB),
+         AT(text='즐', dictionary_form='즐', pos=POS_NOUN),
+         AT(text='리', dictionary_form='리', pos=POS_NOUN),
+         WS(),
+         AT(text='부부', dictionary_form='부부', definition='', pos=POS_NOUN),
+         create_particle_token('는', None),
+         WS(),
+         AT(text='자신', dictionary_form='자신', definition='', pos=POS_NOUN),
+         AT(text='들', dictionary_form='들', definition='', pos=POS_SUFFIX),
+         IT('.')]
+
+        self.assertEqual(to_str(res), to_str(expected))
+
+        lookedup_words = {
+          '살다': 'To live',
+          '있다': 'keep\nlie\nTo be\nTo be',
+          '더': 'More',
+          '들': 'a field, plains, an opening\nand so on and so forth, etcaetera',
+          '리': 'a reason for doing sth, good cause for sth',
+          '부부': 'man\n(夫婦) Man and wife',
+          '자신': '(自信) Self-confidence\n(自身) one’s own self, one`s own body',
+          '즐': ''
+        }
+        self.assertEqual(lookedup_words, self.tokenizer_mecab.get_lookedup_words())
 
 
 if __name__ == '__main__':

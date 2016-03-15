@@ -16,23 +16,36 @@ def start_page():
     global ktokenizer, ezsajeon
     if ktokenizer is None:
         ezsajeon = EzSajeon()
-        ktokenizer = KTokenizer(ezsajeon.get_definition)
-    text_objs = get_data(ktokenizer)
+        ktokenizer = KTokenizer(ezsajeon.get_definition, KTokenizer.MECAB)
+    tokens, glossary = get_data(ktokenizer)
    # text_json = json.dumps(text_objs, sort_keys=True, indent=3)
-    html = render_template('kreader.htm', text=text_objs)
+    html = render_template('kreader.htm', tokens=tokens, glossary=glossary)
     return html
 
 @app.route("/add_text")
 def add_text():
     return
 
+@app.route("/get_word_definition")
+def get_word_definition():
+    word = request.args.get('word', '', type=str)
+    if(len() == 0):
+        return jsonify(records=[])
+
+    definition = ezsajeon.get_definition(word)
+    return jsonify(definition=definition)
+
+
 def get_data(ktokenizer):
     text_objs = []
-    import os.path
-    path = '..\_kreader_files\hp1_1.txt'
+    glossary = {}
+
+    path = '..\_kreader_files\hp1_full.txt'
     with open(path, encoding='utf8') as f:
         for line in f.readlines():
             line_objs = ktokenizer.parse(line)
+            lookedup_words = ktokenizer.get_lookedup_words()
+            glossary.update(lookedup_words)
 
             text_objs.extend(line_objs)
             text_objs.append(Paragraph())
@@ -40,7 +53,7 @@ def get_data(ktokenizer):
     if len(text_objs):
         text_objs.pop()
 
-    return [obj.jsonify() for obj in text_objs]
+    return [obj.jsonify() for obj in text_objs], glossary
 
 
 if __name__ == "__main__":

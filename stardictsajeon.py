@@ -4,7 +4,7 @@ import os.path
 from stardict import DictFileReader, IfoFileReader, IdxFileReader
 
 class StardictSajeon:
-    def __init__(self, dict_dir, ):
+    def __init__(self):
         dict_dir = r'c:\tools\_lang\GoldenDict\content\stardict-KoreanEnglishDic-2.4.2'
 
         ifo_file = os.path.join(dict_dir, "KoreanEnglishDic.ifo")

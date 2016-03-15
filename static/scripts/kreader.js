@@ -1,5 +1,5 @@
 
-function add_word(word_info) {
+function annotate_word(word_info) {
    var WORD_SPACE  = 1;
    var WORD_IGNORED = 2;
    var WORD_ANNOTATED = 3;
@@ -12,33 +12,9 @@ function add_word(word_info) {
 	  $(text_elem).text(' ');
    }
    else if (word_class == WORD_ANNOTATED) {
-	   var word = word_info['text']
-	   
-	   var definition = word_info['def'];
-	   var dictionary_form = word_info['dict_form'] ? word_info['dict_form'] : word;
-	   var part_of_speech = word_info['pos'];
-	   if(part_of_speech) {
-	      definition = '<span class="popup_part_of_speech">(' + part_of_speech + ') </span>' + definition;
-	   }
-	   var content = '<span class="popup_defined_word">' + dictionary_form + '</span><br>' + 
-	                 '<span class="popup_definition">' + definition + '</span>';
-	   
-	   $(text_elem).text(word);
-	   if(definition.length > 0) {
-	       $(text_elem).addClass("defined_word");
-	       $(text_elem).tooltipster({
-                content :  $(content),
-				trigger : 'click',
-				theme : 'tooltipster-light',
-				position : 'bottom',
-				speed : 150,
-				delay : 0,
-				onlyOne : true
-            });
-	   }
-	   else {
-			$(text_elem).addClass("word_without_definition");
-	   }
+       var word = word_info['text']
+       $(text_elem).text(word);
+	   attach_tooltip(text_elem, word_info)
    }
    else if (word_class == WORD_IGNORED) {
 	   $(text_elem).text(word_info['text']);
@@ -51,13 +27,51 @@ function add_word(word_info) {
    }
 }
 
-function annotate(text_obj) {
+function attach_tooltip(text_elem, word_info) {
+   $(text_elem).addClass("defined_word");
+   $(text_elem).tooltipster({
+		content : 'Loading...',
+		functionBefore: function(origin, continueTooltip) { 
+						  //if (origin.data('ajax') !== 'cached') {
+						   var content = create_tooltip_content(word_info);
+						   origin.tooltipster('content', content).data('ajax', 'cached');
+						   continueTooltip();
+						},
+		trigger : 'click',
+		theme : 'tooltipster-light',
+		position : 'bottom',
+		speed : 150,
+		delay : 0,
+		onlyOne : true
+	});
+}
 
-   //#var text_elem = $('body').append('div');
-   //$(text_elem).text('ttt');
+function create_tooltip_content(word_info) {
+   var word = word_info['text']
+   var dictionary_form = word_info['dict_form'] ? word_info['dict_form'] : word;
+   var definition = global_glossary[dictionary_form] ? global_glossary[dictionary_form] : '';
+   var part_of_speech = word_info['pos'];
+   var part_of_speech_info = '';
+   if(part_of_speech) {
+	  part_of_speech_info = '&nbsp;<span class="popup_part_of_speech">(' + part_of_speech + ')</span>';
+   }
+   
+   var content = '<span class="popup_defined_word">' + dictionary_form + '</span>';
+   content += part_of_speech_info;
+   content += '<br>';
+   
+   definition_split = '';
+   definition.split('\n').forEach( function(value, index) {
+		definition_split += value + '<br>';
+   } );
+   content += '<span class="popup_definition">' + definition_split + '</span>';
+   return $(content);
+}
+
+function annotate(text_obj) {
    $.each( text_obj, 
            function(index, value) {
-				add_word(value)
+				annotate_word(value)
            }
    );
 }

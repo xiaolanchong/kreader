@@ -70,8 +70,9 @@ class Mecab:
                 raise RuntimeError('Word decomposition is ill-formatted: {0}'.format(composition))
             stem, stem_pos, _ =  elements[0].split('/')
             #print(stem_pos)
-            assert(stem_pos[0] == 'V' or stem_pos[0] == 'X')  # verb/auxiliarys are conjugated
-            return stem + '다'
+            #assert(stem_pos[0] == 'V' or stem_pos[0] == 'X')  # verb/auxiliarys are conjugated
+            # TODO: why patched in mecab_analyzer?
+            return stem# + '다'
         else:
             return word
 
