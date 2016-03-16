@@ -31,7 +31,7 @@ class TestMecab(unittest.TestCase):
              create_particle_token('에', None),
              AT(text='살', dictionary_form='살다', pos=POS_VERB),
              create_ending_token('고', None),
-             AT(text='있', dictionary_form='있', pos=POS_AUXILIARY),
+             AT(text='있', dictionary_form='있다', pos=POS_AUXILIARY),
              create_ending_token('는', None),
              AT(text='더', dictionary_form='더', pos=POS_ADVERB),
              AT(text='즐', dictionary_form='즐', pos=POS_NOUN),

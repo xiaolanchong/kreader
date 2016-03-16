@@ -40,7 +40,7 @@ def get_data(ktokenizer):
     text_objs = []
     glossary = {}
 
-    path = '..\_kreader_files\hp1_full.txt'
+    path = '..\_kreader_files\hp1_1.txt'
     with open(path, encoding='utf8') as f:
         for line in f.readlines():
             line_objs = ktokenizer.parse(line)

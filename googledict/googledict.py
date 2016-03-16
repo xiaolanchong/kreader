@@ -62,9 +62,8 @@ def get_stateless_token(request, epoch_time):
     var_tkk = int(epoch_time//3600)
     var_a = var_tkk
 
-    var_e = 0
-    while var_e < len(var_d):
-        var_a += var_d[var_e]
+    for var_e in var_d:
+        var_a += var_e
         #var_a = &RLVb(var_a)
         var_dr = (var_a<<(10+(64-32)))>>(64-32) #scalar (var_a<<(10+(64-32)))>>(64-32)
         var_a = (var_a + var_dr) & 4294967295
@@ -77,9 +76,6 @@ def get_stateless_token(request, epoch_time):
         else:
             var_a = var_a ^ var_dr
 
-        var_e += 1
-
-    #var_a = &RLUb(var_a)
     var_db = (var_a<<(3+(64-32)))>>(64-32) #scalar (var_a<<(3+(64-32)))>>(64-32)
     var_a = var_a + var_db & 4294967295
     var_db = (2**32+(var_a)) >> 11 if var_a < 0 else var_a >> 11 #>>>
@@ -121,7 +117,6 @@ class GoogleDictionary():
         return json.loads(response_content)
 
     def unpack(self, json_obj):
-        pprint(json_obj)
         window_content = json_obj[0]
         if len(json_obj) > 1:
             article_by_pos = json_obj[1]
@@ -137,11 +132,12 @@ class GoogleDictionary():
 
 
 def main():
-    word = '자신'
+    word = '따각따각'
     gdict = GoogleDictionary()
     json = gdict.lookup(word, 'ko', 'en')
-    pprint(json)
+    #pprint(json)
     res = gdict.unpack(json)
+    print('Final lookup result:')
     pprint(res)
 
 def test_token():

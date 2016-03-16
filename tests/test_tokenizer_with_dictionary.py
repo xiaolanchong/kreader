@@ -18,17 +18,21 @@ from morph_analyzer import AnnotatedToken as AT, IgnoredToken as IT, \
 from ezsajeon import EzSajeon
 from stardictsajeon import StardictSajeon
 
+KOR_ENG_DICT = False
+
 def to_str(tokens):
     return [repr(token) for token in tokens]
 
 class TestTokenizerWithDictionary(unittest.TestCase):
     def setUp(self):
         self.ezdict = EzSajeon()
-        self.stardict = StardictSajeon()
+
         self.tokenizer = KTokenizer(self.ezdict.get_definition)
         self.tokenizer.debug_mode = True
-        self.tokenizer_sd = KTokenizer(self.stardict.get_definition)
-        self.tokenizer_sd.debug_mode = True
+        if KOR_ENG_DICT:
+            self.stardict = StardictSajeon()
+            self.tokenizer_sd = KTokenizer(self.stardict.get_definition)
+            self.tokenizer_sd.debug_mode = True
 
         self.tokenizer_mecab = KTokenizer(self.ezdict.get_definition, KTokenizer.MECAB)
         self.maxDiff = None
@@ -106,6 +110,8 @@ class TestTokenizerWithDictionary(unittest.TestCase):
         self.assertEqual(res, expected)
 
     def testTokenizeKorEngDictionary(self):
+        if not KOR_ENG_DICT:
+         return
         text = '살고 있는 더즐리 부부는 자신들.'
         res = self.tokenizer_sd.parse(text)
         #pprint.pprint(res)

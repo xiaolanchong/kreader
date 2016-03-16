@@ -40,6 +40,7 @@ function attach_tooltip(text_elem, word_info) {
 		trigger : 'click',
 		theme : 'tooltipster-light',
 		position : 'bottom',
+		interactive : true,
 		speed : 150,
 		delay : 0,
 		onlyOne : true

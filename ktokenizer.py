@@ -3,8 +3,6 @@
 import logging
 import pprint
 
-from twitter import TwitterAnalyzer
-from mecab_analyzer import MecabAnalyzer
 from morph_analyzer import IgnoredToken, AnnotatedToken, WORD_WHITESPACE, WORD_PARAGRAPH
 
 class Whitespace:
@@ -37,8 +35,10 @@ class KTokenizer:
         self.lookedup_words = {}
 
         if   tokenizer == KTokenizer.TWITTER:
+            from twitter import TwitterAnalyzer
             self.tokenizer = TwitterAnalyzer(self.add_lookedup_word)
         elif tokenizer == KTokenizer.MECAB:
+            from mecab_analyzer import MecabAnalyzer
             self.tokenizer = MecabAnalyzer(self.add_lookedup_word)
         else:
             RuntimeError('Unknown tokenizer specified: ' + str(parser))
