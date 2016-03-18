@@ -1,8 +1,7 @@
 {% extends "base.htm" %}
 
 {% block script %}
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
     <script type="text/javascript">
     
         var msg_box = null;
@@ -35,13 +34,14 @@
                 }
             });
         
-            $('.a_cross').click(function(){
+            $('.a_delete').click(function(){
+                var title = $(this).parent().text();
                 msg_box.data('messageBox').question(
                 
-                    'Title',
+                    'Text Deletion',
 
-                    // messageBox body
-                     'Remove text',
+                    
+                     'Delete ' + title + '?', // messageBox body
                     // the buttons to be displayed in the messageBox
                     // The return value will be passed to the callback function cbClose ()
                      [{text:'Yes',return:true}, {text:'No',return:false} ]
@@ -53,13 +53,29 @@
     </script>
 {% endblock %}
 
-
-
 {% block content %}
-        <div class="pure-u title-list">
-             <li><a href="/addtext">+&nbsp;Add text</a></li>
-            {% for textdesc in textdescs %}
-              <li><a href="/showtext?id={{ textdesc.id }}">{{ textdesc.title }}</a>&nbsp;[<a href="#" class="a_cross" id="{{ textdesc.id }}">X</a>]</li>
-            {% endfor %}
-        </div>
+        <table class="title-table">
+            <thead>
+                 <tr>
+                     <th>Title</th>
+                     <th>Total Words</th>
+                     <th>Unique Words</th>
+                     <th>Reading Progress</th>
+                     <th></th>
+                     <th></th>
+                 </tr>
+            </thead>
+            <tbody>
+                 {% for textdesc in textdescs %}
+                     <tr>
+                         <td><a href="/showtext?id={{ textdesc.id }}">{{ textdesc.title }}</a></td>
+                         <td>0</td>
+                         <td>0</td>
+                         <td>0</td>
+                         <td><a href="#" class="a_delete" id="{{ textdesc.id }}"><img src="static/images/Delete.png"></a></td>
+                         <td><a href="#" class="a_modify" id="{{ textdesc.id }}"><img src="static/images/Modify.png"></a></td>
+                     </tr>
+                 {% endfor %}
+            </tbody>
+        </table>
 {% endblock %}

@@ -97,8 +97,6 @@ class DataStorage:
       return new_text.text_id
 
 
-
-
 if __name__ == "__main__":
     ds = DataStorage()
     #ds.create_db()

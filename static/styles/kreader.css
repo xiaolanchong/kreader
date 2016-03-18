@@ -1,8 +1,19 @@
 
-.main_panel
+.main_panel  /* text display*/
 {
    text-align: left;
-   margin-left: 10px
+   margin-left: 10px;
+   line-height: 150%;
+}
+
+body
+{
+    /*padding: 20px 20px 20px 20px;*/
+}
+
+.popup_msg
+{
+   
 }
 
 .popup_defined_word 
@@ -40,25 +51,46 @@
 
 .app-title
 {
-    font-size: 200%
+    font-size: 300%;
+    text-align: left;
+    margin-left : 20px;
+    margin-right : 20px;
+    margin-bottom : 20px;
 }
 
 .header-panel
 {
     padding-top: 10px;
     padding-bottom: 10px;
-    background-color: #e8e8e8;
+    background-color: #c8c8c8;
+    vertical-align: middle;
+}
+
+.header-panel  span
+{
+    vertical-align: top;
+    margin-left: 10px;
+    /*margin-top:    10px*/
 }
 
 .title-list
 {
-    padding-top: 6px;    
+    margin-left : 20px;
+  /*  margin-right : 20px;*/
+    margin-top : 10px;
+    /*margin-bottom : 5px;*/
 }
 
 .body-center
 {
-    text-align: center;
-    font-family: Verdana, Tahoma, Arial;
+  /*   */
+    font-family: Verdana, Tahoma, sans-serif;
+    
+}
+
+.text-title
+{
+   text-align: center;
 }
 
 .add_text_prop
@@ -74,4 +106,29 @@
 li
 {
     margin-top: 10px;
+}
+
+.title-table{
+margin: 10px;
+border-collapse: collapse;
+}
+
+.title-table th{
+/*width: 25%;*/
+padding: 4px;
+text-align: left;
+vertical-align: top;
+color: #333;
+background-color: #eee;
+border: 1px solid #b9b9b9;
+}
+.title-table td{
+padding: 4px;
+background-color: #fff;
+border: 1px solid #b9b9b9;
+}
+
+img
+{
+    margin: 5px;
 }
