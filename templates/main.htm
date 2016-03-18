@@ -1,0 +1,65 @@
+{% extends "base.htm" %}
+
+{% block script %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <script type="text/javascript">
+    
+        var msg_box = null;
+        
+        function msgClose(ret){
+	console.log("msgClose -> retour %s", ret);
+}
+
+		$(document).ready(function() {
+                msg_box = $("body").messageBox({
+                // autoclose timeout. 0 = disable autoclose
+                autoClose : 0, 
+                // show autoclose counter
+                showAutoClose : true,       
+                // enable modal mode   
+                modal:true, 
+                // path to the CSS
+                css: 'static/styles/messageBox.min.css', 
+                // called when message box is closed
+                cbClose: msgClose,       
+                // called when message box is ready          
+                cbReady: false,       
+                // localization         
+                locale:{
+                  NO : 'No',
+                  YES : 'Yes',
+                  CANCEL : 'Cancel',
+                  OK : 'Okey',
+                  textAutoClose: 'Auto close in %d seconds'
+                }
+            });
+        
+            $('.a_cross').click(function(){
+                msg_box.data('messageBox').question(
+                
+                    'Title',
+
+                    // messageBox body
+                     'Remove text',
+                    // the buttons to be displayed in the messageBox
+                    // The return value will be passed to the callback function cbClose ()
+                     [{text:'Yes',return:true}, {text:'No',return:false} ]
+                     
+                
+                );
+            });
+        });
+    </script>
+{% endblock %}
+
+
+
+{% block content %}
+        <div class="pure-u title-list">
+             <li><a href="/addtext">+&nbsp;Add text</a></li>
+            {% for textdesc in textdescs %}
+              <li><a href="/showtext?id={{ textdesc.id }}">{{ textdesc.title }}</a>&nbsp;[<a href="#" class="a_cross" id="{{ textdesc.id }}">X</a>]</li>
+            {% endfor %}
+        </div>
+{% endblock %}

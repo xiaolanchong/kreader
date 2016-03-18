@@ -1,0 +1,26 @@
+{% extends "base.htm" %}
+
+{% block script %}
+
+    <link rel="stylesheet" type="text/css" href="static/styles/kreader.css"  />
+    <link rel="stylesheet" type="text/css" href="static/styles/tooltipster.css" />
+	<link rel="stylesheet" type="text/css" href="static/styles/themes/tooltipster-light.css" />
+
+    <script type="text/javascript" src="static/scripts/jquery.tooltipster.min.js"></script>
+    <script type="text/javascript" src="static/scripts/kreader.js"></script>
+    <script type="text/javascript">
+	    var global_glossary = {{ glossary|safe }};
+		
+		$(document).ready(function() {
+			var tokens = {{ tokens|safe }};
+			annotate(tokens)
+		});
+    </script>
+{% endblock %}
+  
+{% block content %}
+     <h2>{{ title }}</h2>
+     <div class="main_panel"> </div>
+	 <div id="popup_div" class="popup_msg"></div> 
+
+{% endblock %}

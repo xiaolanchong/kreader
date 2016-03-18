@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block head %}
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <title>Korean Reader</title>
+        
+        <link rel="stylesheet" type="text/css" href="static/styles/kreader.css"  />
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+        <link rel="stylesheet" type="text/css" href="static/styles/messageBox.min.css"  />
+        <script type="text/javascript" src="static/scripts/jquery-1.12.1.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery.messagebox.min.js"></script>
+	{% endblock %}
+
+    {% block script %}
+    {% endblock %}
+    
+  </head>
+  
+   <body class="body-center">
+        <div class="pure-g header-panel">
+            <div class="pure-u-1-4">&nbsp;</div>
+            <div class="pure-u-1-2 app-title">Korean Reader</div>
+            <div class="pure-u-1-4"><a href="/">My Texts</a> | <a href="/preferences">Preferences</a></div>
+        </div>
+        {% block content %} {% endblock %}
+   </body>
+
+</html>

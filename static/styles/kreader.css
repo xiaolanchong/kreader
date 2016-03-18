@@ -1,6 +1,8 @@
 
 .main_panel
 {
+   text-align: left;
+   margin-left: 10px
 }
 
 .popup_defined_word 
@@ -31,4 +33,45 @@
 .word_without_definition:hover
 {
   background-color: #FFEBAA;
+}
+
+
+/*  */
+
+.app-title
+{
+    font-size: 200%
+}
+
+.header-panel
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #e8e8e8;
+}
+
+.title-list
+{
+    padding-top: 6px;    
+}
+
+.body-center
+{
+    text-align: center;
+    font-family: Verdana, Tahoma, Arial;
+}
+
+.add_text_prop
+{
+    margin-top: 10px;
+}
+
+.add_text_title
+{
+    width: 100%
+}
+
+li
+{
+    margin-top: 10px;
 }

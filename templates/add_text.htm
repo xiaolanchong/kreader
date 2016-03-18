@@ -1,0 +1,18 @@
+{% extends "base.htm" %}
+{% block content %}
+        <div class="pure-u">
+            <form action="/submittext" method="post" id="form_submit_text" >
+              <div class=" add_text_prop add_text_title">
+                Title: <input type="text" name="title"  value="Test title"> 
+              </div>
+              <div>
+                <textarea rows="10" cols="80" name="submitted_text" class="add_text_prop">
+                    프리벳가 4번지에 살고 있는 더즐리 부부는 자신들이 정상적이라는 것을 아주 자랑스럽게 여기는 사람들이었다.
+                </textarea> 
+               </div>
+               <div>
+                   <button type="submit" form="form_submit_text" value="Add Text" class="add_text_prop">Add Text</button>
+               </div>
+            </form>
+        </div>
+{% endblock %}
