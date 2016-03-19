@@ -4,28 +4,29 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, UnicodeText, Enum
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import ForeignKey
-import enum
+from collections import namedtuple
 
 Base = declarative_base()
 
-class Theme(enum.Enum):
-   default = 'default'
-   noir = 'noir'
+#TextProps= namedtuple('TextProps', ['text_id', 'title', 'source_text', ])
 
 class Preference(Base):
     __tablename__ = "preference"
 
     UserId = Column('user_id', Integer, primary_key=True)
-    ThemeEn = Column('theme', String)
+    Theme = Column('settings', String) # json string
 
 class TextTable(Base):
     __tablename__ = "text"
 
-    TextId = Column('text_id', Integer, primary_key=True, autoincrement=True)
-    Title = Column('title', String)
-    SourceText = Column('source_text', UnicodeText)
-    ParsedText = Column('parsed_text', UnicodeText)
-    Glossary = Column('glossary', UnicodeText)
+    TextId      = Column('text_id', Integer, primary_key=True, autoincrement=True)
+    Title       = Column('title', String)
+    SourceText  = Column('source_text', UnicodeText)
+    ParsedText  = Column('parsed_text', UnicodeText)
+    Glossary    = Column('glossary', UnicodeText)
+    TotalWords  = Column('total_words', Integer)
+    UniqueWords = Column('unique_words', Integer)
+    Progress    = Column('reading_progress', Integer)
 
 class LookupWord(Base):
     __tablename__ = "lookupword"
@@ -55,7 +56,8 @@ class DataStorage:
    # Text table
 
    def get_all_text_descs(self):
-      return self.session.query(TextTable.TextId, TextTable.Title).all()
+      return self.session.query(TextTable.TextId, TextTable.Title, \
+                                TextTable.TotalWords, TextTable.UniqueWords, TextTable.Progress).all()
 
    def get_parsed_text(self, text_id):
       res = self.session.query(TextTable.Title, TextTable.ParsedText, TextTable.Glossary). \
@@ -63,9 +65,18 @@ class DataStorage:
                           one()
       return res
 
-   def add_text(self, title, source_text, parsed_text, glossary):
+   def add_text(self, **kwargs):
+      title       = kwargs['title']
+      source_text = kwargs['source_text']
+      parsed_text = kwargs['parsed_text']
+      glossary    = kwargs['glossary']
+      total_words  = kwargs.get('total_words', 0)
+      unique_words = kwargs.get('unique_words', 0)
+
       new_text = TextTable(Title=title, SourceText=source_text, \
-                           ParsedText=parsed_text, Glossary=glossary)
+                           ParsedText=parsed_text, Glossary=glossary,
+                           TotalWords=total_words, UniqueWords=unique_words,
+                           Progress=0)
       self.session.add(new_text)
       self.session.commit()
       return new_text.TextId

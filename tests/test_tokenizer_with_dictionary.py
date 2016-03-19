@@ -11,7 +11,7 @@ import time
 import html.parser
 sys.path.append(os.path.abspath('..'))
 
-from ktokenizer import KTokenizer, Whitespace as WS
+from ktokenizer import KTokenizer, Whitespace as WS, tokenize
 from morph_analyzer import AnnotatedToken as AT, IgnoredToken as IT, \
                            create_ending_token, create_particle_token, ParticleToken as PT, \
                            POS_NOUN, POS_VERB, POS_ADJECTIVE, POS_SUFFIX, POS_AUXILIARY, POS_ADVERB
@@ -178,6 +178,14 @@ class TestTokenizerWithDictionary(unittest.TestCase):
           '즐': ''
         }
         self.assertEqual(lookedup_words, self.tokenizer_mecab.get_lookedup_words())
+
+    def testTokenizeFunc(self):
+        text = '전혀 무관해 보였다\n그런데\n아들이 하나 있다'
+        parsed_text, glossary, total_words, unique_words = tokenize(self.tokenizer_mecab, lambda : text.split())
+        self.assertEqual(len(parsed_text), 17)
+        self.assertEqual(len(glossary), 8)
+        self.assertEqual(total_words, 7)
+        self.assertEqual(unique_words, 8) # because of 다 ending
 
 
 if __name__ == '__main__':

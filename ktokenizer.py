@@ -2,6 +2,8 @@
 
 import logging
 import pprint
+from collections import Counter
+import re
 
 from morph_analyzer import IgnoredToken, AnnotatedToken, WORD_WHITESPACE, WORD_PARAGRAPH
 
@@ -24,6 +26,13 @@ class Paragraph:
 
     def __repr__(self):
         return '_P'
+
+re_word_counter = re.compile(r"[\w']+", re.UNICODE)
+
+def get_word_number(text):
+    re = re_word_counter.findall(text)
+    return len(Counter(re))
+
 
 class KTokenizer:
     TWITTER = 1
@@ -79,3 +88,26 @@ class KTokenizer:
             self.lookedup_words[word] = definition
         return ''
 
+def tokenize(ktokenizer, line_generator):
+    text_objs = []
+    glossary = {}
+    total_words = 0
+
+    for line in line_generator():
+            line_objs = ktokenizer.parse(line)
+            lookedup_words = ktokenizer.get_lookedup_words()
+            glossary.update(lookedup_words)
+            total_words += get_word_number(line)
+
+            text_objs.extend(line_objs)
+            text_objs.append(Paragraph())
+
+    if len(text_objs):
+        text_objs.pop()
+
+    unique_words = len(glossary)
+
+    return [obj.jsonify() for obj in text_objs], glossary, total_words, unique_words
+
+if __name__ == '__main__':
+    pass

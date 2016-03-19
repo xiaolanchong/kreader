@@ -54,6 +54,7 @@
 {% endblock %}
 
 {% block content %}
+	{% if textdescs|length %}
         <table class="title-table">
             <thead>
                  <tr>
@@ -69,8 +70,8 @@
                  {% for textdesc in textdescs %}
                      <tr>
                          <td><a href="/showtext?id={{ textdesc.id }}">{{ textdesc.title }}</a></td>
-                         <td>0</td>
-                         <td>0</td>
+                         <td>{{ textdesc.total_words }}</td>
+                         <td>{{ textdesc.unique_words }}</td>
                          <td>0</td>
                          <td><a href="#" class="a_delete" id="{{ textdesc.id }}"><img src="static/images/Delete.png"></a></td>
                          <td><a href="#" class="a_modify" id="{{ textdesc.id }}"><img src="static/images/Modify.png"></a></td>
@@ -78,4 +79,7 @@
                  {% endfor %}
             </tbody>
         </table>
+	{% else %}
+	  <h2>No text added</h2>
+	{% endif %}
 {% endblock %}

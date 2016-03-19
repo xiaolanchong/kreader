@@ -6,7 +6,7 @@ function annotate_word(word_info) {
    var WORD_PARAGRAPH = 4;
    
    var parent_elem = $('<span />').appendTo('.main_panel');
-   var text_elem = $('<a />').appendTo($(parent_elem));
+   var text_elem = $(parent_elem);
    var word_class = word_info['class'];
    if (word_class == WORD_SPACE) {
 	  $(text_elem).text(' ');
