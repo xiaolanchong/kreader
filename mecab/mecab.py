@@ -37,7 +37,7 @@ class Mecab:
         # f[0]  overall part of speech
         # f[1]  extra info on PoS?
         # f[2]  F/T
-        # f[3]  word
+        # f[3]  word, empty
         # f[4]  Inflect
         # f[5]  initial PoS
         # f[6]  final PoS
@@ -95,7 +95,8 @@ class Mecab:
 
 def test_output():
     mecab = Mecab()
-    text = '프리벳가 4번지에 살고 있는 더즐리 부부는 보였다'
+   # text = '프리벳가 4번지에 살고 있는 더즐리 부부는 보였다'
+    text = '6년째 공무원 시험에'
     res = mecab.parse(text)
     print(res)
 

@@ -14,7 +14,7 @@ class Preference(Base):
     __tablename__ = "preference"
 
     UserId = Column('user_id', Integer, primary_key=True)
-    Theme = Column('settings', String) # json string
+    Settings = Column('settings', String) # json string
 
 class TextTable(Base):
     __tablename__ = "text"
@@ -38,6 +38,7 @@ class LookupWord(Base):
     Context = Column('context', String)
 
 class DataStorage:
+   USER_ID = 1
    def __init__(self, path_to_db):
       self.engine = create_engine('sqlite:///' + path_to_db)
       Session = sessionmaker(bind=self.engine)
@@ -47,11 +48,12 @@ class DataStorage:
       Base.metadata.bind = self.engine
       Base.metadata.create_all()
 
-   def get_preferences():
-      pass
+   def get_preferences(self):
+      result = self.session.query(Preference.Settings).filter(Preference.UserId==DataStorage.USER_ID).one_or_none()
+      return result[0] if result else None
 
-   def set_preferences():
-      pass
+   def set_preferences(self, preference_string):
+      self.session.merge(Preference(UserId=DataStorage.USER_ID, Settings=preference_string))
 
    # Text table
 
@@ -61,6 +63,12 @@ class DataStorage:
 
    def get_parsed_text(self, text_id):
       res = self.session.query(TextTable.Title, TextTable.ParsedText, TextTable.Glossary). \
+                          filter(TextTable.TextId==text_id). \
+                          one()
+      return res
+
+   def get_parsed_text_no_glossary(self, text_id):
+      res = self.session.query(TextTable.Title, TextTable.ParsedText). \
                           filter(TextTable.TextId==text_id). \
                           one()
       return res
@@ -80,6 +88,34 @@ class DataStorage:
       self.session.add(new_text)
       self.session.commit()
       return new_text.TextId
+
+   def get_source_text(self, text_id):
+      res = self.session.query(TextTable.Title, TextTable.SourceText). \
+                          filter(TextTable.TextId==text_id). \
+                          one_or_none()
+      if res is None:
+        raise KeyError('Text with key={0} not found'.format(text_id))
+      else:
+        return res
+
+   def update_text(self, **kwargs):
+      text_id     = kwargs['text_id']
+      title       = kwargs['title']
+      source_text = kwargs['source_text']
+      parsed_text = kwargs['parsed_text']
+      glossary    = kwargs['glossary']
+      total_words  = kwargs.get('total_words', 0)
+      unique_words = kwargs.get('unique_words', 0)
+      progress = 0 # reset?
+
+    # new_text = TextTable(TextId=text_id, )
+      self.session.query(TextTable).filter(TextTable.TextId == text_id).\
+                         update( {
+                        TextTable.Title:title, TextTable.SourceText : source_text, \
+                           TextTable.ParsedText : parsed_text, TextTable.Glossary : glossary,
+                           TextTable.TotalWords : total_words, TextTable.UniqueWords : unique_words,
+                           TextTable.Progress : progress})
+      self.session.commit()
 
    def delete_text(self, text_id):
       self.session.query(TextTable). \

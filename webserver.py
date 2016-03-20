@@ -36,17 +36,18 @@ def add_text():
 def show_text():
     text_id = request.args.get('id', None, type=int)
     if text_id:
-      title, parsed_text_json, glossary = datastorage.get_parsed_text(text_id)
+      title, parsed_text_json = datastorage.get_parsed_text_no_glossary(text_id)
 
-      html = render_template('show_text.htm', tokens=parsed_text_json, glossary=glossary, title=title)
+      html = render_template('show_text.htm', tokens=parsed_text_json, glossary='', title=title)
       return html
     abort(404)
 
 @app.route("/submittext", methods=['POST'])
 def submit_text():
     global ktokenizer, ezsajeon
-    if ktokenizer is None:
+    if ezsajeon is None:
         ezsajeon = EzSajeon()
+    if ktokenizer is None:
         ktokenizer = KTokenizer(ezsajeon.get_definition, KTokenizer.MECAB)
 
     title=request.form['title']
@@ -67,17 +68,61 @@ def submit_text():
 
     return redirect('/')
 
+@app.route("/edittext")
+def edit_text():
+    text_id = request.args.get('id', None, type=int)
+    if text_id:
+      title, text = datastorage.get_source_text(text_id)
+
+      html = render_template('edit_text.htm', text=text, text_id=text_id, title=title)
+      return html
+    abort(404)
+
+@app.route("/updatetext", methods=['POST'])
+def update_text():
+    global ktokenizer, ezsajeon
+    if ezsajeon is None:
+        ezsajeon = EzSajeon()
+    if ktokenizer is None:
+        ktokenizer = KTokenizer(ezsajeon.get_definition, KTokenizer.MECAB)
+
+    title=request.form['title']
+    text_id=request.form['text_id']  # TODO: process errors
+    source_text=request.form['submitted_text']
+    sentences = source_text.split('\n')
+
+    parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda : sentences)
+    parsed_text_json = json.dumps(parsed_text)
+    glossary_json = json.dumps(glossary)
+    datastorage.update_text(text_id=text_id, title=title, source_text=source_text, \
+                         parsed_text=parsed_text_json, glossary=glossary_json,\
+                         total_words=total_words, unique_words=unique_words)
+
+    logging.info('Update text: in size=%i, out chunks=%i, sentence#=%i, '
+                 'total words#=%i, unique words#=%i',
+                          len(source_text), len(parsed_text),
+                          len(sentences), total_words, unique_words)
+
+    return redirect('/')
+
+@app.route("/set_preferences")
+def set_preferences():
+    preferences_str = request.args.get('preferences', '', type=str)
+    if(len(word)):
+        datastorage.set_preferences(preferences_str)
+
+
 @app.route("/get_word_definition")
 def get_word_definition():
+    global ezsajeon
     word = request.args.get('word', '', type=str)
-    if(len() == 0):
+    if(len(word) == 0):
         return jsonify(records=[])
 
+    if ezsajeon is None:
+        ezsajeon = EzSajeon()
     definition = ezsajeon.get_definition(word)
     return jsonify(definition=definition)
-
-
-
 
 
 if __name__ == "__main__":

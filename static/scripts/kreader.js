@@ -33,25 +33,57 @@ function attach_tooltip(text_elem, word_info) {
 		content : 'Loading...',
 		functionBefore: function(origin, continueTooltip) { 
 						  //if (origin.data('ajax') !== 'cached') {
-						   var content = create_tooltip_content(word_info);
-						   origin.tooltipster('content', content).data('ajax', 'cached');
+						   if (false) {
+							 var content = create_tooltip_content_onplace(word_info);
+							 origin.tooltipster('content', content).data('ajax', 'cached');
+						   } else {
+						      request_definition(origin, word_info);
+						   }
+						   
 						   continueTooltip();
 						},
 		trigger : 'click',
 		theme : 'tooltipster-light',
 		position : 'bottom',
 		interactive : true,
-		speed : 150,
+		speed : 0,
 		delay : 0,
 		onlyOne : true
 	});
 }
 
-function create_tooltip_content(word_info) {
+function request_definition(origin, word_info) {
    var word = word_info['text']
-   var dictionary_form = word_info['dict_form'] ? word_info['dict_form'] : word;
-   var definition = global_glossary[dictionary_form] ? global_glossary[dictionary_form] : '';
+   var dictionary_form = word_info['dict_form'] || word;
+	$.ajax({ url: '/get_word_definition', 
+		 data: { 'word': dictionary_form },
+		 success: function(data){
+			//loadingSpinner.Hide();
+			//console.log(recordId + " not added, now expand");
+			var definition = data.definition;
+			var content = create_tooltip_content_async(word_info, definition);
+			origin.tooltipster('content', content).data('ajax', 'cached');
+		 }, 
+		 error: function(req) { origin.tooltipster('content', 'Error occuried'); },
+		 dataType: "json"});
+}
+
+function create_tooltip_content_async(word_info, definition) {
+   var word = word_info['text']
+   var dictionary_form = word_info['dict_form'] || word;
    var part_of_speech = word_info['pos'];
+   return create_tooltip_content(word, dictionary_form, definition, part_of_speech);
+}
+
+function create_tooltip_content_onplace(word_info) {
+   var word = word_info['text']
+   var dictionary_form = word_info['dict_form'] || word;
+   var definition = global_glossary[dictionary_form] || '';
+   var part_of_speech = word_info['pos'];
+   return create_tooltip_content(word, dictionary_form, definition, part_of_speech);
+}
+
+function create_tooltip_content(word, dictionary_form, definition, part_of_speech) {
    var part_of_speech_info = '';
    if(part_of_speech) {
 	  part_of_speech_info = '&nbsp;<span class="popup_part_of_speech">(' + part_of_speech + ')</span>';
@@ -75,4 +107,22 @@ function annotate(text_obj) {
 				annotate_word(value)
            }
    );
+}
+
+function init_settings() {
+   $( "#settings-font-dec" ).button();
+   $( "#settings-font-inc" ).button();
+   $( "#setting-light" ).button();
+   $( "#setting-dark" ).button();
+   $( "#setting-sepia" ).button();
+   $("#settings").tooltipster({
+		content : $("#settings_content").clone().show(),
+		trigger : 'click',
+		theme : 'tooltipster-light',
+		position : 'bottom',
+		interactive : true,
+		speed : 150,
+		delay : 0,
+		onlyOne : true
+	});
 }

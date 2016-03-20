@@ -7,12 +7,21 @@
         
         <title>Korean Reader</title>
         
-        <link rel="stylesheet" type="text/css" href="static/styles/kreader.css"  />
-        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-        <link rel="stylesheet" type="text/css" href="static/styles/messageBox.min.css"  />
         <script type="text/javascript" src="static/scripts/jquery-1.12.1.min.js"></script>
         <script type="text/javascript" src="static/scripts/jquery.messagebox.min.js"></script>
-        
+		<script type="text/javascript" src="static/scripts/jquery.tooltipster.min.js"></script>
+		<script type="text/javascript" src="static/scripts/kreader.js"></script>
+		
+		<link rel="stylesheet" href="static/scripts/jquery-ui.min.css">
+		<script src="static/scripts/jquery-ui.min.js"></script>
+		    
+        <link rel="stylesheet" type="text/css" href="static/styles/kreader.css"  />
+		
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+        <link rel="stylesheet" type="text/css" href="static/styles/messageBox.min.css"  />
+		<link rel="stylesheet" type="text/css" href="static/styles/tooltipster.css" />
+		<link rel="stylesheet" type="text/css" href="static/styles/themes/tooltipster-light.css" />
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         
@@ -29,11 +38,26 @@
         <div class="header-panel">
             <div class="app-title">Korean Reader</div>
             <div>
-            <span class=""><a href="/"><img src="static/images/Text.png">My Texts</a></span> 
-            <span><a href="/addtext"><img src="static/images/Add.png">Add Text</a></span> 
-            <span><a href="/preferences"><img src="static/images/Repair.png">My Settings</a></span>
+				<span class=""><a href="/"><img src="static/images/Text.png">My Texts</a></span> 
+				<span><a href="/addtext"><img src="static/images/Add.png">Add Text</a></span> 
+				<span id="settings"><img src="static/images/Repair.png">Settings</span>
+
             </div>
         </div>
+	    <div id="settings_content" style="display:none">
+		   
+		   <div >
+		        <span>Font Size:</span>
+		        <button id="settings-font-dec" style="">-</button>
+		        <button id="settings-font-inc" style="">+</button>
+		   </div>
+		   <div style="margin-top: 5px">
+		        <span>Theme:</span>
+		        <button class="settings-theme" id="setting-light">Light</button>
+		        <button class="settings-theme" id="setting-dark">Dark</button>
+				<button class="settings-theme" id="setting-sepia">Sepia</button>
+			</div>
+		</div>		
         {% block content %} {% endblock %}
    </body>
 

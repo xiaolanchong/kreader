@@ -11,6 +11,8 @@
 }
 
 		$(document).ready(function() {
+				init_settings();
+				
                 msg_box = $("body").messageBox({
                 // autoclose timeout. 0 = disable autoclose
                 autoClose : 0, 
@@ -35,20 +37,19 @@
             });
         
             $('.a_delete').click(function(){
-                var title = $(this).parent().text();
+                var title = $(this).parent().parent().filter(":first-child").text();
                 msg_box.data('messageBox').question(
-                
                     'Text Deletion',
-
-                    
                      'Delete ' + title + '?', // messageBox body
                     // the buttons to be displayed in the messageBox
                     // The return value will be passed to the callback function cbClose ()
                      [{text:'Yes',return:true}, {text:'No',return:false} ]
-                     
-                
                 );
             });
+            $('.a_modify').click(function(){
+                //var title = $(this).parent().text();
+                $(this).attr('id');
+            });			
         });
     </script>
 {% endblock %}
@@ -74,7 +75,7 @@
                          <td>{{ textdesc.unique_words }}</td>
                          <td>0</td>
                          <td><a href="#" class="a_delete" id="{{ textdesc.id }}"><img src="static/images/Delete.png"></a></td>
-                         <td><a href="#" class="a_modify" id="{{ textdesc.id }}"><img src="static/images/Modify.png"></a></td>
+                         <td><a href="/edittext?id={{ textdesc.id }}" class="a_modify" ><img src="static/images/Modify.png"></a></td>
                      </tr>
                  {% endfor %}
             </tbody>

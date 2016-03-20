@@ -60,10 +60,12 @@ def convert_pos(pos):
 'SL'
 'SN'
 
-def patch_dictionary_form(word, pos):
-    if pos[0] == 'V' and word[-1] != '다':
-        return word + '다'
-    return word
+def patch_dictionary_form(word, dictionary_form, pos):
+    if pos[0] == 'V' and dictionary_form[-1] != '다':
+        return dictionary_form + '다'
+    if pos[0] == 'N':
+        return word
+    return dictionary_form
 
 def crack_complex_pos(pos):
     return pos.split('+')[0]
@@ -77,7 +79,7 @@ class MecabAnalyzer(MorphAnalyzer):
         out = []
         tokens = self.parser.parse(text)
         for word, dictionary_form, pos in tokens:
-            dictionary_form = patch_dictionary_form(dictionary_form, pos)
+            dictionary_form = patch_dictionary_form(word, dictionary_form, pos)
             if pos[0] == 'S':
                 obj = IgnoredToken(word)
             elif pos[0] == 'J':

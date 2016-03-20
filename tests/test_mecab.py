@@ -42,6 +42,17 @@ class TestMecab(unittest.TestCase):
              create_ending_token('다', None)]
         self.assertEqual(to_str(res), to_str(expected))
 
+    def testParseWord(self):
+        text = '효과) 사무실. '
+        res = self.parser.parse(text)
+        expected = \
+        [AT(text='효과', dictionary_form='효과', pos=POS_NOUN),
+         IT(')'),
+         AT(text='사무실', dictionary_form='사무실', pos=POS_NOUN), IT('.')
+         ]
+        self.assertEqual(to_str(res), to_str(expected))
+
+
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestMecab)
     unittest.TextTestRunner(verbosity=2).run(suite)
