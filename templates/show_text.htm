@@ -8,9 +8,10 @@
 		
 		$(document).ready(function() {
 		    init_settings();
+			$("#settings").show();
 			
 			var tokens = {{ tokens|safe }};
-			annotate(tokens)
+			annotate(tokens);
 		});
     </script>
 {% endblock %}

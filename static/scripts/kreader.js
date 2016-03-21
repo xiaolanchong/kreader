@@ -109,20 +109,64 @@ function annotate(text_obj) {
    );
 }
 
+function change_text_size(delta) {
+   var panel = $(".main_panel");
+   var size = panel.css('font-size');
+   var fontSize = parseFloat(size); 
+   if(fontSize > 5) {
+	 fontSize += delta;
+     panel.css('font-size', fontSize + 'px');
+   }
+}
+
 function init_settings() {
-   $( "#settings-font-dec" ).button();
-   $( "#settings-font-inc" ).button();
-   $( "#setting-light" ).button();
-   $( "#setting-dark" ).button();
-   $( "#setting-sepia" ).button();
+
+var content_html = 
+'<div id="settings_content">' +
+'	<div >'  +
+'		<div>Font Size:</div>'  +
+'		<div>' +
+'			<button id="settings-font-dec" style="">-</button>'  +
+'			<button id="settings-font-inc" style="">+</button>'  +
+' 		</div>'  +
+'		<div>Theme:</div>'  +
+  '<div id="radio">' +
+  '  <input type="radio" id="radio1" name="radio"><label for="radio1">Choice 1</label>' +
+  '  <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">Choice 2</label>' +
+  '  <input type="radio" id="radio3" name="radio"><label for="radio3">Choice 3</label>' +
+  '</div>'
+'</div>	';
+
+   var content_elem = $(content_html);
+   $( "#settings-font-dec", content_elem )
+       .button()
+	   .click(function() {
+	   change_text_size(-1);
+   }); 
+   
+   $( "#settings-font-inc", content_elem )
+      .button()
+	  .click(function() {
+		change_text_size(1);
+   });
+   
+   /*$( "#setting-light", content_elem ).button();
+   $( "#setting-dark", content_elem ).button();
+   $( "#setting-sepia", content_elem ).button();*/
+   $( "#radio", content_elem ).buttonset();
+  // $( "#radio1", content_elem ).attr('checked', true).button( "refresh" );
+   
+
    $("#settings").tooltipster({
-		content : $("#settings_content").clone().show(),
+		content : content_elem,
 		trigger : 'click',
 		theme : 'tooltipster-light',
 		position : 'bottom',
 		interactive : true,
 		speed : 150,
 		delay : 0,
-		onlyOne : true
-	});
+		onlyOne : true,
+		//autoClose : false,
+	});	
+    $("#settings").hide();
 }
