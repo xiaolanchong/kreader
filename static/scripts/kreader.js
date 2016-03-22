@@ -43,7 +43,7 @@ function attach_tooltip(text_elem, word_info) {
 						   continueTooltip();
 						},
 		trigger : 'click',
-		theme : 'tooltipster-light',
+		theme : 'tooltipster-default',
 		position : 'bottom',
 		interactive : true,
 		speed : 0,
@@ -60,15 +60,15 @@ function request_definition(origin, word_info) {
 		 success: function(data){
 			//loadingSpinner.Hide();
 			//console.log(recordId + " not added, now expand");
-			var definition = data.definition;
-			var content = create_tooltip_content_async(word_info, definition);
+			var definitions = data.definitions;
+			var content = create_tooltip_content_async(word_info, definitions);
 			origin.tooltipster('content', content).data('ajax', 'cached');
 		 }, 
 		 error: function(req) { origin.tooltipster('content', 'Error occuried'); },
 		 dataType: "json"});
 }
 
-function create_tooltip_content_async(word_info, definition) {
+function create_tooltip_content_async(word_info, definitions) {
    
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
@@ -80,20 +80,20 @@ function create_tooltip_content_async(word_info, definition) {
 	   conjugation_info += ' +' + value[1]; // + '/' + value[0];
 	   //console.log(value);
    });
-   //console.log(definition);
+   //console.log(definitions);
    var part_of_speech = word_info['pos'];
-   return create_tooltip_content(dictionary_form, definition, part_of_speech, conjugation_info);
+   return create_tooltip_content(dictionary_form, definitions, part_of_speech, conjugation_info);
 }
 
 function create_tooltip_content_onplace(word_info) {
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
-   var definition = global_glossary[dictionary_form] || '';
+   var definitions = global_glossary[dictionary_form] || [];
    var part_of_speech = word_info['pos'];
-   return create_tooltip_content(dictionary_form, definition, part_of_speech, '');
+   return create_tooltip_content(dictionary_form, definitions, part_of_speech, '');
 }
 
-function create_tooltip_content(dictionary_form, definition, part_of_speech, conjugation_info) {
+function create_tooltip_content(dictionary_form, definitions, part_of_speech, conjugation_info) {
    var part_of_speech_info = '';
    if(part_of_speech) {
 	  part_of_speech_info = '&nbsp;<span class="popup_part_of_speech">(' + part_of_speech + ')</span>';
@@ -104,10 +104,21 @@ function create_tooltip_content(dictionary_form, definition, part_of_speech, con
    content += '<span class="popup_conjugation_info">' + conjugation_info + '</span>';
    content += '<br>';
    
-   definition_split = '';
-   definition.split('\n').forEach( function(value, index) {
-		definition_split += value + '<br>';
-   } );
+   definition_split = '<ul>';
+   definitions.forEach( function(definition, index) {
+	   if (definition.length > 0) {
+		   definition_split += '<li>'
+		   //definition_split = '';
+		   definition.split('\n').forEach( function(value, index) {
+				definition_split += value + '<br>';
+		   } );
+		   definition_split += '</li>'
+	   }
+   });
+   definition_split += '</ul>';
+   //console.log(definition_split);
+   
+
    content += '<span class="popup_definition">' + definition_split + '</span>';
    return $(content);
 }

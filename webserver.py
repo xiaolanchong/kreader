@@ -113,17 +113,13 @@ def set_preferences():
 
 @app.route("/get_word_definition")
 def get_word_definition():
-    #global ezsajeon
     word = request.args.get('word', '', type=str)
     pos  = request.args.get('pos', '', type=str)
     if(len(word) == 0):
         return jsonify(records=[])
 
-    #if ezsajeon is None:
-    #    ezsajeon = EzSajeon()
-    definition = composite_dict.get_definition(word)
-    #print(len(definition))
-    return jsonify(definition=definition)
+    definitions = composite_dict.get_definitions(word)
+    return jsonify(definitions=definitions)
 
 
 if __name__ == "__main__":

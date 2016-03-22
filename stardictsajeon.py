@@ -10,6 +10,9 @@ def find_nth(haystack, needle, n):
          n -= 1
       return start
 
+def get_full_dict_name(file_name):
+      return os.path.join(os.path.dirname(__file__), r'..', '_kreader_files', file_name)
+
 class StardictBaseSajeon:
     def __init__(self, dict_dir, dict_name):
         ifo_file = os.path.join(dict_dir, dict_name + ".ifo")
@@ -38,7 +41,7 @@ class StardictBaseSajeon:
 
 class StardictEnSajeon(StardictBaseSajeon):
     def __init__(self):
-        dict_dir = r'..\_kreader_files\stardict-KoreanEnglishDic-2.4.2'
+        dict_dir = get_full_dict_name(r'stardict-KoreanEnglishDic-2.4.2')
         dict_name = 'KoreanEnglishDic'
         super().__init__(dict_dir, dict_name)
 
@@ -53,7 +56,7 @@ class StardictEnSajeon(StardictBaseSajeon):
 
 class StardictRuSajeon(StardictBaseSajeon):
     def __init__(self):
-        dict_dir = r'..\_kreader_files\stardict-GNU_korean-russian-dict(v.0.5)'
+        dict_dir = get_full_dict_name(r'stardict-GNU_korean-russian-dict(v.0.5)')
         dict_name = 'GNU_krd-0.5'
         super().__init__(dict_dir, dict_name)
 

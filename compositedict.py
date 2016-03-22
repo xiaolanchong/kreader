@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from ezsajeon import EzSajeon
-from stardictsajeon import StardictRuSajeon
-from stardictsajeon import StardictEnSajeon
+from stardictsajeon import StardictRuSajeon, StardictEnSajeon, find_nth
 
 class CompositeDictionary:
    def __init__(self, extra_dict):
@@ -16,7 +15,8 @@ class CompositeDictionary:
       if self.stardict_ru:
         aux_article = self.stardict_ru.get_definition(word, add_samples)
         main_article += '\n'
-        main_article += aux_article
+        end_of_word = find_nth(aux_article, '\n', 1)
+        main_article += aux_article[(end_of_word+1):]
 
       if self.stardict_en:
         aux_article = self.stardict_en.get_definition(word, add_samples)
@@ -26,6 +26,21 @@ class CompositeDictionary:
         main_article += aux_article
       return main_article
 
+   def get_definitions(self, word, add_samples=False):
+      articles = []
+      main_article = self.ezsajeon.get_definition(word)
+      articles.append(main_article)
+
+      if self.stardict_ru:
+        aux_article = self.stardict_ru.get_definition(word, add_samples)
+        end_of_word = find_nth(aux_article, '\n', 1)
+        articles.append(aux_article[(end_of_word+1):])
+
+      if self.stardict_en:
+        aux_article = self.stardict_en.get_definition(word, add_samples)
+        #if aux_article:
+        articles.append(aux_article)
+      return articles
 
 if __name__ == "__main__":
     dc = CompositeDictionary(True)
