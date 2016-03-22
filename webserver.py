@@ -6,7 +6,7 @@ import logging
 import json
 
 from ktokenizer import KTokenizer, Paragraph, tokenize
-from ezsajeon import EzSajeon
+from compositedict import CompositeDictionary
 from datastorage import DataStorage
 
 app = Flask(__name__)
@@ -15,7 +15,7 @@ datastorage = DataStorage("../_kreader_files/kreader.db")
 datastorage.create_db()
 
 ktokenizer = None
-ezsajeon = None
+composite_dict = CompositeDictionary(True)
 
 Textdesc = namedtuple('Textdesc', ['id', 'title', 'total_words', 'unique_words'])
 
@@ -44,9 +44,8 @@ def show_text():
 
 @app.route("/submittext", methods=['POST'])
 def submit_text():
-    global ktokenizer, ezsajeon
-    if ezsajeon is None:
-        ezsajeon = EzSajeon()
+    global ktokenizer
+
     if ktokenizer is None:
         ktokenizer = KTokenizer( KTokenizer.MECAB)
 
@@ -81,9 +80,7 @@ def edit_text():
 
 @app.route("/updatetext", methods=['POST'])
 def update_text():
-    global ktokenizer, ezsajeon
-    if ezsajeon is None:
-        ezsajeon = EzSajeon()
+    global ktokenizer
     if ktokenizer is None:
         ktokenizer = KTokenizer(KTokenizer.MECAB)
 
@@ -116,15 +113,16 @@ def set_preferences():
 
 @app.route("/get_word_definition")
 def get_word_definition():
-    global ezsajeon
+    #global ezsajeon
     word = request.args.get('word', '', type=str)
     pos  = request.args.get('pos', '', type=str)
     if(len(word) == 0):
         return jsonify(records=[])
 
-    if ezsajeon is None:
-        ezsajeon = EzSajeon()
-    definition = ezsajeon.get_definition(word)
+    #if ezsajeon is None:
+    #    ezsajeon = EzSajeon()
+    definition = composite_dict.get_definition(word)
+    #print(len(definition))
     return jsonify(definition=definition)
 
 

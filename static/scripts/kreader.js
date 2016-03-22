@@ -80,7 +80,7 @@ function create_tooltip_content_async(word_info, definition) {
 	   conjugation_info += ' +' + value[1]; // + '/' + value[0];
 	   //console.log(value);
    });
-   console.log(conjugation_info);
+   //console.log(definition);
    var part_of_speech = word_info['pos'];
    return create_tooltip_content(dictionary_form, definition, part_of_speech, conjugation_info);
 }

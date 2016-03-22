@@ -107,15 +107,28 @@ class TestTokenizer(unittest.TestCase):
         res = self.tokenizer_mecab.parse(text)
         expected = \
             [
-             AT(text='보였다', dictionary_form='보이다', pos=POS_VERB, decomposed_tokens=[D(POS_ENDING, 'EP'), D(POS_ENDING, '다')]),
+             AT(text='보였다', dictionary_form='보이다', pos=POS_VERB,
+                 decomposed_tokens=[D(POS_ENDING, 'EP'), D(POS_ENDING, '다')]),
              ]
         self.assertEqual(to_str(res), to_str(expected))
 
+    def testAdjComposite(self):
         text = '스럽게'
         res = self.tokenizer_mecab.parse(text)
         expected = \
             [
-             AT(text='스럽게', dictionary_form='스럽다', pos=POS_ADJECTIVE, decomposed_tokens=[ D(POS_ENDING, '게')]),
+             AT(text='스럽게', dictionary_form='스럽다', pos=POS_ADJECTIVE,
+                 decomposed_tokens=[ D(POS_ENDING, '게')]),
+             ]
+        self.assertEqual(to_str(res), to_str(expected))
+
+    def testTripleComposition(self):
+        text = '주시겠어요'
+        res = self.tokenizer_mecab.parse(text)
+        expected = \
+            [
+             AT(text='주시겠어요', dictionary_form='주다', pos=POS_VERB,
+                  decomposed_tokens=[D(POS_ENDING, '시'), D(POS_ENDING, '겠'), D(POS_ENDING, '어요')])
              ]
         self.assertEqual(to_str(res), to_str(expected))
 

@@ -36,8 +36,8 @@ class StardictBaseSajeon:
     def customize(self, article, add_examples):
         return article
 
-class StardictSajeon(StardictBaseSajeon):
-    def __init__(self, dict_dic):
+class StardictEnSajeon(StardictBaseSajeon):
+    def __init__(self):
         dict_dir = r'..\_kreader_files\stardict-KoreanEnglishDic-2.4.2'
         dict_name = 'KoreanEnglishDic'
         super().__init__(dict_dir, dict_name)
@@ -49,6 +49,7 @@ class StardictSajeon(StardictBaseSajeon):
         else:
             pos = article.find(example_delimiter)
             res = article[:pos]
+        return res
 
 class StardictRuSajeon(StardictBaseSajeon):
     def __init__(self):
@@ -64,7 +65,7 @@ class StardictRuSajeon(StardictBaseSajeon):
       return article[:second_cr]
 
 def test_output_en():
-    ss = StardictSajeon()
+    ss = StardictEnSajeon()
 
     article_with_sample = ss.get_definition('번지', True)
     print(article_with_sample)

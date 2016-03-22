@@ -38,7 +38,7 @@ class IfoFileReader(object):
         May raise IfoFileException during initialization.
         """
         self._ifo = dict()
-        with open(filename, "r") as ifo_file:
+        with open(filename, "r", encoding="utf8") as ifo_file:
             self._ifo["dict_title"] = ifo_file.readline() # dictionary title
             line = ifo_file.readline() # version info
             key, equal, value = line.partition("=")
