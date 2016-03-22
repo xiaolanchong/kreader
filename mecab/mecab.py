@@ -97,6 +97,7 @@ def test_output():
     mecab = Mecab()
    # text = '프리벳가 4번지에 살고 있는 더즐리 부부는 보였다'
     text = '6년째 공무원 시험에'
+    text = '배웠는지'
     res = mecab.parse(text)
     print(res)
 

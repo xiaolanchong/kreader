@@ -48,13 +48,14 @@ def submit_text():
     if ezsajeon is None:
         ezsajeon = EzSajeon()
     if ktokenizer is None:
-        ktokenizer = KTokenizer(ezsajeon.get_definition, KTokenizer.MECAB)
+        ktokenizer = KTokenizer( KTokenizer.MECAB)
 
     title=request.form['title']
     source_text=request.form['submitted_text']
     sentences = source_text.split('\n')
 
     parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda : sentences)
+    glossary = ''
     parsed_text_json = json.dumps(parsed_text)
     glossary_json = json.dumps(glossary)
     datastorage.add_text(title=title, source_text=source_text, \
@@ -84,7 +85,7 @@ def update_text():
     if ezsajeon is None:
         ezsajeon = EzSajeon()
     if ktokenizer is None:
-        ktokenizer = KTokenizer(ezsajeon.get_definition, KTokenizer.MECAB)
+        ktokenizer = KTokenizer(KTokenizer.MECAB)
 
     title=request.form['title']
     text_id=request.form['text_id']  # TODO: process errors
@@ -93,6 +94,7 @@ def update_text():
 
     parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda : sentences)
     parsed_text_json = json.dumps(parsed_text)
+    glossary=''
     glossary_json = json.dumps(glossary)
     datastorage.update_text(text_id=text_id, title=title, source_text=source_text, \
                          parsed_text=parsed_text_json, glossary=glossary_json,\
@@ -116,6 +118,7 @@ def set_preferences():
 def get_word_definition():
     global ezsajeon
     word = request.args.get('word', '', type=str)
+    pos  = request.args.get('pos', '', type=str)
     if(len(word) == 0):
         return jsonify(records=[])
 

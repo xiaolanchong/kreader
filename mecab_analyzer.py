@@ -3,12 +3,12 @@
 import pprint
 
 from morph_analyzer import AnnotatedToken, IgnoredToken, \
-                           create_particle_token, create_ending_token, \
                            MorphAnalyzer
 
 from morph_analyzer import *
 
 from mecab import Mecab
+import jamo
 
 def convert_pos(pos):
     known_pos = {
@@ -45,11 +45,12 @@ def convert_pos(pos):
     'XSN' : POS_SUFFIX,
     'XSV' : POS_SUFFIX,
     'XSA' : POS_SUFFIX,
+    'XR'  : POS_NOUN       # hada root
     }
 
     return known_pos.get(pos, pos)
 
-'XR'
+
 'SF'
 'SE'
 'SSO'
@@ -60,6 +61,13 @@ def convert_pos(pos):
 'SL'
 'SN'
 
+def recover_particle(word):
+   I, V, F = jamo.decompose(word[-1])
+   if F == 'ᆻ':
+      return 'ᆻ'
+   else:
+      return word[-1]
+
 def patch_dictionary_form(word, dictionary_form, pos):
     if pos[0] == 'V' and dictionary_form[-1] != '다':
         return dictionary_form + '다'
@@ -67,12 +75,19 @@ def patch_dictionary_form(word, dictionary_form, pos):
         return word
     return dictionary_form
 
-def crack_complex_pos(pos):
-    return pos.split('+')[0]
+def decompose(pos_desc):
+      parts = pos_desc.split('+')
+      decomposed_tokens = []
+      for dep_part in parts[1:]:
+         dep_posdesc_word = dep_part.split('/')
+         dep_pos = convert_pos(dep_posdesc_word[0])
+         dep_word = dep_posdesc_word[1] if len(dep_posdesc_word) > 1 else dep_posdesc_word[0]
+         decomposed_tokens.append(DecomposedToken(dep_pos, dep_word)) # TODO: restore 시-, -었
+
+      return convert_pos(parts[0]), decomposed_tokens
 
 class MecabAnalyzer(MorphAnalyzer):
-    def __init__(self, dict_lookup_func):
-        self.dict_lookup_func = dict_lookup_func if dict_lookup_func else lambda x: ''
+    def __init__(self):
         self.parser = Mecab()
 
     def parse(self, text):
@@ -82,16 +97,14 @@ class MecabAnalyzer(MorphAnalyzer):
             dictionary_form = patch_dictionary_form(word, dictionary_form, pos)
             if pos[0] == 'S':
                 obj = IgnoredToken(word)
-            elif pos[0] == 'J':
-                obj = create_particle_token(word, self.dict_lookup_func)
-            elif pos[0] == 'E':
-                obj = create_ending_token(word, self.dict_lookup_func)
             else:
-                definition = self.dict_lookup_func(dictionary_form)
+                definition = ''
+                main_pos, decomposed_tokens = decompose(pos)
                 obj = AnnotatedToken(text=word,
                             dictionary_form=dictionary_form,
                             definition=definition,
-                            pos=convert_pos(pos)
+                            pos=main_pos,
+                            decomposed_tokens=decomposed_tokens
                             )
 
             out.append(obj)
@@ -103,7 +116,7 @@ def test_output():
     text = '그들은 기이하거나 신비스런 일과는 전혀 무관해 보였다.'
    # text = '프리벳가 4번지에'
 
-    parser = MecabAnalyzer(None)
+    parser = MecabAnalyzer()
 
     f = parser.parse(text)
     pprint.pprint(f)

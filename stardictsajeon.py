@@ -3,13 +3,18 @@
 import os.path
 from stardict import DictFileReader, IfoFileReader, IdxFileReader
 
-class StardictSajeon:
-    def __init__(self):
-        dict_dir = r'c:\tools\_lang\GoldenDict\content\stardict-KoreanEnglishDic-2.4.2'
+def find_nth(haystack, needle, n):
+      start = haystack.find(needle)
+      while start >= 0 and n > 1:
+         start = haystack.find(needle, start+len(needle))
+         n -= 1
+      return start
 
-        ifo_file = os.path.join(dict_dir, "KoreanEnglishDic.ifo")
-        idx_file = os.path.join(dict_dir, "KoreanEnglishDic.idx")
-        dict_file =os.path.join(dict_dir, "KoreanEnglishDic.dict.dz")
+class StardictBaseSajeon:
+    def __init__(self, dict_dir, dict_name):
+        ifo_file = os.path.join(dict_dir, dict_name + ".ifo")
+        idx_file = os.path.join(dict_dir, dict_name + ".idx")
+        dict_file =os.path.join(dict_dir, dict_name + ".dict.dz")
         ifo_reader = IfoFileReader(ifo_file)
         idx_reader = IdxFileReader(idx_file)
         self.dict_reader = DictFileReader(dict_file, ifo_reader, idx_reader, True)
@@ -25,16 +30,40 @@ class StardictSajeon:
         article = dicts[0].get('m', '')
         article = article.decode('utf8')
 
+        article = self.customize(article, add_examples)
+        return article
+
+    def customize(self, article, add_examples):
+        return article
+
+class StardictSajeon(StardictBaseSajeon):
+    def __init__(self, dict_dic):
+        dict_dir = r'..\_kreader_files\stardict-KoreanEnglishDic-2.4.2'
+        dict_name = 'KoreanEnglishDic'
+        super().__init__(dict_dir, dict_name)
+
+    def customize(self, article, add_examples):
         example_delimiter ='ㆍ'
         if add_examples:
             res = article.replace(example_delimiter, '\n')
         else:
             pos = article.find(example_delimiter)
             res = article[:pos]
-        return res
 
+class StardictRuSajeon(StardictBaseSajeon):
+    def __init__(self):
+        dict_dir = r'..\_kreader_files\stardict-GNU_korean-russian-dict(v.0.5)'
+        dict_name = 'GNU_krd-0.5'
+        super().__init__(dict_dir, dict_name)
 
-def test_output():
+    def customize(self, article, add_examples):
+      if add_examples:
+        return article
+
+      second_cr = find_nth(article, '\n', 2)
+      return article[:second_cr]
+
+def test_output_en():
     ss = StardictSajeon()
 
     article_with_sample = ss.get_definition('번지', True)
@@ -53,6 +82,20 @@ def test_output():
     print(article_with_sample)
     open('testzzzz.txt', mode='w', encoding='utf8').write(article_with_sample)
 
+def test_output_ru():
+    ss = StardictRuSajeon()
+
+    article_with_sample = ss.get_definition('번지', True)
+    print(article_with_sample)
+    print('-' * 25)
+
+    article_with_sample = ss.get_definition('늙다', False)
+    print(article_with_sample)
+    print('-' * 25)
+
+    article_with_sample = ss.get_definition('늙다', True)
+    print(article_with_sample)
+    print('-' * 25)
 
 if __name__ == '__main__':
-    test_output()
+    test_output_ru()

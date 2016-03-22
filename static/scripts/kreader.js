@@ -56,7 +56,7 @@ function request_definition(origin, word_info) {
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
 	$.ajax({ url: '/get_word_definition', 
-		 data: { 'word': dictionary_form },
+		 data: { 'word': dictionary_form, 'pos' : word_info['pos'] },
 		 success: function(data){
 			//loadingSpinner.Hide();
 			//console.log(recordId + " not added, now expand");
@@ -69,10 +69,20 @@ function request_definition(origin, word_info) {
 }
 
 function create_tooltip_content_async(word_info, definition) {
+   
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
+   var dependent_tokens = word_info['dec_tok'] || [];
+  // console.log(dependent_tokens, word_info['dec_tok']);
+   //dependent_tokens = word_info["dec_tok"]);
+   conjugation_info = ''
+   $.each(dependent_tokens, function(index, value) {
+	   conjugation_info += ' +' + value[1]; // + '/' + value[0];
+	   //console.log(value);
+   });
+   console.log(conjugation_info);
    var part_of_speech = word_info['pos'];
-   return create_tooltip_content(word, dictionary_form, definition, part_of_speech);
+   return create_tooltip_content(dictionary_form, definition, part_of_speech, conjugation_info);
 }
 
 function create_tooltip_content_onplace(word_info) {
@@ -80,10 +90,10 @@ function create_tooltip_content_onplace(word_info) {
    var dictionary_form = word_info['dict_form'] || word;
    var definition = global_glossary[dictionary_form] || '';
    var part_of_speech = word_info['pos'];
-   return create_tooltip_content(word, dictionary_form, definition, part_of_speech);
+   return create_tooltip_content(dictionary_form, definition, part_of_speech, '');
 }
 
-function create_tooltip_content(word, dictionary_form, definition, part_of_speech) {
+function create_tooltip_content(dictionary_form, definition, part_of_speech, conjugation_info) {
    var part_of_speech_info = '';
    if(part_of_speech) {
 	  part_of_speech_info = '&nbsp;<span class="popup_part_of_speech">(' + part_of_speech + ')</span>';
@@ -91,6 +101,7 @@ function create_tooltip_content(word, dictionary_form, definition, part_of_speec
    
    var content = '<span class="popup_defined_word">' + dictionary_form + '</span>';
    content += part_of_speech_info;
+   content += '<span class="popup_conjugation_info">' + conjugation_info + '</span>';
    content += '<br>';
    
    definition_split = '';

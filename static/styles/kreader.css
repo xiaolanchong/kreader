@@ -35,6 +35,11 @@ body
    font-style: italic;
 }
 
+.popup_conjugation_info
+{
+   /*font-size: smaller;*/
+}
+
 .defined_word:hover
 {
   background-color: #D4BC6A;

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -7,8 +8,6 @@ from sqlalchemy.schema import ForeignKey
 from collections import namedtuple
 
 Base = declarative_base()
-
-#TextProps= namedtuple('TextProps', ['text_id', 'title', 'source_text', ])
 
 class Preference(Base):
     __tablename__ = "preference"

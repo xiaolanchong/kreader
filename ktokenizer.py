@@ -5,11 +5,13 @@ import pprint
 from collections import Counter
 import re
 
-from morph_analyzer import IgnoredToken, AnnotatedToken, WORD_WHITESPACE, WORD_PARAGRAPH
+from morph_analyzer import IgnoredToken, AnnotatedToken, WORD_WHITESPACE, WORD_PARAGRAPH, \
+                            POS_ENDING, composable_pos_set
 
 class Whitespace:
     def __init__(self):
-        pass
+        self.space_number = 1
+        self.text = ' ' * self.space_number
 
     def jsonify(self):
         return {'class' : WORD_WHITESPACE}
@@ -34,21 +36,25 @@ def get_word_number(text):
     return len(Counter(re))
 
 
+
+def is_composable(pos):
+   return pos in composable_pos_set
+
+
 class KTokenizer:
     TWITTER = 1
     MECAB = 2
 
-    def __init__(self, dict_lookup_func=None, tokenizer=TWITTER):
+    def __init__(self, tokenizer=TWITTER):
         self.debug_mode = False
-        self.dict_lookup_func = dict_lookup_func
         self.lookedup_words = {}
 
         if   tokenizer == KTokenizer.TWITTER:
             from twitter import TwitterAnalyzer
-            self.tokenizer = TwitterAnalyzer(self.add_lookedup_word)
+            self.tokenizer = TwitterAnalyzer(lambda x: x)
         elif tokenizer == KTokenizer.MECAB:
             from mecab_analyzer import MecabAnalyzer
-            self.tokenizer = MecabAnalyzer(self.add_lookedup_word)
+            self.tokenizer = MecabAnalyzer()
         else:
             RuntimeError('Unknown tokenizer specified: ' + str(parser))
 
@@ -76,27 +82,60 @@ class KTokenizer:
 
             out.append(token)
             current_pos += len(token.text)
-        return out
 
-    def get_lookedup_words(self):
-        return self.lookedup_words
+        return self.merge_tokens(out)
 
-    def add_lookedup_word(self, word):
-        if self.dict_lookup_func is not None and \
-           word not in self.lookedup_words:
-            definition = self.dict_lookup_func(word)
-            self.lookedup_words[word] = definition
-        return ''
+   # def in_annotated_token(self, cur_token, accumulated_token, result_tokens):
+   #   if isinstance(cur_token, AnnotatedToken):
+   #      cur_token.pos == POS_ENDING
+    #     return in_annotated_token, cur_token
+
+    def process_token(self, cur_token, prev_token, result_tokens):
+      if isinstance(prev_token, AnnotatedToken) and prev_token.pos in composable_pos_set:
+         if isinstance(cur_token, AnnotatedToken) and cur_token.pos == POS_ENDING:
+            prev_token.add_decomposed(cur_token)
+            return prev_token
+         else:
+            result_tokens.append(prev_token)
+            return cur_token
+
+      elif isinstance(prev_token, IgnoredToken):
+         if isinstance(cur_token, IgnoredToken) or \
+            isinstance(cur_token, Whitespace):
+             prev_token.text += cur_token.text
+             return prev_token
+
+         else:
+            result_tokens.append(prev_token)
+            return cur_token
+      else:
+            result_tokens.append(prev_token)
+            return cur_token
+
+
+    def merge_tokens(self, tokens):
+      if len(tokens) == 0:
+         return tokens
+      result_tokens = []
+      prev_token = tokens[0]
+      for cur_token in tokens[1:]:
+         prev_token = self.process_token(cur_token, prev_token, result_tokens)
+      result_tokens.append(prev_token)
+      return result_tokens
+
+
 
 def tokenize(ktokenizer, line_generator):
     text_objs = []
-    glossary = {}
+    glossary = set()
     total_words = 0
 
     for line in line_generator():
             line_objs = ktokenizer.parse(line)
-            lookedup_words = ktokenizer.get_lookedup_words()
-            glossary.update(lookedup_words)
+#            lookedup_words = ktokenizer.get_lookedup_words()
+            for obj in line_objs:
+               if isinstance(obj, AnnotatedToken):
+                  glossary.add(obj.dictionary_form)
             total_words += get_word_number(line)
 
             text_objs.extend(line_objs)

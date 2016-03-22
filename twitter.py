@@ -25,6 +25,7 @@ pos_name = {
     'Number'      : POS_NUMBER,
     'Suffix'      : POS_SUFFIX,
     'PreEomi'     : POS_ENDING,
+    'Eomi'        : POS_ENDING,
 }
 
 
@@ -90,10 +91,6 @@ class TwitterAnalyzer(MorphAnalyzer):
 
             if is_ignored(pos):
                 obj = IgnoredToken(word)
-            elif pos == 'Josa':
-                obj = create_particle_token(word, self.dict_lookup_func)
-            elif pos == 'Eomi':
-                obj = create_ending_token(word, self.dict_lookup_func)
             else:
                 definition = self.get_definition(dictionary_form, pos)
                 obj = AnnotatedToken(text=word,
