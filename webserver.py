@@ -8,6 +8,7 @@ import json
 from ktokenizer import KTokenizer, Paragraph, tokenize
 from compositedict import CompositeDictionary
 from datastorage import DataStorage
+from googledict import GoogleDictionary
 
 app = Flask(__name__)
 
@@ -16,6 +17,7 @@ datastorage.create_db()
 
 ktokenizer = None
 composite_dict = CompositeDictionary(True)
+google_dict = GoogleDictionary()
 
 Textdesc = namedtuple('Textdesc', ['id', 'title', 'total_words', 'unique_words'])
 
@@ -119,7 +121,8 @@ def get_word_definition():
         return jsonify(records=[])
 
     definitions = composite_dict.get_definitions(word)
-    return jsonify(definitions=definitions)
+    pronunciation_url = google_dict.get_pronunciation_url(word, 'ko')
+    return jsonify(definitions=definitions, pronunciation=pronunciation_url)
 
 
 if __name__ == "__main__":

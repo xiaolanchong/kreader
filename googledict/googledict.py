@@ -130,6 +130,17 @@ class GoogleDictionary():
 
         return defs
 
+    def get_pronunciation_url(self, word, language):
+        secret_token = get_current_token(word)
+        url="https://translate.google.com/translate_tts?ie=UTF-8&client=t&tk={0}&tl={1}&q={2}".format(secret_token, language, quote(word))
+        return url
+
+    def get_sound_file(self, word, language):
+        url = self.get_pronunciation_url(word, language)
+        self.connection.request("GET", url)
+        response = self.connection.getresponse()
+        return response.read()
+
 
 def main():
     word = '따각따각'
@@ -139,6 +150,11 @@ def main():
     res = gdict.unpack(json)
     print('Final lookup result:')
     pprint(res)
+
+    print(gdict.get_pronunciation_url('오늘', 'ko'))
+    f = gdict.get_sound_file('오늘', 'ko')
+    open('test.mp3', mode='wb').write(f)
+
 
 def test_token():
     epoch_time = 1458008272
