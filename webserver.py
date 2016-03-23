@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify, render_template, redirect, request, abort
+from flask import Flask, jsonify, render_template, redirect, request, abort, make_response
 from collections import namedtuple
 import logging
 import json
@@ -121,9 +121,15 @@ def get_word_definition():
         return jsonify(records=[])
 
     definitions = composite_dict.get_definitions(word)
-    pronunciation_url = google_dict.get_pronunciation_url(word, 'ko')
-    return jsonify(definitions=definitions, pronunciation=pronunciation_url)
+    return jsonify(definitions=definitions)
 
+@app.route('/sound/<word>')
+def get_sound(word):
+    content, content_type = google_dict.get_sound_file(word, 'ko')
+
+    response = make_response(content)
+    response.headers['Content-Type'] = content_type
+    return response
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)

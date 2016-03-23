@@ -93,16 +93,13 @@ def get_stateless_token(request, epoch_time):
 
 class GoogleDictionary():
     def __init__(self):
-        host = 'translate.google.com'
-        self.connection = HTTPSConnection(host)
+        self.host = 'translate.google.com'
+        self.connection = HTTPSConnection(self.host)
         self.empty_comma = re.compile(r',(?=,)')
 
     def lookup(self, lookedup_word, src_language='ru', dst_language='en'):
-        token = get_current_token(lookedup_word)
-
-        url = '/translate_a/single?client=t&sl={0}&tl={1}&hl=en&dt=at&dt=bd&dt=ex&' \
-              'dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=2&' \
-              'rom=1&ssel=3&tsel=3&kc=1&tk={2}&q={3}'.format(src_language, dst_language, token, quote(lookedup_word))
+        secret_token = get_current_token(lookedup_word)
+        url = self.format_lookup_url(lookedup_word, secret_token, src_language, dst_language)
         self.connection.request("GET", url)
         response = self.connection.getresponse()
         response_content = response.read().decode('utf8')
@@ -115,6 +112,12 @@ class GoogleDictionary():
         #fixed_content = self.empty_comma.subn('', response_content)[0].replace('\xA0', ' ')
 
         return json.loads(response_content)
+
+    def format_lookup_url(self, word, secret_token, src_language, dst_language):
+        url = '/translate_a/single?client=t&sl={0}&tl={1}&hl=en&dt=at&dt=bd&dt=ex&' \
+              'dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=2&' \
+              'rom=1&ssel=3&tsel=3&kc=1&tk={2}&q={3}'.format(src_language, dst_language, secret_token, quote(word))
+        return url
 
     def unpack(self, json_obj):
         window_content = json_obj[0]
@@ -132,14 +135,16 @@ class GoogleDictionary():
 
     def get_pronunciation_url(self, word, language):
         secret_token = get_current_token(word)
-        url="https://translate.google.com/translate_tts?ie=UTF-8&client=t&tk={0}&tl={1}&q={2}".format(secret_token, language, quote(word))
-        return url
+        url_sound ="https://translate.google.com/translate_tts?ie=UTF-8&client=t&tk={0}&tl={1}&q={2}". \
+                            format(secret_token, language, quote(word))
+        return url_sound
 
     def get_sound_file(self, word, language):
-        url = self.get_pronunciation_url(word, language)
-        self.connection.request("GET", url)
+        url_sound = self.get_pronunciation_url(word, language)
+        self.connection.request("GET", url_sound)
         response = self.connection.getresponse()
-        return response.read()
+        content_type = response.headers['Content-Type']
+        return response.read(), content_type
 
 
 def main():
@@ -151,9 +156,10 @@ def main():
     print('Final lookup result:')
     pprint(res)
 
-    print(gdict.get_pronunciation_url('오늘', 'ko'))
+    sound_url = gdict.get_pronunciation_url('오늘', 'ko')
+    print(sound_url)
     f = gdict.get_sound_file('오늘', 'ko')
-    open('test.mp3', mode='wb').write(f)
+   # open('test.mp3', mode='wb').write(f)
 
 
 def test_token():
