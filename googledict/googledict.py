@@ -2,7 +2,7 @@
 
 from pprint import pprint
 
-from http.client import  HTTPSConnection
+from http.client import HTTPSConnection, ImproperConnectionState
 from urllib.parse import quote
 
 import json
@@ -141,7 +141,12 @@ class GoogleDictionary():
 
     def get_sound_file(self, word, language):
         url_sound = self.get_pronunciation_url(word, language)
-        self.connection.request("GET", url_sound)
+        try:
+            self.connection.request("GET", url_sound)
+        except ImproperConnectionState:        # reconnect and try again
+            self.connection.close()
+            self.connection.connect()
+            self.connection.request("GET", url_sound)
         response = self.connection.getresponse()
         content_type = response.headers['Content-Type']
         return response.read(), content_type
