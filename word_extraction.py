@@ -3,10 +3,11 @@
 import re
 
 from ktokenizer import KTokenizer, tokenize
+from morph_analyzer import AnnotatedToken
 from ezsajeon import EzSajeon
 
 ezsajeon = EzSajeon()
-tokenizer = KTokenizer(ezsajeon.get_definition, KTokenizer.MECAB)
+tokenizer = KTokenizer(KTokenizer.MECAB)
 
 hanja_re = re.compile('^\((.+?)\)')
 
@@ -22,16 +23,19 @@ def main():
     mash(in_path, out_path, card_tag)
 
 def mash(in_path, out_path, card_tag):
-    glossary = {}
+    glossary = set()
     words_no_definition = set()
 
     with open(in_path, encoding='utf8') as fin, \
          open(out_path, encoding='utf8', mode='w') as fout:
         for line in fin.readlines():
             line_objs = tokenizer.parse(line)
-            lookedup_words = tokenizer.get_lookedup_words()
-            for word, definition in lookedup_words.items():
-               if len(word) and len(definition) and (word not in glossary):
+            #lookedup_words = tokenizer.get_lookedup_words()
+            for token in line_objs:
+               if isinstance(token, AnnotatedToken) and (token.dictionary_form not in glossary):
+                  word = token.dictionary_form
+                  glossary.add(word)
+                  definition = ezsajeon.get_definition(word)
                   hanja = ''
                   m = hanja_re.search(definition)
                   if m is not None:
@@ -46,7 +50,7 @@ def mash(in_path, out_path, card_tag):
                   print(word + ' : no definition')
                   words_no_definition.add(word)
 
-            glossary.update(lookedup_words)
+           # glossary.update(lookedup_words)
 
     print('Unique words: {0}'.format(len(glossary)))
 
