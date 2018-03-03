@@ -1,3 +1,4 @@
+{% set btn_my_texts = "active" %}
 {% extends "base.htm" %}
 
 {% block script %}
@@ -6,9 +7,7 @@
     
         var msg_box = null;
         
-        function msgClose(ret){
-	console.log("msgClose -> retour %s", ret);
-}
+        function msgClose(ret){}
 
 		$(document).ready(function() {
 				init_settings();
@@ -74,8 +73,12 @@
                          <td>{{ textdesc.total_words }}</td>
                          <td>{{ textdesc.unique_words }}</td>
                          <td>0</td>
-                         <td><a href="#" class="a_delete" id="{{ textdesc.id }}"><img src="static/images/Delete.png"></a></td>
-                         <td><a href="/edittext?id={{ textdesc.id }}" class="a_modify" ><img src="static/images/Modify.png"></a></td>
+                         <td>
+						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" id="{{ textdesc.id }}"><img src="static/images/Delete_small.png"></a>
+						 </td>
+                         <td>
+						     <a href="/edittext?id={{ textdesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" ><img src="static/images/Modify_small.png"></a>
+						 </td>
                      </tr>
                  {% endfor %}
             </tbody>

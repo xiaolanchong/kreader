@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import pprint
 from collections import Counter
 import re
 
 from morph_analyzer import IgnoredToken, AnnotatedToken, WORD_WHITESPACE, WORD_PARAGRAPH, \
                             POS_ENDING, composable_pos_set
+
 
 class Whitespace:
     def __init__(self):
@@ -14,10 +14,11 @@ class Whitespace:
         self.text = ' ' * self.space_number
 
     def jsonify(self):
-        return {'class' : WORD_WHITESPACE}
+        return {'class': WORD_WHITESPACE}
 
     def __repr__(self):
         return '_'
+
 
 class Paragraph:
     def __init__(self):
@@ -31,10 +32,10 @@ class Paragraph:
 
 re_word_counter = re.compile(r"[\w']+", re.UNICODE)
 
+
 def get_word_number(text):
     re = re_word_counter.findall(text)
     return len(Counter(re))
-
 
 
 def is_composable(pos):
@@ -56,7 +57,7 @@ class KTokenizer:
             from mecab_analyzer import MecabAnalyzer
             self.tokenizer = MecabAnalyzer()
         else:
-            RuntimeError('Unknown tokenizer specified: ' + str(parser))
+            RuntimeError('Unknown tokenizer specified: ' + str(tokenizer))
 
     def parse(self, text):
         self.lookedup_words = {}
@@ -78,17 +79,12 @@ class KTokenizer:
                skipped_chars += 1
 
             if skipped_chars:
-                out.append(Whitespace()) # convert all ws symbols to a space
+                out.append(Whitespace())  # convert all ws symbols to a space
 
             out.append(token)
             current_pos += len(token.text)
 
         return self.merge_tokens(out)
-
-   # def in_annotated_token(self, cur_token, accumulated_token, result_tokens):
-   #   if isinstance(cur_token, AnnotatedToken):
-   #      cur_token.pos == POS_ENDING
-    #     return in_annotated_token, cur_token
 
     def process_token(self, cur_token, prev_token, result_tokens):
       if isinstance(prev_token, AnnotatedToken) and prev_token.pos in composable_pos_set:
@@ -122,7 +118,6 @@ class KTokenizer:
          prev_token = self.process_token(cur_token, prev_token, result_tokens)
       result_tokens.append(prev_token)
       return result_tokens
-
 
 
 def tokenize(ktokenizer, line_generator):

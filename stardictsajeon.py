@@ -61,11 +61,11 @@ class StardictRuSajeon(StardictBaseSajeon):
         super().__init__(dict_dir, dict_name)
 
     def customize(self, article, add_examples):
-      if add_examples:
-        return article
+       if add_examples:
+          return article
 
-      second_cr = find_nth(article, '\n', 2)
-      return article[:second_cr]
+       second_cr = find_nth(article, '\n', 2)
+       return article[:second_cr]
 
 def test_output_en():
     ss = StardictEnSajeon()
@@ -100,6 +100,9 @@ def test_output_ru():
     article_with_sample = ss.get_definition('늙다', True)
     print(article_with_sample)
     print('-' * 25)
+
+    article_with_sample = ss.get_definition('이사', True)
+    print(article_with_sample)
 
 if __name__ == '__main__':
     test_output_ru()

@@ -74,21 +74,15 @@ padding: 0.25em;
 }
 
 
-/*  */
-
 .app-title
 {
-    font-size: 300%;
+    font-size: 200%;
     text-align: left;
-    margin-left : 20px;
-    margin-right : 20px;
-    margin-bottom : 20px;
 }
 
 .header-panel
 {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding: 5px 10px 5px 10px;
     background-color: #c8c8c8;
     vertical-align: middle;
 }
@@ -118,6 +112,20 @@ padding: 0.25em;
 .text-title
 {
    text-align: center;
+   padding-top: 10px;
+   padding-bottom: 0px;
+   margin-bottom: 10px;
+}
+
+.add_text_form
+{
+   margin: 10px 10px;
+}
+
+.add_text_area
+{
+	
+	width: 100%;
 }
 
 .add_text_prop
@@ -188,3 +196,10 @@ img
    background-color: #d9cba0; /* d9c484 */
    color : #252617; /* 59583f */
 }
+
+  #theme-selector .ui-selecting {
+    background: #ccc;
+  }
+  #theme-selector .ui-selected {
+    background: #999;
+  }

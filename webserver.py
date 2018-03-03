@@ -21,6 +21,7 @@ google_dict = GoogleDictionary()
 
 Textdesc = namedtuple('Textdesc', ['id', 'title', 'total_words', 'unique_words'])
 
+
 @app.route("/")
 def start_page():
     textdescs = [Textdesc(id=id, title=title,
@@ -29,10 +30,12 @@ def start_page():
     html = render_template('main.htm', textdescs=textdescs)
     return html
 
+
 @app.route("/addtext")
 def add_text():
     html = render_template('add_text.htm')
     return html
+
 
 @app.route("/showtext")
 def show_text():
@@ -44,12 +47,13 @@ def show_text():
       return html
     abort(404)
 
+
 @app.route("/submittext", methods=['POST'])
 def submit_text():
     global ktokenizer
 
     if ktokenizer is None:
-        ktokenizer = KTokenizer( KTokenizer.MECAB)
+        ktokenizer = KTokenizer(KTokenizer.MECAB)
 
     title=request.form['title']
     source_text=request.form['submitted_text']
@@ -59,8 +63,8 @@ def submit_text():
     glossary = ''
     parsed_text_json = json.dumps(parsed_text)
     glossary_json = json.dumps(glossary)
-    datastorage.add_text(title=title, source_text=source_text, \
-                         parsed_text=parsed_text_json, glossary=glossary_json,\
+    datastorage.add_text(title=title, source_text=source_text,
+                         parsed_text=parsed_text_json, glossary=glossary_json,
                          total_words=total_words, unique_words=unique_words)
 
     logging.info('Added text: in size=%i, out chunks=%i, sentence#=%i, '
@@ -69,6 +73,7 @@ def submit_text():
                           len(sentences), total_words, unique_words)
 
     return redirect('/')
+
 
 @app.route("/edittext")
 def edit_text():
@@ -79,6 +84,7 @@ def edit_text():
       html = render_template('edit_text.htm', text=text, text_id=text_id, title=title)
       return html
     abort(404)
+
 
 @app.route("/updatetext", methods=['POST'])
 def update_text():
@@ -93,43 +99,46 @@ def update_text():
 
     parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda : sentences)
     parsed_text_json = json.dumps(parsed_text)
-    glossary=''
+    glossary = ''
     glossary_json = json.dumps(glossary)
-    datastorage.update_text(text_id=text_id, title=title, source_text=source_text, \
-                         parsed_text=parsed_text_json, glossary=glossary_json,\
-                         total_words=total_words, unique_words=unique_words)
+    datastorage.update_text(text_id=text_id, title=title, source_text=source_text,
+                            parsed_text=parsed_text_json, glossary=glossary_json,
+                            total_words=total_words, unique_words=unique_words)
 
     logging.info('Update text: in size=%i, out chunks=%i, sentence#=%i, '
                  'total words#=%i, unique words#=%i',
-                          len(source_text), len(parsed_text),
-                          len(sentences), total_words, unique_words)
+                 len(source_text), len(parsed_text),
+                 len(sentences), total_words, unique_words)
 
     return redirect('/')
 
-@app.route("/set_preferences")
+# RESTful API
+
+
+@app.route("/preferences")
 def set_preferences():
     preferences_str = request.args.get('preferences', '', type=str)
-    if(len(word)):
-        datastorage.set_preferences(preferences_str)
 
 
-@app.route("/get_word_definition")
-def get_word_definition():
-    word = request.args.get('word', '', type=str)
-    pos  = request.args.get('pos', '', type=str)
-    if(len(word) == 0):
+@app.route("/definition/<word>")
+def get_word_definition(word):
+    if len(word) == 0:
         return jsonify(records=[])
 
     definitions = composite_dict.get_definitions(word)
     return jsonify(definitions=definitions)
 
-@app.route('/sound/<word>')
-def get_sound(word):
-    content, content_type = google_dict.get_sound_file(word, 'ko')
 
-    response = make_response(content)
-    response.headers['Content-Type'] = content_type
-    return response
+@app.route('/sound/<word>')
+def get_sound():
+    abort(402)
+    # sound is broken
+    #content, content_type = google_dict.get_sound_file(word, 'ko')
+
+    #response = make_response(content)
+    #response.headers['Content-Type'] = content_type
+    #return response
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)

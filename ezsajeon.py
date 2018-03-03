@@ -6,7 +6,7 @@ import os.path
 class EzSajeon:
     def __init__(self):
         self.dict = {}
-        path = os.path.join(os.path.dirname(__file__),'ezcorean_2cols.tsv')
+        path = os.path.join(os.path.dirname(__file__), 'ezcorean_2cols.tsv')
         with open(path, encoding='utf8') as f:
             for line in f.readlines():
                 word, definition = line.rstrip().split('\t')
@@ -20,6 +20,7 @@ class EzSajeon:
 
     def get_definition(self, word):
         return self.dict.get(word, '')
+
 
 def test_output():
     es = EzSajeon()

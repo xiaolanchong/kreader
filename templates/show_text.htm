@@ -1,3 +1,4 @@
+{% set btn_settings_visible = True %}
 {% extends "base.htm" %}
 
 {% block script %}
@@ -17,8 +18,9 @@
 {% endblock %}
   
 {% block content %}
-     <h2 class="text-title">{{ title }}</h2>
-     <div class="main_panel"> </div>
-	 <div id="popup_div" class="popup_msg"></div> 
-
+	<div class="theme-dark">
+		<h2 class="text-title">{{ title }}</h2>
+		<div class="main_panel"> </div>
+		<div id="popup_div" class="popup_msg"></div> 
+	</div>
 {% endblock %}

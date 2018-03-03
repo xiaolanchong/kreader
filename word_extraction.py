@@ -1,33 +1,47 @@
 ﻿# -*- coding: utf-8 -*-
 
 import re
+import argparse
+import sys
+import contextlib
 
 from ktokenizer import KTokenizer, tokenize
 from morph_analyzer import AnnotatedToken
 from ezsajeon import EzSajeon
+from stardictsajeon import StardictRuSajeon
 
 ezsajeon = EzSajeon()
+rusajeon = StardictRuSajeon()
 tokenizer = KTokenizer(KTokenizer.MECAB)
 
 hanja_re = re.compile('^\((.+?)\)')
+
+
+@contextlib.contextmanager
+def smart_open(filename=None):
+    if filename and filename != '-':
+        fh = open(filename, encoding='utf8', mode='w')
+    else:
+        fh = sys.stdout
+
+    try:
+        yield fh
+    finally:
+        if fh is not sys.stdout:
+            fh.close()
+
 
 def get_text_from_file(path):
     with open(path, encoding='utf8') as f:
        for line in f.readlines():
            yield line
 
-def main():
-    card_tag = 'hp_stone_ch1'
-    in_path = '..\_kreader_files\hp1_1.txt'
-    out_path = '..\_kreader_files\hp1_1_words.txt'
-    mash(in_path, out_path, card_tag)
-
 def mash(in_path, out_path, card_tag):
     glossary = set()
     words_no_definition = set()
 
     with open(in_path, encoding='utf8') as fin, \
-         open(out_path, encoding='utf8', mode='w') as fout:
+         smart_open(out_path) as fout:
         for line in fin.readlines():
             line_objs = tokenizer.parse(line)
             #lookedup_words = tokenizer.get_lookedup_words()
@@ -35,7 +49,8 @@ def mash(in_path, out_path, card_tag):
                if isinstance(token, AnnotatedToken) and (token.dictionary_form not in glossary):
                   word = token.dictionary_form
                   glossary.add(word)
-                  definition = ezsajeon.get_definition(word)
+                  #definition = ezsajeon.get_definition(word)
+                  definition = rusajeon.get_definition(word, True)
                   hanja = ''
                   m = hanja_re.search(definition)
                   if m is not None:
@@ -53,6 +68,19 @@ def mash(in_path, out_path, card_tag):
            # glossary.update(lookedup_words)
 
     print('Unique words: {0}'.format(len(glossary)))
+
+def main():  
+    parser = argparse.ArgumentParser(description='Extracts words with definitions from Korean texts. '
+                                                 'Output format to import into Anki easily: word <TAB> definition <TAB> hanja <TAB> sentence <TAB> tag')
+    parser.add_argument(dest='input', 
+                        help='Korean text file')
+    parser.add_argument(nargs='?', dest='output',
+                        help='output file', default='')
+    parser.add_argument('--tag', '-t', default='', dest='card_tag',
+                        help='optional tag for Anki cards')	
+
+    args = parser.parse_args()
+    mash(args.input, args.output, args.card_tag)
 
 if __name__ == '__main__':
     main()

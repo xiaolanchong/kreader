@@ -55,8 +55,8 @@ function attach_tooltip(text_elem, word_info) {
 function request_definition(origin, word_info) {
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
-   $.ajax({ url: '/get_word_definition', 
-       data: { 'word': dictionary_form, 'pos' : word_info['pos'] },
+   $.ajax({ url: '/definition/' + dictionary_form, 
+       data: {},
        success: function(data){
          var definitions = data["definitions"] || [];
          var content = create_tooltip_content_async(word_info, definitions);
@@ -160,11 +160,11 @@ var content_html =
 '         <button id="settings-font-inc" style="">+</button>'  +
 '       </div>'  +
 '      <div>Theme:</div>'  +
-  '<div id="radio">' +
+  '<form><div id="radio">' +
   '  <input type="radio" id="radio1" name="radio"><label for="radio1">Choice 1</label>' +
   '  <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">Choice 2</label>' +
   '  <input type="radio" id="radio3" name="radio"><label for="radio3">Choice 3</label>' +
-  '</div>'
+  '</div></form>' +
 '</div>   ';
 
    var content_elem = $(content_html);
@@ -199,6 +199,5 @@ var content_html =
       delay : 0,
       onlyOne : true,
       //autoClose : false,
-   });   
-    $("#settings").hide();
+   });
 }

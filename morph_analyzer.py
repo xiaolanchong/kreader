@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from collections import namedtuple
-
 WORD_WHITESPACE = 1
 WORD_IGNORED = 2
 WORD_ANNOTATED = 3
