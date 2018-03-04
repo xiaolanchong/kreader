@@ -1,18 +1,19 @@
 {% extends "base.htm" %}
 
 {% block content %}
-<div class="pure-u">
+<h3>New text</h3>
+<div class="m-2">
 	<form action="/updatetext" method="post" id="form_submit_text" >
-	  <div class=" add_text_prop add_text_title">
-		Title: <input type="text" name="title"  value="{{ title }}"> 
-	  </div>
-	  <div>
-		<textarea rows="10" cols="80" name="submitted_text" class="add_text_prop">{{ text }}</textarea> 
-		<input type="hidden" name="text_id" value="{{ text_id }}" /> 
-	   </div>
-	   <div>
-		   <button type="submit" form="form_submit_text" value="Update Text" class="add_text_prop">Update Text</button>
-	   </div>
+	    <div class="form-group">
+		    <input type="text" name="title" class="form-control" id="formGroupExampleInput" value="{{ title }}">
+	    </div>	 
+        <div>
+		    <textarea rows="10" name="submitted_text" class="form-control">{{ text }}</textarea> 
+		    <input type="hidden" name="text_id" value="{{ text_id }}" /> 
+        </div>
+	    <div>
+		    <button type="submit" form="form_submit_text" value="Update Text" class="btn btn-success mt-2">Update Text</button>
+	    </div>	   
 	</form>
 </div>
 {% endblock %}

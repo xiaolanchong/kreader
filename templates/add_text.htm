@@ -2,17 +2,18 @@
 {% extends "base.htm" %}
 
 {% block content %}
+<h3>New text</h3>
         <div class="add_text_form">
+						
             <form action="/submittext" method="post" id="form_submit_text" >
 			  <div class="form-group">
-				<label for="formGroupExampleInput">Text title</label>
-				<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Text title">
+				   <input type="text" name="title" class="form-control" id="formGroupExampleInput" placeholder="Text title">
 			  </div>			  
               <div>
-                <textarea rows="10" cols="" name="submitted_text" class="form-control add_text_area" placeholder="Enter text..."></textarea> 
+                   <textarea rows="10" cols="" name="submitted_text" class="form-control" placeholder="Enter text..."></textarea> 
                </div>
                <div>
-                   <button type="submit" form="form_submit_text" value="Add Text" class="add_text_prop btn btn-success">Add Text</button>
+                   <button type="submit" form="form_submit_text" value="Add Text" class="btn btn-success mt-2">Add Text</button>
                </div>
             </form>
         </div>

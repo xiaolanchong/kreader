@@ -1,16 +1,14 @@
 
-.main_panel  /* text display*/
+/*** Show text page   ***/
+
+#main_panel 
 {
    text-align: left;
-   margin-left: 10px;
+   padding-left: 10px;
    line-height: 150%;
 }
 
-body
-{
-    /*padding: 20px 20px 20px 20px;*/
-}
-
+/*************** Popup word definition tooltip  ****************/
 .popup_msg
 {
    
@@ -62,6 +60,8 @@ padding: 0.25em;
     right: 0px;
 }
 
+/** Show text - individual words  **/
+
 .defined_word:hover
 {
   background-color: #D4BC6A;
@@ -73,6 +73,7 @@ padding: 0.25em;
   background-color: #FFEBAA;
 }
 
+/**  **/
 
 .app-title
 {
@@ -87,26 +88,9 @@ padding: 0.25em;
     vertical-align: middle;
 }
 
-.header-panel  span
+.body-class
 {
-    vertical-align: top;
-    margin-left: 10px;
-    /*margin-top:    10px*/
-}
-
-.title-list
-{
-    margin-left : 20px;
-  /*  margin-right : 20px;*/
-    margin-top : 10px;
-    /*margin-bottom : 5px;*/
-}
-
-.body-center
-{
-  /*   */
     font-family: Verdana, Tahoma, sans-serif;
-    
 }
 
 .text-title
@@ -117,38 +101,25 @@ padding: 0.25em;
    margin-bottom: 10px;
 }
 
-.add_text_form
+#settings_content
 {
-   margin: 10px 10px;
+  padding: 10px 10px;
 }
 
-.add_text_area
-{
-	
-	width: 100%;
-}
-
-.add_text_prop
-{
-    margin-top: 10px;
-}
-
-.add_text_title
-{
-    width: 100%
-}
 
 li
 {
     margin-top: 10px;
 }
 
-.title-table{
+.title-table
+{
 margin: 10px;
 border-collapse: collapse;
 }
 
-.title-table th{
+.title-table th
+{
 /*width: 25%;*/
 padding: 4px;
 text-align: left;
@@ -157,7 +128,8 @@ color: #333;
 background-color: #eee;
 border: 1px solid #b9b9b9;
 }
-.title-table td{
+.title-table td
+{
 padding: 4px;
 background-color: #fff;
 border: 1px solid #b9b9b9;
@@ -168,7 +140,7 @@ img
     margin: 5px;
 }
 
-/* Settings */
+/* Settings page */
 
 #settings {
    cursor: pointer;
@@ -188,18 +160,11 @@ img
 .theme-dark
 {
    background-color: #202529;
-   color : white;/*#a1b4c4;*/
+   color : white;
 }
 
 .theme-sepia
 {
-   background-color: #d9cba0; /* d9c484 */
-   color : #252617; /* 59583f */
+   background-color: #d9cba0;
+   color : #252617;
 }
-
-  #theme-selector .ui-selecting {
-    background: #ccc;
-  }
-  #theme-selector .ui-selected {
-    background: #999;
-  }

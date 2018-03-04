@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
- {% block head %}
+	{% block head %}
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" type="image/png" href="static/images/kreader_icon.png"/>
+	<link rel="shortcut icon" type="image/png" href="static/images/kreader_seal.png"/>
         
     <title>Korean Reader</title>
 	
 	<!-- bootstrap -->
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>    
+	<script src="static/scripts/jquery-3.3.1.min.js"></script>
+    <script src="static/scripts/popper.min.js"></script>
+	<script src="static/scripts/tether.min.js"></script> 
+    <script src="static/scripts/bootstrap.min.js"></script>    
 
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="static/scripts/jquery-ui.min.css">
+    <script src="static/scripts/jquery-1.12.1.min.js"></script>
 	
     <script type="text/javascript" src="static/scripts/jquery.messagebox.min.js"></script>
     <script type="text/javascript" src="static/scripts/jquery.tooltipster.min.js"></script>
@@ -25,7 +26,7 @@
   
     <link rel="stylesheet" type="text/css" href="static/styles/kreader.css"  />
     
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+  <!--  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css"> -->
     <link rel="stylesheet" type="text/css" href="static/styles/messageBox.min.css"  />
     <link rel="stylesheet" type="text/css" href="static/styles/tooltipster.css" />
     <link rel="stylesheet" type="text/css" href="static/styles/themes/tooltipster-light.css" />
@@ -33,11 +34,12 @@
     <link rel="stylesheet" type="text/css" href="static/styles/themes/tooltipster-punk.css" />
     <link rel="stylesheet" type="text/css" href="static/styles/themes/tooltipster-shadow.css" />
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/scripts/bootstrap.min.css">
+	<link rel="stylesheet" href="static/scripts/fontawesome-all.min.css">
+	<!--
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	-->
         
-        <!-- Icons by courtesy of ABSFreePic.com -->
-    
     {% endblock %}
 
     {% block script %}
@@ -45,21 +47,22 @@
     
   </head>
   
-  <body class="body-center">
+  <body class="body-class">
     <div class="header-panel">
-      <div class="app-title">Korean Reader</div>
+      <div class="app-title"><img src="static/images/kreader_seal.png">Korean Reader</div>
       <ul class="nav nav-pills">
         <li class="nav-item">
-	      <a class="nav-link {{ btn_my_texts }}" href="/">My Texts</a>
+	      <a class="nav-link {{ btn_my_texts }}" href="/">My texts</a>
         </li>
         <li class="nav-item">
-	      <a class="nav-link {{ btn_add_text }}" href="/addtext">Add Text</a>
+	      <a class="nav-link {{ btn_add_text }}" href="/addtext">Add text</a>
         </li>
-		{% if btn_settings_visible %}
         <li class="nav-item">
-          <a class="nav-link {{ btn_settings }}" id="settings" href="#!">Settings</a>
+          <a class="nav-link {{ btn_settings }}" id="settings" href="/settings">Settings</a>
         </li>
-		{% endif %}
+        <li class="nav-item">
+          <a class="nav-link {{ btn_new_words }}" id="settings" href="/new_words">New words</a>
+        </li>		
       </ul>
     </div>	
   

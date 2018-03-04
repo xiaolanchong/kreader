@@ -6,12 +6,17 @@
     <script type="text/javascript">
     
         var msg_box = null;
+		var text_id_to_delete = null;
         
-        function msgClose(ret){}
+        function msgClose(toDelete){
+		    if(toDelete) {
+				$('.title-table #' + text_id_to_delete).remove();
+				delete_text(text_id_to_delete);
+			}
+			text_id_to_delete = null;
+		}
 
-		$(document).ready(function() {
-				init_settings();
-				
+		$(document).ready(function() {		
                 msg_box = $("body").messageBox({
                 // autoclose timeout. 0 = disable autoclose
                 autoClose : 0, 
@@ -36,18 +41,17 @@
             });
         
             $('.a_delete').click(function(){
-                var title = $(this).parent().parent().filter(":first-child").text();
+                var title = $(this).attr("data-text-title");
+				text_id_to_delete = $(this).attr("data-text-id")
                 msg_box.data('messageBox').question(
                     'Text Deletion',
-                     'Delete ' + title + '?', // messageBox body
+                     'Delete "' + title + '"?', // messageBox body
                     // the buttons to be displayed in the messageBox
                     // The return value will be passed to the callback function cbClose ()
                      [{text:'Yes',return:true}, {text:'No',return:false} ]
                 );
             });
             $('.a_modify').click(function(){
-                //var title = $(this).parent().text();
-                $(this).attr('id');
             });			
         });
     </script>
@@ -68,16 +72,17 @@
             </thead>
             <tbody>
                  {% for textdesc in textdescs %}
-                     <tr>
+                     <tr id="{{ textdesc.id  }}">
                          <td><a href="/showtext?id={{ textdesc.id }}">{{ textdesc.title }}</a></td>
                          <td>{{ textdesc.total_words }}</td>
                          <td>{{ textdesc.unique_words }}</td>
                          <td>0</td>
                          <td>
-						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" id="{{ textdesc.id }}"><img src="static/images/Delete_small.png"></a>
+						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" data-text-id="{{ textdesc.id  }}" data-text-title="{{ textdesc.title }}" "><img src="static/images/Delete_small.png"></a>
 						 </td>
                          <td>
-						     <a href="/edittext?id={{ textdesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" ><img src="static/images/Modify_small.png"></a>
+						     <a href="/edittext?id={{ textdesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" 
+							    ><img src="static/images/Modify_small.png"></a>
 						 </td>
                      </tr>
                  {% endfor %}

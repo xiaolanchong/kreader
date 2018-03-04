@@ -5,9 +5,10 @@ from collections import namedtuple
 import logging
 import json
 
-from ktokenizer import KTokenizer, Paragraph, tokenize
+from ktokenizer import KTokenizer, tokenize
 from compositedict import CompositeDictionary
 from datastorage import DataStorage
+from settings import Settings
 from googledict import GoogleDictionary
 
 app = Flask(__name__)
@@ -41,11 +42,12 @@ def add_text():
 def show_text():
     text_id = request.args.get('id', None, type=int)
     if text_id:
-      title, parsed_text_json = datastorage.get_parsed_text_no_glossary(text_id)
-
-      html = render_template('show_text.htm', tokens=parsed_text_json, glossary='', title=title)
-      return html
-    abort(404)
+        title, parsed_text_json = datastorage.get_parsed_text_no_glossary(text_id)
+        settings = Settings.load(datastorage)
+        html = render_template('show_text.htm', tokens=parsed_text_json, glossary='', title=title, **settings)
+        return html
+    else:
+        abort(404)
 
 
 @app.route("/submittext", methods=['POST'])
@@ -92,9 +94,9 @@ def update_text():
     if ktokenizer is None:
         ktokenizer = KTokenizer(KTokenizer.MECAB)
 
-    title=request.form['title']
-    text_id=request.form['text_id']  # TODO: process errors
-    source_text=request.form['submitted_text']
+    title = request.form['title']
+    text_id = request.form['text_id']  # TODO: process errors
+    source_text = request.form['submitted_text']
     sentences = source_text.split('\n')
 
     parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda : sentences)
@@ -112,16 +114,41 @@ def update_text():
 
     return redirect('/')
 
-# RESTful API
+
+@app.route("/settings", methods=['GET'])
+def settings():
+    args = Settings.load(datastorage)
+    html = render_template('settings.htm', **args)
+    return html
 
 
-@app.route("/preferences")
-def set_preferences():
-    preferences_str = request.args.get('preferences', '', type=str)
+@app.route("/new_words")
+def new_words():
+    html = render_template('new_words.htm')
+    return html
 
 
-@app.route("/definition/<word>")
-def get_word_definition(word):
+# ---------------------------------
+# ---------- RESTful API ----------
+
+
+@app.route('/text/<text_id>', methods=['DELETE'])
+def delete_text(text_id):
+    datastorage.delete_text(text_id)
+    return ''
+
+
+@app.route("/settings", methods=['PUT'])
+def set_settings():
+    try:
+        Settings.save(datastorage, request.form)
+        return ''
+    except AttributeError:
+        abort(400)
+
+
+@app.route("/definition/<word>", methods=['GET'])
+def word_definition(word):
     if len(word) == 0:
         return jsonify(records=[])
 
@@ -129,8 +156,8 @@ def get_word_definition(word):
     return jsonify(definitions=definitions)
 
 
-@app.route('/sound/<word>')
-def get_sound():
+@app.route('/sound/<word>', methods=['GET'])
+def get_sound(word):
     abort(402)
     # sound is broken
     #content, content_type = google_dict.get_sound_file(word, 'ko')

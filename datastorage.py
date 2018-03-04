@@ -73,7 +73,7 @@ class DataStorage:
     # Learned word
 
     def get_learned_word(self, word):
-        result = self.session.query(LearnedWord.WordId, LearnedWord.Word, LearnedWord.De)
+        result = self.session.query(LearnedWord.WordId, LearnedWord.Word, LearnedWord)
 
     # Text
 
@@ -141,6 +141,8 @@ class DataStorage:
         self.session.query(TextTable). \
                filter(TextTable.TextId == text_id). \
                delete()
+
+
 
 
 if __name__ == "__main__":

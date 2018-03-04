@@ -6,7 +6,7 @@ from ktokenizer import KTokenizer, Paragraph
 from ezsajeon import EzSajeon
 
 env = Environment(loader=PackageLoader('main', 'templates'))
-template = env.get_template('kreader.htm')
+template = env.get_template('word_extraction.htm')
 
 def get_data(ktokenizer):
     text_objs = []

@@ -3,24 +3,24 @@
 
 {% block script %}
 
-
     <script type="text/javascript">
-	    var global_glossary = null {# glossary|safe #};
 		
 		$(document).ready(function() {
-		    init_settings();
-			$("#settings").show();
-			
-			var tokens = {{ tokens|safe }};
-			annotate(tokens);
+			let theme_class = "theme-{{ theme }}";
+			$("#main_panel")
+			   .css('font-size', {{ font_size }})
+			   .addClass(theme_class);
+			let tokens = {{ tokens|safe }};
+			annotate(tokens, theme_class);		
 		});
     </script>
+
 {% endblock %}
   
 {% block content %}
-	<div class="theme-dark">
+	<div id="main_panel">
 		<h2 class="text-title">{{ title }}</h2>
-		<div class="main_panel"> </div>
+		<div class="text-body"> </div>
 		<div id="popup_div" class="popup_msg"></div> 
 	</div>
 {% endblock %}

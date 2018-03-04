@@ -1,11 +1,11 @@
 
-function annotate_word(word_info) {
+function annotate_word(word_info, theme_class) {
    var WORD_SPACE  = 1;
    var WORD_IGNORED = 2;
    var WORD_ANNOTATED = 3;
    var WORD_PARAGRAPH = 4;
    
-   var parent_elem = $('<span />').appendTo('.main_panel');
+   var parent_elem = $('<span />').appendTo('.text-body');
    var text_elem = $(parent_elem);
    var word_class = word_info['class'];
    if (word_class == WORD_SPACE) {
@@ -14,7 +14,7 @@ function annotate_word(word_info) {
    else if (word_class == WORD_ANNOTATED) {
        var word = word_info['text']
        $(text_elem).text(word);
-      attach_tooltip(text_elem, word_info)
+      attach_tooltip(text_elem, word_info, theme_class)
    }
    else if (word_class == WORD_IGNORED) {
       $(text_elem).text(word_info['text']);
@@ -27,7 +27,7 @@ function annotate_word(word_info) {
    }
 }
 
-function attach_tooltip(text_elem, word_info) {
+function attach_tooltip(text_elem, word_info, theme_class) {
    $(text_elem).addClass("defined_word");
    $(text_elem).tooltipster({
       content : 'Loading...',
@@ -35,7 +35,10 @@ function attach_tooltip(text_elem, word_info) {
                     //if (origin.data('ajax') !== 'cached') {
                      if (false) {
                       var content = create_tooltip_content_onplace(word_info);
-                      origin.tooltipster('content', content).data('ajax', 'cached');
+                      origin
+					     .tooltipster('content', content)
+						 .data('ajax', 'cached')
+						 .addClass(theme_class);
                      } else {
                         request_definition(origin, word_info);
                      }
@@ -97,7 +100,8 @@ function create_tooltip_content(dictionary_form, definitions,
      part_of_speech_info = '&nbsp;<span class="popup_part_of_speech">(' + part_of_speech + ')</span>';
    }
    
-   var content = '<span class="popup_defined_word">' + dictionary_form + '</span>';
+   var content = '';
+   content += '<span class="popup_defined_word">' + dictionary_form + '</span>';
    content += part_of_speech_info;
    content += '<span class="popup_conjugation_info">' + conjugation_info + '</span>';
    content += '<br>';
@@ -106,7 +110,6 @@ function create_tooltip_content(dictionary_form, definitions,
    definitions.forEach( function(definition, index) {
       if (definition.length > 0) {
          definition_split += '<li>'
-         //definition_split = '';
          definition.split('\n').forEach( function(value, index) {
             definition_split += value + '<br>';
          } );
@@ -116,17 +119,20 @@ function create_tooltip_content(dictionary_form, definitions,
    definition_split += '</ul>';
    
    content += '<span class="popup_definition">' + definition_split + '</span>';
-   
+  
+  /* sound off  
    pronunciation_url = "/sound/" + dictionary_form;
    content += '<div class="popup_pronounce_button"><a id="play_button" href="#">' + 
               '<img src="static/images/Sound2.png"></img><a></div>';
    content += '<audio id="player"><source src="' + pronunciation_url + '"  preload="none"/></audio>'
-  
+  */
    var new_elem = $(content);
+  /* sound off   
    $("#play_button", new_elem).click(function() {
              $('#player').get(0).play();
              return false;
          });
+  */		 
 
    return new_elem;
 }
@@ -139,65 +145,80 @@ function annotate(text_obj) {
    );
 }
 
+function send_font_settings(font_size) {
+	data = {'font_size' : font_size };
+	send_settings(data);
+}
+
 function change_text_size(delta) {
-   var panel = $(".main_panel");
-   var size = panel.css('font-size');
-   var font_size = parseFloat(size);
+   var font_size = $( "#settings-font-size" ).val();
+   font_size = parseFloat(font_size);
    var new_font_size = Math.min(25, Math.max(5, font_size + delta));
    if(Math.abs(font_size - new_font_size) > 1e-3) {
-     panel.css('font-size', new_font_size + 'px');
+       $( "#settings-font-size" ).val('' + new_font_size);
+	   $( "#settings-font-sample" ).css('font-size', new_font_size);
+	   send_font_settings(new_font_size);
    }
 }
 
-function init_settings() {
+function change_theme(theme) {
+	data = {'theme' : theme };
+	send_settings(data);
+}
 
-var content_html = 
-'<div id="settings_content">' +
-'   <div >'  +
-'      <div>Font Size:</div>'  +
-'      <div>' +
-'         <button id="settings-font-dec" style="">-</button>'  +
-'         <button id="settings-font-inc" style="">+</button>'  +
-'       </div>'  +
-'      <div>Theme:</div>'  +
-  '<form><div id="radio">' +
-  '  <input type="radio" id="radio1" name="radio"><label for="radio1">Choice 1</label>' +
-  '  <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">Choice 2</label>' +
-  '  <input type="radio" id="radio3" name="radio"><label for="radio3">Choice 3</label>' +
-  '</div></form>' +
-'</div>   ';
+function send_settings(data) {
+   $.ajax({ url: '/settings', 
+       data: data,
+	   method: 'PUT', 
+       success: function(data){
+         
+       }, 
+       error: function(req) { /* TODO: error msge */ }
+	   });	
+}
 
-   var content_elem = $(content_html);
-   $( "#settings-font-dec", content_elem )
-       .button()
-      .click(function() {
+function init_settings(font_size, theme) {
+	
+   $( "#settings-font-size" ).val('' + font_size);
+   $( "#settings-font-sample" ).css('font-size', font_size);
+	   
+   $( "#settings-font-dec" )
+       .click(function() {
             change_text_size(-1);
-            return false;
    }); 
    
-   $( "#settings-font-inc", content_elem )
-      .button()
-     .click(function() {
+   $( "#settings-font-inc")
+      .click(function() {
             change_text_size(1);
-            return false;
    });
    
-   /*$( "#setting-light", content_elem ).button();
-   $( "#setting-dark", content_elem ).button();
-   $( "#setting-sepia", content_elem ).button();*/
-   $( "#radio", content_elem ).buttonset();
-  // $( "#radio1", content_elem ).attr('checked', true).button( "refresh" );
+   $( "#settings-theme-light")
+      .prop("checked", theme == "light")
+      .click(function() {
+            change_theme('light');
+   });
    
+   $( "#settings-theme-dark")
+      .prop("checked", theme == "dark")
+      .click(function() {
+            change_theme('dark');
+   });   
 
-   $("#settings").tooltipster({
-      content : content_elem,
-      trigger : 'click',
-      theme : 'tooltipster-light',
-      position : 'bottom',
-      interactive : true,
-      speed : 150,
-      delay : 0,
-      onlyOne : true,
-      //autoClose : false,
+   $( "#settings-theme-sepia")
+      .prop("checked", theme == "sepia")
+      .click(function() {
+            change_theme('sepia');
    });
+
+}
+
+function delete_text(text_id) {
+   $.ajax({ url: '/text/' + text_id, 
+       data: {},
+	   method: 'DELETE', 
+       success: function(data){
+         
+       }, 
+       error: function(req) { /* TODO: error msge */ }
+	   });	
 }
