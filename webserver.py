@@ -4,6 +4,7 @@ from flask import Flask, jsonify, render_template, redirect, request, abort, mak
 from collections import namedtuple
 import logging
 import json
+import datetime
 
 from ktokenizer import KTokenizer, tokenize
 from compositedict import CompositeDictionary
@@ -21,6 +22,7 @@ composite_dict = CompositeDictionary(True)
 google_dict = GoogleDictionary()
 
 Textdesc = namedtuple('Textdesc', ['id', 'title', 'total_words', 'unique_words'])
+Worddesc = namedtuple('Worddesc', ['id', 'word', 'hanja', 'definitions', 'context', 'added_min_ago'])
 
 
 @app.route("/")
@@ -44,7 +46,8 @@ def show_text():
     if text_id:
         title, parsed_text_json = datastorage.get_parsed_text_no_glossary(text_id)
         settings = Settings.load(datastorage)
-        html = render_template('show_text.htm', tokens=parsed_text_json, glossary='', title=title, **settings)
+        html = render_template('show_text.htm', tokens=parsed_text_json, glossary='',
+                               title=title, text_id=text_id, **settings)
         return html
     else:
         abort(404)
@@ -122,9 +125,22 @@ def settings():
     return html
 
 
+def get_new_words():
+    for word_id, word, when_added, context in datastorage.get_new_words():
+        added_min_ago = (datetime.datetime.utcnow() - when_added).total_seconds() // 60
+        definitions = composite_dict.get_definitions(word)
+        yield Worddesc(id=word_id, word=word, context=context, hanja='', added_min_ago=added_min_ago,
+                       definitions=definitions)
+
+
 @app.route("/new_words")
 def new_words():
-    html = render_template('new_words.htm')
+    start = request.args.get('start', 0, type=int)
+    number = request.args.get('number', 100, type=int)
+    all_worddescs = list(get_new_words())
+    total=len(all_worddescs)
+    worddescs = all_worddescs[start:number]
+    html = render_template('new_words.htm', worddescs=worddescs, total=total)
     return html
 
 
@@ -154,6 +170,22 @@ def word_definition(word):
 
     definitions = composite_dict.get_definitions(word)
     return jsonify(definitions=definitions)
+
+
+@app.route('/new_word/<word>')
+@app.route("/new_word/<word>", methods=['PUT', 'DELETE'])
+def add_or_delete_new_word(word):
+    if request.method == 'DELETE':
+        word_id = request.get('word_id', None, type=int)
+        datastorage.delete_word(word_id)
+    else:
+        text_id = request.form.get('text_id', None, type=int)
+        context = request.form.get('context', '')
+        if len(word) == 0:
+            abort(404)
+
+        datastorage.add_new_word(word, text_id, context)
+    return ''
 
 
 @app.route('/sound/<word>', methods=['GET'])

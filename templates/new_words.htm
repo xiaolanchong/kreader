@@ -1,4 +1,4 @@
-{% set btn_settings = "active" %}
+{% set btn_new_words = "active" %}
 {% extends "base.htm" %}
 
 {% block script %}
@@ -7,4 +7,52 @@
   
 {% block content %}
 
+	{% if worddescs|length %}
+        <table class="title-table">
+            <thead>
+                 <tr>
+                     <th>Word</th>
+                     <th>Hanja</th>
+                     <th>Definition</th>
+                     <th>Context</th>
+                     <th></th>
+                     <th></th>
+                 </tr>
+            </thead>
+            <tbody>
+                 {% for worddesc in worddescs %}
+                     <tr id="{{ worddesc.id  }}">
+                         <td>{{ worddesc.word }}</td>
+                         <td>{{ worddesc.hanja }}</td>
+                         <td>
+							{% if worddescs|length %}
+								<ol>
+						        {% for definition in worddesc.definitions %}
+								    <li> {{ definition }} </li>
+							    {% endfor %}
+								</ol>
+							{% else %}
+							    {{ definition }}
+							{% endif %}
+						 </td>
+                         <td>
+						   <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseContext_{{ worddesc.id }}" aria-expanded="false" aria-controls="collapseContext">Show</button>
+						   <div class="collapse" id="collapseContext_{{ worddesc.id }}">{{ worddesc.context }}</div>
+						 </td>
+                         <td>
+						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" data-word-id="{{ worddesc.id  }}" data-word-title="{{ worddesc.title }}" "><img src="static/images/Delete_small.png"></a>
+						 </td>
+                         <td>
+						     <a href="/edittext?id={{ worddesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" 
+							    ><img src="static/images/Modify_small.png"></a>
+						 </td>
+                     </tr>
+                 {% endfor %}
+            </tbody>
+        </table>
+		<div class="m-3">Total words: {{total}}</div>
+	{% else %}
+	  <h3 class="m-3">No word added</h3>
+	{% endif %}
+	
 {% endblock %}

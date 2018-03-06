@@ -2,11 +2,22 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, UnicodeText
+from sqlalchemy import Column, Integer, String, UnicodeText, DateTime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import ForeignKey
+import datetime
 
 Base = declarative_base()
+
+
+class User(Base):
+    __tablename__ = "user"
+
+    UserId = Column('user_id', Integer, primary_key=True, autoincrement=True)
+    Name = Column('name', String, nullable=False)
+    Mail = Column('mail', String)
+    Password = Column('password', String)
+    Salt = Column('salt', String)
 
 
 class Preference(Base):
@@ -20,6 +31,7 @@ class TextTable(Base):
     __tablename__ = "text"
 
     TextId = Column('text_id', Integer, primary_key=True, autoincrement=True)
+    UserId = Column('user_id', ForeignKey("user.text_id"), nullable=True)
     Title = Column('title', String)
     SourceText = Column('source_text', UnicodeText)
     ParsedText = Column('parsed_text', UnicodeText)
@@ -29,23 +41,14 @@ class TextTable(Base):
     Progress = Column('reading_progress', Integer)
 
 
-class LookupWord(Base):
-    __tablename__ = "lookupword"
-
-    LookupId = Column('lookup_id', Integer, primary_key=True, autoincrement=True)
-    TextId = Column('text_id', ForeignKey("text.text_id"), nullable=True)
-    Word = Column('word', String)
-    Definition = Column('definition', String)
-    Context = Column('context', String)
-
-
-class LearnedWord(Base):
-    __tablename__ = "learnedword"
+class NewWord(Base):
+    __tablename__ = "newword"
 
     WordId = Column('word_id', Integer, primary_key=True, autoincrement=True)
-    TextId = Column('text_id', ForeignKey("text.text_id"), nullable=True)
+    UserId = Column('user_id', Integer, ForeignKey('user.user_id'))
     Word = Column('word', String)
-    Definition = Column('definition', String)
+    TextId = Column('text_id', ForeignKey("text.text_id"), nullable=True)
+    WhenAdded = Column('when_added', DateTime)
     Context = Column('context', String)
 
 
@@ -69,11 +72,38 @@ class DataStorage:
 
     def set_preferences(self, preference_string):
         self.session.merge(Preference(UserId=DataStorage.USER_ID, Settings=preference_string))
+        self.session.commit()
 
-    # Learned word
+    # New words
 
-    def get_learned_word(self, word):
-        result = self.session.query(LearnedWord.WordId, LearnedWord.Word, LearnedWord)
+    def get_new_words(self):
+        result = self.session.query(NewWord.WordId, NewWord.Word, NewWord.WhenAdded, NewWord.Context) \
+                             .filter(NewWord.UserId == DataStorage.USER_ID)
+        return result
+
+    def add_new_word(self, word, text_id, context):
+        if self.word_exists(word):
+            raise AttributeError(word + ' already added')
+
+        new_word = NewWord(Word=word, Context=context, UserId=DataStorage.USER_ID, TextId=text_id,
+                           WhenAdded=datetime.datetime.utcnow())
+        self.session.add(new_word)
+        self.session.commit()
+        return new_word.WordId
+
+    def delete_new_word(self, word_id):
+        self.session.query(NewWord). \
+               filter(NewWord.WordId == word_id). \
+               filter(NewWord.UserId == DataStorage.USER_ID). \
+               delete()
+        return
+
+    def word_exists(self, word):
+        result = self.session.query(NewWord.WordId) \
+                             .filter(NewWord.UserId == DataStorage.USER_ID) \
+                             .filter(NewWord.Word == word) \
+                             .one_or_none()
+        return result is not None
 
     # Text
 
@@ -141,8 +171,6 @@ class DataStorage:
         self.session.query(TextTable). \
                filter(TextTable.TextId == text_id). \
                delete()
-
-
 
 
 if __name__ == "__main__":

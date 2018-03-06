@@ -30,7 +30,8 @@ class Settings:
     def save(ds: datastorage.DataStorage, args):
         settings_str = ds.get_preferences()
         db_settings = json.loads(settings_str) if settings_str is not None else {}
-        print('argzzz', args.get)
+        print('db_settings', db_settings)
+        #print('argzzz', args.get)
         font_size = args.get('font_size', None, type=int)
         if font_size:
             if not 5 <= font_size <= 32:

@@ -32,15 +32,14 @@ function attach_tooltip(text_elem, word_info, theme_class) {
    $(text_elem).tooltipster({
       content : 'Loading...',
       functionBefore: function(origin, continueTooltip) { 
-                    //if (origin.data('ajax') !== 'cached') {
                      if (false) {
-                      var content = create_tooltip_content_onplace(word_info);
+                      var content = create_tooltip_content_onplace(word_info, text_elem);
                       origin
 					     .tooltipster('content', content)
 						 .data('ajax', 'cached')
 						 .addClass(theme_class);
                      } else {
-                        request_definition(origin, word_info);
+                        request_definition(origin, word_info, text_elem);
                      }
                      
                      continueTooltip();
@@ -55,21 +54,24 @@ function attach_tooltip(text_elem, word_info, theme_class) {
    });
 }
 
-function request_definition(origin, word_info) {
+function request_definition(origin, word_info, clicked_elem) {
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
    $.ajax({ url: '/definition/' + dictionary_form, 
        data: {},
        success: function(data){
          var definitions = data["definitions"] || [];
-         var content = create_tooltip_content_async(word_info, definitions);
+         var content = create_tooltip_content_async(word_info, definitions, clicked_elem);
          origin.tooltipster('content', content).data('ajax', 'cached');
        }, 
-       error: function(req) { origin.tooltipster('content', 'Error occuried'); },
-       dataType: "json"});
+       error: function(req) { 
+			origin.tooltipster('content', 'Error occuried'); 
+		},
+       dataType: "json"
+	   });
 }
 
-function create_tooltip_content_async(word_info, definitions){
+function create_tooltip_content_async(word_info, definitions, clicked_elem){
    
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
@@ -82,19 +84,19 @@ function create_tooltip_content_async(word_info, definitions){
 
    var part_of_speech = word_info['pos'];
    return create_tooltip_content(dictionary_form, definitions, 
-                    part_of_speech, conjugation_info);
+                    part_of_speech, conjugation_info, clicked_elem);
 }
 
-function create_tooltip_content_onplace(word_info) {
+function create_tooltip_content_onplace(word_info, clicked_elem) {
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
    var definitions = global_glossary[dictionary_form] || [];
    var part_of_speech = word_info['pos'];
-   return create_tooltip_content(dictionary_form, definitions, part_of_speech, '');
+   return create_tooltip_content(dictionary_form, definitions, part_of_speech, '', clicked_elem);
 }
 
 function create_tooltip_content(dictionary_form, definitions, 
-              part_of_speech, conjugation_info) {
+              part_of_speech, conjugation_info, clicked_elem) {
    var part_of_speech_info = '';
    if(part_of_speech) {
      part_of_speech_info = '&nbsp;<span class="popup_part_of_speech">(' + part_of_speech + ')</span>';
@@ -126,15 +128,44 @@ function create_tooltip_content(dictionary_form, definitions,
               '<img src="static/images/Sound2.png"></img><a></div>';
    content += '<audio id="player"><source src="' + pronunciation_url + '"  preload="none"/></audio>'
   */
+   content += '<div class="popup_add_word_button"><a id="add_word_button" href="#">' + 
+              '<img src="static/images/Add.png"></img><a></div>';  
    var new_elem = $(content);
   /* sound off   
    $("#play_button", new_elem).click(function() {
              $('#player').get(0).play();
              return false;
          });
-  */		 
+  */
+   $("#add_word_button", new_elem).click(function() {
+			 var context = extract_context(clicked_elem);
+			 add_new_word(dictionary_form, context);
+             return false;
+         });  
 
    return new_elem;
+}
+
+function add_new_word(word, context) {
+   $.ajax({ url: '/new_word/' + word, 
+       data: { 'context': context, 'text_id': current_text_id},
+	   method: 'PUT', 
+       success: function(data){
+         
+       }, 
+       error: function(req) { /* TODO: error msge */ }
+	   });		
+}
+
+function delete_new_word(word, word_id) {
+   $.ajax({ url: '/new_word/' + word, 
+       data: { 'word_id': word_id},
+	   method: 'DELETE', 
+       success: function(data){
+         
+       }, 
+       error: function(req) { /* TODO: error msge */ }
+	   });		
 }
 
 function annotate(text_obj) {
@@ -219,6 +250,55 @@ function delete_text(text_id) {
        success: function(data){
          
        }, 
-       error: function(req) { /* TODO: error msge */ }
+       error: function(req) { /* TODO: error msg */ }
 	   });	
+}
+
+function concat(one, two, forward) {
+	return forward ? one + two : two + one;
+}
+
+function get_side_context(elem, forward) {
+	const stop_symbol_re = /([\.!\?])/ig;
+	const max_length = 100;
+	let result = '';
+	let iteration_round = 0;
+	while((forward ? $(elem).next() : $(elem).prev()).length) {
+		if(iteration_round > 150) {
+			console.error("Context loop halted");
+			break;
+		}
+		elem = forward ? $(elem).next() : $(elem).prev();	
+		let text = $(elem).text();
+		if (text.length + result.length <= max_length) {
+		//	console.log('Added symbols: ' + text + ', ' + result.length);
+			result = concat(result, text, forward);
+		}
+		else {
+			let match_res = stop_symbol_re.exec(text);
+			if(match_res != null && match_res.index >= 0) {
+				result = concat(result, text.substring(0, match_res.index + (forward? 1 : 0)), forward);
+		//		console.log('Found stop symbol in ' + text + ', ' + match_res.index + ', ' + result.length);
+				break;
+			}
+			else if(result.length < 2*max_length) {
+				result = concat(result, text, forward);
+		//		console.log('Added symbols after limit: ' + text + ', ' + result.length);
+			}
+			else {
+				
+			}
+		}
+		iteration_round += 1;
+	}
+	return result;
+}
+
+// Extracts a sentence or two from the text, which the current html element belongs to
+function extract_context(elem) {
+	let ahead_context = get_side_context(elem, true);
+	let behind_context = get_side_context(elem, false);
+	let result = behind_context + $(elem).text() + ahead_context;
+	//console.log(result);
+	return result;
 }
