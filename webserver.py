@@ -125,8 +125,8 @@ def settings():
     return html
 
 
-def get_new_words():
-    for word_id, word, when_added, context in datastorage.get_new_words():
+def get_new_words(start, number):
+    for word_id, word, when_added, context in datastorage.get_new_words(start, number):
         added_min_ago = (datetime.datetime.utcnow() - when_added).total_seconds() // 60
         definitions = composite_dict.get_definitions(word)
         yield Worddesc(id=word_id, word=word, context=context, hanja='', added_min_ago=added_min_ago,
@@ -137,9 +137,8 @@ def get_new_words():
 def new_words():
     start = request.args.get('start', 0, type=int)
     number = request.args.get('number', 100, type=int)
-    all_worddescs = list(get_new_words())
-    total=len(all_worddescs)
-    worddescs = all_worddescs[start:number]
+    worddescs = list(get_new_words(start, number))
+    total = datastorage.get_word_number()
     html = render_template('new_words.htm', worddescs=worddescs, total=total)
     return html
 

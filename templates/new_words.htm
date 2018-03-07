@@ -3,8 +3,34 @@
 
 {% block script %}
 
+    <script type="text/javascript">
+
+	$(document).ready(function() {
+		$( "#dialog-confirm" ).dialog({
+		  autoOpen: false,
+		  resizable: false,
+		  height: "auto",
+		  width: 400,
+		  modal: true,
+		  buttons: {
+			"Delete word": function() {
+			  $( this ).dialog( "close" );
+			},
+			"Cancel": function() {
+			  $( this ).dialog( "close" );
+			}
+		  }
+		});
+		
+		$( "#delete_word" ).on( "click", function() {
+		   $( "#dialog-confirm" ).dialog( "open" );
+		});
+	
+	});
+	
+	</script>
 {% endblock %}
-  
+ 
 {% block content %}
 
 	{% if worddescs|length %}
@@ -12,47 +38,54 @@
             <thead>
                  <tr>
                      <th>Word</th>
-                     <th>Hanja</th>
+                 <!--    <th>Hanja</th> -->
                      <th>Definition</th>
                      <th>Context</th>
-                     <th></th>
-                     <th></th>
+                 <!--    <th></th>
+                     <th></th> -->
                  </tr>
             </thead>
             <tbody>
-                 {% for worddesc in worddescs %}
-                     <tr id="{{ worddesc.id  }}">
-                         <td>{{ worddesc.word }}</td>
-                         <td>{{ worddesc.hanja }}</td>
-                         <td>
-							{% if worddescs|length %}
-								<ol>
-						        {% for definition in worddesc.definitions %}
-								    <li> {{ definition }} </li>
-							    {% endfor %}
-								</ol>
-							{% else %}
-							    {{ definition }}
-							{% endif %}
-						 </td>
-                         <td>
-						   <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseContext_{{ worddesc.id }}" aria-expanded="false" aria-controls="collapseContext">Show</button>
-						   <div class="collapse" id="collapseContext_{{ worddesc.id }}">{{ worddesc.context }}</div>
-						 </td>
-                         <td>
-						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" data-word-id="{{ worddesc.id  }}" data-word-title="{{ worddesc.title }}" "><img src="static/images/Delete_small.png"></a>
-						 </td>
-                         <td>
-						     <a href="/edittext?id={{ worddesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" 
-							    ><img src="static/images/Modify_small.png"></a>
-						 </td>
-                     </tr>
-                 {% endfor %}
+			 {% for worddesc in worddescs %}
+				 <tr id="{{ worddesc.id  }}">
+					 <td><div class="mx-1">{{ worddesc.word }}</div></td>
+					<!-- <td>{{ worddesc.hanja }}</td> -->
+					 <td class="small">
+						{% if worddescs|length %}
+							<ol>
+							{% for definition in worddesc.definitions %}
+								{% if definition|length %} <li> {{ definition }} </li> {% endif %}
+							{% endfor %}
+							</ol>
+						{% else %}
+							{{ definition }}
+						{% endif %}
+					 </td>
+					 <td>
+					   <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#collapseContext_{{ worddesc.id }}" aria-expanded="false" aria-controls="collapseContext">Show</button>
+						<a href="#" class="btn btn-outline-secondary btn-sm a_delete" id="delete_word"
+							 data-word-id="{{ worddesc.id }}" data-word="{{ worddesc.word }}"">
+							<img src="static/images/Delete_small.png">
+						</a>
+					   <div class="collapse small" id="collapseContext_{{ worddesc.id }}">{{ worddesc.context }}</div>
+					 </td>
+					 <!--
+					 <td>
+						 <a href="/edittext?id={{ worddesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" 
+							><img src="static/images/Modify_small.png"></a>
+					 </td>
+					 -->
+				 </tr>
+			 {% endfor %}
             </tbody>
         </table>
-		<div class="m-3">Total words: {{total}}</div>
+		<div class="m-1">Total words: {{total}}</div>
 	{% else %}
 	  <h3 class="m-3">No word added</h3>
 	{% endif %}
+	
+<div id="dialog-confirm" title="Empty the recycle bin?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>These items will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
 	
 {% endblock %}

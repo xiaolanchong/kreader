@@ -76,9 +76,11 @@ class DataStorage:
 
     # New words
 
-    def get_new_words(self):
+    def get_new_words(self, start=0, number=100):
         result = self.session.query(NewWord.WordId, NewWord.Word, NewWord.WhenAdded, NewWord.Context) \
-                             .filter(NewWord.UserId == DataStorage.USER_ID)
+                             .filter(NewWord.UserId == DataStorage.USER_ID) \
+                             .limit(number) \
+                             .offset(start)
         return result
 
     def add_new_word(self, word, text_id, context):
@@ -96,7 +98,6 @@ class DataStorage:
                filter(NewWord.WordId == word_id). \
                filter(NewWord.UserId == DataStorage.USER_ID). \
                delete()
-        return
 
     def word_exists(self, word):
         result = self.session.query(NewWord.WordId) \
@@ -104,6 +105,12 @@ class DataStorage:
                              .filter(NewWord.Word == word) \
                              .one_or_none()
         return result is not None
+
+    def get_word_number(self):
+        result = self.session.query(NewWord.WordId) \
+                             .filter(NewWord.UserId == DataStorage.USER_ID) \
+                             .count()
+        return result
 
     # Text
 

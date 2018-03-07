@@ -4,8 +4,8 @@
 #main_panel 
 {
    text-align: left;
-   padding-left: 10px;
-   line-height: 150%;
+  /* padding-left: 10px;
+   line-height: 150%;*/
 }
 
 /*************** Popup word definition tooltip  ****************/
@@ -30,8 +30,6 @@ margin-bottom: 0;
 /*border-bottom: 1px solid lightgray;*/
 }
 
-
-
 .popup_definition li
 {
 /*list-style: none;*/
@@ -40,7 +38,6 @@ margin-left: 0.5em;
 padding: 0.25em;
 /*border-top: 1px solid gray;*/
 }
-
 
 .popup_part_of_speech
 {
@@ -106,15 +103,9 @@ padding: 0.25em;
   padding: 10px 10px;
 }
 
-
-li
-{
-    margin-top: 10px;
-}
-
 .title-table
 {
-margin: 10px;
+margin: 3px;
 border-collapse: collapse;
 }
 
@@ -122,7 +113,7 @@ border-collapse: collapse;
 {
 /*width: 25%;*/
 padding: 4px;
-text-align: left;
+text-align: center;
 vertical-align: top;
 color: #333;
 background-color: #eee;
@@ -130,7 +121,7 @@ border: 1px solid #b9b9b9;
 }
 .title-table td
 {
-padding: 4px;
+padding: 1px;
 background-color: #fff;
 border: 1px solid #b9b9b9;
 }
@@ -140,11 +131,13 @@ img
     margin: 5px;
 }
 
-/* Settings page */
-
-#settings {
-   cursor: pointer;
+td ol
+{
+	margin-left: 1.5em;
+	padding-left: 0;
 }
+
+/* Settings page */
 
 .settings-theme
 {
