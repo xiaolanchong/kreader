@@ -1,4 +1,6 @@
 
+//--------------------- Show text page ------------------------
+
 function annotate_word(word_info, theme_class) {
    var WORD_SPACE  = 1;
    var WORD_IGNORED = 2;
@@ -146,26 +148,35 @@ function create_tooltip_content(dictionary_form, definitions,
    return new_elem;
 }
 
+function display_ok(title, message) {
+	$.notify({
+			title: '',
+			message: message
+		},{
+			type: 'success'
+		});	
+}
+
+function display_error(title, message) {
+	$.notify({
+			title: '<strong>' + title + '</strong>',
+			message: message
+		},{
+			type: 'danger'
+		});	
+}
+
 function add_new_word(word, context) {
    $.ajax({ url: '/new_word/' + word, 
        data: { 'context': context, 'text_id': current_text_id},
 	   method: 'PUT', 
        success: function(data){
-         
+		  display_ok('', '\'' + word + '\' added.');
        }, 
-       error: function(req) { /* TODO: error msge */ }
-	   });		
-}
-
-function delete_new_word(word, word_id) {
-   $.ajax({ url: '/new_word/' + word, 
-       data: { 'word_id': word_id},
-	   method: 'DELETE', 
-       success: function(data){
-         
-       }, 
-       error: function(req) { /* TODO: error msge */ }
-	   });		
+       error: function(req) {
+		  display_error('Error!', '\'' + word + '\' not added.')		   
+	   }
+	});		
 }
 
 function annotate(text_obj) {
@@ -176,82 +187,15 @@ function annotate(text_obj) {
    );
 }
 
-function send_font_settings(font_size) {
-	data = {'font_size' : font_size };
-	send_settings(data);
-}
-
-function change_text_size(delta) {
-   var font_size = $( "#settings-font-size" ).val();
-   font_size = parseFloat(font_size);
-   var new_font_size = Math.min(25, Math.max(5, font_size + delta));
-   if(Math.abs(font_size - new_font_size) > 1e-3) {
-       $( "#settings-font-size" ).val('' + new_font_size);
-	   $( "#settings-font-sample" ).css('font-size', new_font_size);
-	   send_font_settings(new_font_size);
-   }
-}
-
-function change_theme(theme) {
-	data = {'theme' : theme };
-	send_settings(data);
-}
-
-function send_settings(data) {
-   $.ajax({ url: '/settings', 
-       data: data,
-	   method: 'PUT', 
-       success: function(data){
-         
-       }, 
-       error: function(req) { /* TODO: error msge */ }
-	   });	
-}
-
-function init_settings(font_size, theme) {
-	
-   $( "#settings-font-size" ).val('' + font_size);
-   $( "#settings-font-sample" ).css('font-size', font_size);
-	   
-   $( "#settings-font-dec" )
-       .click(function() {
-            change_text_size(-1);
-   }); 
-   
-   $( "#settings-font-inc")
-      .click(function() {
-            change_text_size(1);
-   });
-   
-   $( "#settings-theme-light")
-      .prop("checked", theme == "light")
-      .click(function() {
-            change_theme('light');
-   });
-   
-   $( "#settings-theme-dark")
-      .prop("checked", theme == "dark")
-      .click(function() {
-            change_theme('dark');
-   });   
-
-   $( "#settings-theme-sepia")
-      .prop("checked", theme == "sepia")
-      .click(function() {
-            change_theme('sepia');
-   });
-
-}
-
 function delete_text(text_id) {
    $.ajax({ url: '/text/' + text_id, 
        data: {},
 	   method: 'DELETE', 
        success: function(data){
-         
+          display_ok('', 'Text added.');
        }, 
-       error: function(req) { /* TODO: error msg */ }
-	   });	
+       error: function(req) { display_error('Error!', 'New text not added.');  }
+	});	
 }
 
 function concat(one, two, forward) {
@@ -301,4 +245,67 @@ function extract_context(elem) {
 	let result = behind_context + $(elem).text() + ahead_context;
 	//console.log(result);
 	return result;
+}
+
+//-------------------- New words page ----------------
+
+function delete_new_word(word, word_id) {
+   $.ajax({ url: '/new_word/' + word, 
+       data: { 'word_id': word_id},
+	   method: 'DELETE', 
+       success: function(data){
+           display_ok('', '\'' + word + '\' deleted.');
+       }, 
+       error: function(req) { display_error('Error!', '\'' + word + '\' not deleted.'); }
+	   });		
+}
+
+//--------------------- Settings page ------------------------
+
+function change_text_size() {
+    const new_font_size = $( "#settings-font-size" ).spinner("value");
+	$( "#settings-font-sample" ).css('font-size', new_font_size);
+	data = {'font_size' : new_font_size };
+	send_settings(data);
+}
+
+function change_theme(theme) {
+	data = {'theme' : theme };
+	send_settings(data);
+}
+
+function send_settings(data) {
+   $.ajax({ url: '/settings', 
+		data: data,
+		method: 'PUT', 
+		success: function(data){}, 
+		error: function(req) { 
+	       display_error('Error!', 'New settings not saved.'); 
+		}
+	});	
+}
+
+function init_settings(font_size, theme) {
+	
+   $( "#settings-font-size" ).spinner( "value", font_size );
+   $( "#settings-font-sample" ).css('font-size', font_size);
+
+   $( "#settings-theme-light")
+      .prop("checked", theme == "light")
+      .click(function() {
+            change_theme('light');
+   });
+   
+   $( "#settings-theme-dark")
+      .prop("checked", theme == "dark")
+      .click(function() {
+            change_theme('dark');
+   });   
+
+   $( "#settings-theme-sepia")
+      .prop("checked", theme == "sepia")
+      .click(function() {
+            change_theme('sepia');
+   });
+
 }

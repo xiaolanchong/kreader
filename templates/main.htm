@@ -65,8 +65,6 @@
                      <th>Title</th>
                      <th>Total Words</th>
                      <th>Unique Words</th>
-                     <th>Reading Progress</th>
-                     <th></th>
                      <th></th>
                  </tr>
             </thead>
@@ -76,12 +74,9 @@
                          <td><a href="/showtext?id={{ textdesc.id }}">{{ textdesc.title }}</a></td>
                          <td>{{ textdesc.total_words }}</td>
                          <td>{{ textdesc.unique_words }}</td>
-                         <td>0</td>
                          <td>
 						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" data-text-id="{{ textdesc.id  }}" data-text-title="{{ textdesc.title }}" "><img src="static/images/Delete_small.png"></a>
-						 </td>
-                         <td>
-						     <a href="/edittext?id={{ textdesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" 
+						    <a href="/edittext?id={{ textdesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" 
 							    ><img src="static/images/Modify_small.png"></a>
 						 </td>
                      </tr>

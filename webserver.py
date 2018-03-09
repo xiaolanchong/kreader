@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, jsonify, render_template, redirect, request, abort, make_response
+from flask import Flask, jsonify, render_template, redirect, request, abort, Response
 from collections import namedtuple
+from io import StringIO
+import csv
+import re
 import logging
 import json
 import datetime
@@ -22,7 +25,7 @@ composite_dict = CompositeDictionary(True)
 google_dict = GoogleDictionary()
 
 Textdesc = namedtuple('Textdesc', ['id', 'title', 'total_words', 'unique_words'])
-Worddesc = namedtuple('Worddesc', ['id', 'word', 'hanja', 'definitions', 'context', 'added_min_ago'])
+Worddesc = namedtuple('Worddesc', ['id', 'word', 'hanja', 'definitions', 'context', 'added_min_ago', 'title'])
 
 
 @app.route("/")
@@ -126,20 +129,20 @@ def settings():
 
 
 def get_new_words(start, number):
-    for word_id, word, when_added, context in datastorage.get_new_words(start, number):
+    for word_id, word, when_added, context, title, _ in datastorage.get_new_words(start, number):
         added_min_ago = (datetime.datetime.utcnow() - when_added).total_seconds() // 60
         definitions = composite_dict.get_definitions(word)
         yield Worddesc(id=word_id, word=word, context=context, hanja='', added_min_ago=added_min_ago,
-                       definitions=definitions)
+                       definitions=definitions, title=title)
 
 
 @app.route("/new_words")
 def new_words():
     start = request.args.get('start', 0, type=int)
-    number = request.args.get('number', 100, type=int)
+    number = request.args.get('number', 20, type=int)
     worddescs = list(get_new_words(start, number))
     total = datastorage.get_word_number()
-    html = render_template('new_words.htm', worddescs=worddescs, total=total)
+    html = render_template('new_words.htm', worddescs=worddescs, total=total, start=start)
     return html
 
 
@@ -171,12 +174,11 @@ def word_definition(word):
     return jsonify(definitions=definitions)
 
 
-@app.route('/new_word/<word>')
 @app.route("/new_word/<word>", methods=['PUT', 'DELETE'])
 def add_or_delete_new_word(word):
     if request.method == 'DELETE':
-        word_id = request.get('word_id', None, type=int)
-        datastorage.delete_word(word_id)
+        word_id = request.form.get('word_id', None, type=int)
+        datastorage.delete_new_word(word_id)
     else:
         text_id = request.form.get('text_id', None, type=int)
         context = request.form.get('context', '')
@@ -185,6 +187,30 @@ def add_or_delete_new_word(word):
 
         datastorage.add_new_word(word, text_id, context)
     return ''
+
+
+def get_csv_words(start, number):
+    re_hanja = re.compile("([\u4E00-\u9FFF-]{2,})", re.MULTILINE | re.UNICODE)
+    outbuffer = StringIO()
+    writer = csv.writer(outbuffer, dialect='excel', quoting=csv.QUOTE_MINIMAL)
+    for _, word, _, context, _, tag in datastorage.get_new_words(start=start, number=number):
+        definitions = composite_dict.get_definitions(word)
+        definition = '\n'.join(definitions)
+        m_hanja = re_hanja.findall(definition)
+        hanja = ', '.join(m_hanja)
+        writer.writerow([word, hanja, definition, context, tag])
+    return outbuffer.getvalue()
+
+
+@app.route('/download_words', methods=['GET'])
+def download_words():
+    start = request.form.get('start', None, type=int)
+    number = request.form.get('number', None, type=int)
+    content = get_csv_words(start, number)
+    response = Response(content, mimetype='text/csv')
+    response.headers['Content-Type'] = 'application/force-download'
+    response.headers['Content-disposition'] = 'attachment; filename=deck.csv'
+    return response
 
 
 @app.route('/sound/<word>', methods=['GET'])

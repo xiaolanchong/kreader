@@ -6,7 +6,20 @@
     <script type="text/javascript">
 
 		$(document).ready(function() {
+			$( "#settings-font-size" ).spinner({
+			  min: 7,
+			  max: 25,
+			  change: function( event, ui ) {
+				 change_text_size(); 
+			  },
+			  stop: function( event, ui ) {
+				 change_text_size(); 
+			  }
+			});	
+			
 		    init_settings({{ font_size }}, "{{ theme }}");
+			
+		
 		});
     </script>
 
@@ -15,27 +28,23 @@
 {% block content %}
 
 <div id="settings_content"> 
-	  <h3>Settings</h3>	
-		<form class="input-group  m-2">
-		  <label class="form-check-label m-1 align-self-md-center " for="defaultCheck1">
-			Font Size:
-		  </label>
-		  <input class="m-1" type="text"  size="2" id="settings-font-size">
-		  <button class="btn btn-success m-1" type="button" id="settings-font-inc">+</button>
-		  <button class="btn btn-success m-1" type="button" id="settings-font-dec">-</button>
-	  </form>
-		<div class="m-3 align-self-md-center " for="defaultCheck1" id="settings-font-sample">	
-		    Lorem ipsum dolor sit amet, primis liberavisse usu ea, ea cum graeci conceptam.<br>
-			국방상 또는 국민경제상 긴절한 필요로 인하여 법률이 정하는 경우를 제외하고는.<br>
-			Лорем ипсум долор сит амет, вел но видит лаудем, меи стет солута волумус ех.
-		  </div>	  
-		<form class="m-2">
-		  <div id="radio"> 
-			  <label  class="m-1">Theme:</label> 
-			  <input type="radio" id="settings-theme-light" name="radio" class="ml-3"><label for="settings-theme-light" class="theme-light border ml-1 btn-lg">Light</label> 	
-			  <input type="radio" id="settings-theme-dark" name="radio" class="ml-3"><label for="settings-theme-dark" class="theme-dark border ml-1 btn-lg">Dark</label>
-			  <input type="radio" id="settings-theme-sepia" name="radio" class="ml-3" ><label for="settings-theme-sepia" class="theme-sepia border ml-1 btn-lg">Sepia</label>	  
-		 </div>
-	   </form> 
+	<h3>Settings</h3>	
+	<form class="input-group ">
+		<label class="form-check-label align-self-md-center " for="settings-font-size">Font Size:</label>
+		<input class="mx-2" type="text" size="2" id="settings-font-size" readonly>
+	</form>
+	<div class="m-3 align-self-md-center " id="settings-font-sample">	
+		Lorem ipsum dolor sit amet, primis liberavisse usu ea, ea cum graeci conceptam.<br>
+		국방상 또는 국민경제상 긴절한 필요로 인하여 법률이 정하는 경우를 제외하고는.<br>
+		Лорем ипсум долор сит амет, вел но видит лаудем, меи стет солута волумус ех.
+	</div>
+	<form class="m-2">
+		<div> 
+			<label class="m-1">Theme:</label> 
+			<input type="radio" id="settings-theme-light" name="radio" class="ml-3"><label for="settings-theme-light" class="theme-light border ml-1 btn-lg">Light</label> 	
+			<input type="radio" id="settings-theme-dark" name="radio" class="ml-3"><label for="settings-theme-dark" class="theme-dark border ml-1 btn-lg">Dark</label>
+			<input type="radio" id="settings-theme-sepia" name="radio" class="ml-3" ><label for="settings-theme-sepia" class="theme-sepia border ml-1 btn-lg">Sepia</label>	  
+		</div>
+	</form> 
 </div> 
 {% endblock %}

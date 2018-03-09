@@ -75,27 +75,19 @@ padding: 0.25em;
 .app-title
 {
     font-size: 200%;
-    text-align: left;
+ 
 }
 
 .header-panel
 {
     padding: 5px 10px 5px 10px;
     background-color: #c8c8c8;
-    vertical-align: middle;
+   /* vertical-align: middle;*/
 }
 
 .body-class
 {
     font-family: Verdana, Tahoma, sans-serif;
-}
-
-.text-title
-{
-   text-align: center;
-   padding-top: 10px;
-   padding-bottom: 0px;
-   margin-bottom: 10px;
 }
 
 #settings_content
@@ -128,7 +120,7 @@ border: 1px solid #b9b9b9;
 
 img
 {
-    margin: 5px;
+  /*  margin: 5px; */
 }
 
 td ol

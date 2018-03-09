@@ -33,12 +33,12 @@ class TextTable(Base):
     TextId = Column('text_id', Integer, primary_key=True, autoincrement=True)
     UserId = Column('user_id', ForeignKey("user.text_id"), nullable=True)
     Title = Column('title', String)
+    Tag = Column('tag', String, default='')
     SourceText = Column('source_text', UnicodeText)
     ParsedText = Column('parsed_text', UnicodeText)
     Glossary = Column('glossary', UnicodeText)
     TotalWords = Column('total_words', Integer)
     UniqueWords = Column('unique_words', Integer)
-    Progress = Column('reading_progress', Integer)
 
 
 class NewWord(Base):
@@ -57,8 +57,8 @@ class DataStorage:
 
     def __init__(self, path_to_db):
         self.engine = create_engine('sqlite:///' + path_to_db)
-        Session = sessionmaker(bind=self.engine)
-        self.session = Session()
+        sessionMaker = sessionmaker(bind=self.engine)
+        self.session = sessionMaker()
 
     def create_db(self):
         Base.metadata.bind = self.engine
@@ -77,11 +77,15 @@ class DataStorage:
     # New words
 
     def get_new_words(self, start=0, number=100):
-        result = self.session.query(NewWord.WordId, NewWord.Word, NewWord.WhenAdded, NewWord.Context) \
+        query = self.session.query(NewWord.WordId, NewWord.Word, NewWord.WhenAdded, NewWord.Context,
+                                   TextTable.Title, TextTable.Tag) \
                              .filter(NewWord.UserId == DataStorage.USER_ID) \
-                             .limit(number) \
-                             .offset(start)
-        return result
+                             .outerjoin(TextTable, NewWord.TextId == TextTable.TextId)
+        if start is not None:
+            query = query.offset(start)
+        if number is not None:
+            query = query.limit(number)
+        return query
 
     def add_new_word(self, word, text_id, context):
         if self.word_exists(word):
