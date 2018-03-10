@@ -32,7 +32,7 @@ Worddesc = namedtuple('Worddesc', ['id', 'word', 'hanja', 'definitions', 'contex
 def start_page():
     textdescs = [Textdesc(id=id, title=title,
                           total_words=total_words, unique_words=unique_words) for
-                          id, title, total_words, unique_words, progress in datastorage.get_all_text_descs()]
+                          id, title, total_words, unique_words in datastorage.get_all_text_descs()]
     html = render_template('main.htm', textdescs=textdescs)
     return html
 
@@ -171,7 +171,8 @@ def word_definition(word):
         return jsonify(records=[])
 
     definitions = composite_dict.get_definitions(word)
-    return jsonify(definitions=definitions)
+    already_added = datastorage.word_exists(word)
+    return jsonify(definitions=definitions, already_added=already_added)
 
 
 @app.route("/new_word/<word>", methods=['PUT', 'DELETE'])
@@ -209,7 +210,7 @@ def download_words():
     content = get_csv_words(start, number)
     response = Response(content, mimetype='text/csv')
     response.headers['Content-Type'] = 'application/force-download'
-    response.headers['Content-disposition'] = 'attachment; filename=deck.csv'
+    response.headers['Content-disposition'] = 'attachment; filename=words.csv'
     return response
 
 

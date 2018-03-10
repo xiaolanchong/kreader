@@ -120,7 +120,7 @@ class DataStorage:
 
     def get_all_text_descs(self):
         return self.session.query(TextTable.TextId, TextTable.Title,
-                                  TextTable.TotalWords, TextTable.UniqueWords, TextTable.Progress).all()
+                                  TextTable.TotalWords, TextTable.UniqueWords).all()
 
     def get_parsed_text(self, text_id):
         res = self.session.query(TextTable.Title, TextTable.ParsedText, TextTable.Glossary). \
@@ -167,15 +167,13 @@ class DataStorage:
         glossary = kwargs['glossary']
         total_words = kwargs.get('total_words', 0)
         unique_words = kwargs.get('unique_words', 0)
-        progress = 0
 
         self.session.query(TextTable).\
             filter(TextTable.TextId == text_id).\
             update({
                 TextTable.Title: title, TextTable.SourceText: source_text,
                 TextTable.ParsedText: parsed_text, TextTable.Glossary: glossary,
-                TextTable.TotalWords: total_words, TextTable.UniqueWords: unique_words,
-                TextTable.Progress: progress})
+                TextTable.TotalWords: total_words, TextTable.UniqueWords: unique_words})
         self.session.commit()
 
     def delete_text(self, text_id):

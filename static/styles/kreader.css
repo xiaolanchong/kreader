@@ -57,6 +57,12 @@ padding: 0.25em;
     right: 0px;
 }
 
+.gray
+{
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+}
+
 /** Show text - individual words  **/
 
 .defined_word:hover
@@ -75,14 +81,12 @@ padding: 0.25em;
 .app-title
 {
     font-size: 200%;
- 
 }
 
 .header-panel
 {
     padding: 5px 10px 5px 10px;
     background-color: #c8c8c8;
-   /* vertical-align: middle;*/
 }
 
 .body-class
@@ -116,11 +120,6 @@ border: 1px solid #b9b9b9;
 padding: 1px;
 background-color: #fff;
 border: 1px solid #b9b9b9;
-}
-
-img
-{
-  /*  margin: 5px; */
 }
 
 td ol

@@ -34,18 +34,9 @@ function attach_tooltip(text_elem, word_info, theme_class) {
    $(text_elem).tooltipster({
       content : 'Loading...',
       functionBefore: function(origin, continueTooltip) { 
-                     if (false) {
-                      var content = create_tooltip_content_onplace(word_info, text_elem);
-                      origin
-					     .tooltipster('content', content)
-						 .data('ajax', 'cached')
-						 .addClass(theme_class);
-                     } else {
-                        request_definition(origin, word_info, text_elem);
-                     }
-                     
-                     continueTooltip();
-                  },
+                          request_definition(origin, word_info, text_elem);	                 
+						  continueTooltip();
+					  },
       trigger : 'click',
       theme : 'tooltipster-default',
       position : 'bottom',
@@ -57,23 +48,24 @@ function attach_tooltip(text_elem, word_info, theme_class) {
 }
 
 function request_definition(origin, word_info, clicked_elem) {
-   var word = word_info['text']
-   var dictionary_form = word_info['dict_form'] || word;
+   const word = word_info['text']
+   const dictionary_form = word_info['dict_form'] || word;
    $.ajax({ url: '/definition/' + dictionary_form, 
-       data: {},
-       success: function(data){
-         var definitions = data["definitions"] || [];
-         var content = create_tooltip_content_async(word_info, definitions, clicked_elem);
-         origin.tooltipster('content', content).data('ajax', 'cached');
-       }, 
-       error: function(req) { 
+		data: {},
+		success: function(data){
+			const definitions = data["definitions"] || [];
+			const already_added = data["already_added"] || false;
+			const content = create_tooltip_content_async(word_info, definitions, already_added, clicked_elem);
+			origin.tooltipster('content', content).data('ajax', 'cached');
+		}, 
+		error: function(req) { 
 			origin.tooltipster('content', 'Error occuried'); 
 		},
-       dataType: "json"
-	   });
+		dataType: "json"
+	});
 }
 
-function create_tooltip_content_async(word_info, definitions, clicked_elem){
+function create_tooltip_content_async(word_info, definitions, already_added, clicked_elem){
    
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
@@ -86,9 +78,10 @@ function create_tooltip_content_async(word_info, definitions, clicked_elem){
 
    var part_of_speech = word_info['pos'];
    return create_tooltip_content(dictionary_form, definitions, 
-                    part_of_speech, conjugation_info, clicked_elem);
+                    part_of_speech, conjugation_info, already_added, clicked_elem);
 }
 
+/*
 function create_tooltip_content_onplace(word_info, clicked_elem) {
    var word = word_info['text']
    var dictionary_form = word_info['dict_form'] || word;
@@ -96,22 +89,23 @@ function create_tooltip_content_onplace(word_info, clicked_elem) {
    var part_of_speech = word_info['pos'];
    return create_tooltip_content(dictionary_form, definitions, part_of_speech, '', clicked_elem);
 }
+*/
 
 function create_tooltip_content(dictionary_form, definitions, 
-              part_of_speech, conjugation_info, clicked_elem) {
+              part_of_speech, conjugation_info, already_added, clicked_elem) {
    var part_of_speech_info = '';
    if(part_of_speech) {
      part_of_speech_info = '&nbsp;<span class="popup_part_of_speech">(' + part_of_speech + ')</span>';
    }
    
-   var content = '';
-   content += '<span class="popup_defined_word">' + dictionary_form + '</span>';
-   content += part_of_speech_info;
-   content += '<span class="popup_conjugation_info">' + conjugation_info + '</span>';
-   content += '<br>';
+    var content = '';
+    content += '<span class="popup_defined_word">' + dictionary_form + '</span>';
+    content += part_of_speech_info;
+    content += '<span class="popup_conjugation_info">' + conjugation_info + '</span>';
+    content += '<br>';
    
-   definition_split = '<ul>';
-   definitions.forEach( function(definition, index) {
+    definition_split = '<ul>';
+    definitions.forEach( function(definition, index) {
       if (definition.length > 0) {
          definition_split += '<li>'
          definition.split('\n').forEach( function(value, index) {
@@ -119,10 +113,10 @@ function create_tooltip_content(dictionary_form, definitions,
          } );
          definition_split += '</li>'
       }
-   });
-   definition_split += '</ul>';
+    });
+    definition_split += '</ul>';
    
-   content += '<span class="popup_definition">' + definition_split + '</span>';
+	content += '<span class="popup_definition">' + definition_split + '</span>';
   
   /* sound off  
    pronunciation_url = "/sound/" + dictionary_form;
@@ -130,16 +124,23 @@ function create_tooltip_content(dictionary_form, definitions,
               '<img src="static/images/Sound2.png"></img><a></div>';
    content += '<audio id="player"><source src="' + pronunciation_url + '"  preload="none"/></audio>'
   */
-   content += '<div class="popup_add_word_button"><a id="add_word_button" href="#">' + 
-              '<img src="static/images/Add.png"></img><a></div>';  
-   var new_elem = $(content);
+    content += '<div class="popup_add_word_button">';
+	if(!already_added) {
+		content += '<a id="add_word_button" href="#">' +
+					 '<img class="m-1" src="static/images/Add.png"/>' +
+				   '<a>';
+	} else {
+		content += '<img class="gray m-1" src="static/images/Add.png"/>';
+	}
+	content += '</div>';  
+    const new_elem = $(content);
   /* sound off   
    $("#play_button", new_elem).click(function() {
              $('#player').get(0).play();
              return false;
          });
   */
-   $("#add_word_button", new_elem).click(function() {
+    $("#add_word_button", new_elem).click(function() {
 			 var context = extract_context(clicked_elem);
 			 add_new_word(dictionary_form, context);
              return false;

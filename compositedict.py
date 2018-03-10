@@ -50,3 +50,7 @@ if __name__ == "__main__":
     print('-' * 25)
     res = dc.get_definition('콧수염', True)
     print(res)
+
+    print('-' * 25)
+    res = dc.stardict_ru.get_definition('자기', False)
+    print(res)
