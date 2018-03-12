@@ -1,20 +1,26 @@
 
 //--------------------- Show text page ------------------------
 
+//@param word_info is a dict of { 'class' : 1-4
+//                                'text' : 
+//                                'dict_form :
+//                                'dec_tok'
+//                              }
+//@param theme_class one of text-(light|dark|sepia) classes
 function annotate_word(word_info, theme_class) {
-   var WORD_SPACE  = 1;
-   var WORD_IGNORED = 2;
-   var WORD_ANNOTATED = 3;
-   var WORD_PARAGRAPH = 4;
+   const WORD_SPACE  = 1;
+   const WORD_IGNORED = 2;
+   const WORD_ANNOTATED = 3;
+   const WORD_PARAGRAPH = 4;
    
-   var parent_elem = $('<span />').appendTo('.text-body');
-   var text_elem = $(parent_elem);
-   var word_class = word_info['class'];
+   const parent_elem = $('<span />').appendTo('.text-body');
+   const text_elem = $(parent_elem);
+   const word_class = word_info['class'];
    if (word_class == WORD_SPACE) {
      $(text_elem).text(' ');
    }
    else if (word_class == WORD_ANNOTATED) {
-       var word = word_info['text']
+       const word = word_info['text']
        $(text_elem).text(word);
       attach_tooltip(text_elem, word_info, theme_class)
    }
@@ -73,7 +79,7 @@ function create_tooltip_content_async(word_info, definitions, already_added, cli
 
    conjugation_info = ''
    $.each(dependent_tokens, function(index, value) {
-      conjugation_info += ' +' + value[1]; // + '/' + value[0];
+      conjugation_info += ' +' + value[1] + '/' + value[0];
    });
 
    var part_of_speech = word_info['pos'];
@@ -193,9 +199,9 @@ function delete_text(text_id) {
        data: {},
 	   method: 'DELETE', 
        success: function(data){
-          display_ok('', 'Text added.');
+          display_ok('', 'Text deleted.');
        }, 
-       error: function(req) { display_error('Error!', 'New text not added.');  }
+       error: function(req) { display_error('Error!', 'Text not deleted.');  }
 	});	
 }
 

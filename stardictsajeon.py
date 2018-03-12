@@ -69,11 +69,14 @@ class StardictRuSajeon(StardictBaseSajeon):
     def get_definitions(article):
         for definition in article.split('\n\n'):
             second_cr = find_nth(definition, '\n', 2)
-            yield definition[:second_cr]
+            subst = definition[:second_cr] if second_cr > 0 else definition
+            subst = subst.rstrip()
+            if len(subst):
+                yield subst
 
     def customize(self, article, add_examples):
         if add_examples:
-            return article
+            return article.rstrip()
 
         return '\n'.join(StardictRuSajeon.get_definitions(article))
 

@@ -3,8 +3,8 @@
 
 {% block script %}
 
-    <script type="text/javascript">
-    
+<script type="text/javascript">
+  /*  
         var msg_box = null;
 		var text_id_to_delete = null;
         
@@ -15,8 +15,37 @@
 			}
 			text_id_to_delete = null;
 		}
-
-		$(document).ready(function() {		
+*/
+	$(document).ready(function() {
+		$( "#dialog-confirm" ).dialog({
+		  autoOpen: false,
+		  resizable: false,
+		  height: "auto",
+		  width: "auto",
+		  modal: true,
+		  buttons: {
+			"Delete text": function() {
+			    $( this ).dialog( "close" );
+			    const text_id_to_delete = $( this ).dialog( "option", "text-id");
+				$('.title-table #' + text_id_to_delete).remove();
+				delete_text(text_id_to_delete);
+			},
+			"Cancel": function() {
+			  $( this ).dialog( "close" );
+			}
+		  }
+		});
+		
+		$( ".a_delete" ).on( "click", function() {
+			const text_title = $(this).attr('data-text-title');
+			const text_id = $(this).attr('data-text-id');
+			const msg_title = "Delete \"" + text_title + "\"?";
+			$( "#dialog-confirm" )
+				.dialog('option', 'title', msg_title)
+				.dialog('option', 'text-id', text_id)
+				.dialog( "open" );
+		});
+		/*
                 msg_box = $("body").messageBox({
                 // autoclose timeout. 0 = disable autoclose
                 autoClose : 0, 
@@ -39,10 +68,10 @@
                   textAutoClose: 'Auto close in %d seconds'
                 }
             });
-        
+
             $('.a_delete').click(function(){
-                var title = $(this).attr("data-text-title");
-				text_id_to_delete = $(this).attr("data-text-id")
+                const title = $(this).attr("data-text-title");
+				const text_id_to_delete = $(this).attr("data-text-id")
                 msg_box.data('messageBox').question(
                     'Text Deletion',
                      'Delete "' + title + '"?', // messageBox body
@@ -51,10 +80,9 @@
                      [{text:'Yes',return:true}, {text:'No',return:false} ]
                 );
             });
-            $('.a_modify').click(function(){
-            });			
-        });
-    </script>
+		        */
+    });
+</script>
 {% endblock %}
 
 {% block content %}
@@ -65,7 +93,7 @@
                      <th>Title</th>
                      <th>Total Words</th>
                      <th>Unique Words</th>
-                     <th></th>
+                     <th>Actions</th>
                  </tr>
             </thead>
             <tbody>
@@ -75,9 +103,12 @@
                          <td>{{ textdesc.total_words }}</td>
                          <td>{{ textdesc.unique_words }}</td>
                          <td>
-						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" data-text-id="{{ textdesc.id  }}" data-text-title="{{ textdesc.title }}" "><img src="static/images/Delete_small.png"></a>
-						    <a href="/edittext?id={{ textdesc.id }}" class="btn btn-outline-secondary btn-sm a_modify" 
-							    ><img src="static/images/Modify_small.png"></a>
+						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" data-text-id="{{ textdesc.id  }}" data-text-title="{{ textdesc.title }}">
+								<img src="static/images/Delete_small.png"/>
+							</a>
+						    <a href="/edittext?id={{ textdesc.id }}" class="btn btn-outline-secondary btn-sm a_modify">
+								<img src="static/images/Modify_small.png"/>
+							</a>
 						 </td>
                      </tr>
                  {% endfor %}
@@ -86,4 +117,9 @@
 	{% else %}
 	  <h2>No text added</h2>
 	{% endif %}
+	
+<div id="dialog-confirm" title="Delete text?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0"></span>The text will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
+	
 {% endblock %}

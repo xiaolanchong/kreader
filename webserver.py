@@ -87,9 +87,9 @@ def submit_text():
 def edit_text():
     text_id = request.args.get('id', None, type=int)
     if text_id:
-      title, text = datastorage.get_source_text(text_id)
+      title, text, tag = datastorage.get_source_text(text_id)
 
-      html = render_template('edit_text.htm', text=text, text_id=text_id, title=title)
+      html = render_template('edit_text.htm', text=text, text_id=text_id, title=title, tag=tag)
       return html
     abort(404)
 
@@ -103,13 +103,14 @@ def update_text():
     title = request.form['title']
     text_id = request.form['text_id']  # TODO: process errors
     source_text = request.form['submitted_text']
+    tag = request.form['tag']
     sentences = source_text.split('\n')
 
-    parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda : sentences)
+    parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda: sentences)
     parsed_text_json = json.dumps(parsed_text)
     glossary = ''
     glossary_json = json.dumps(glossary)
-    datastorage.update_text(text_id=text_id, title=title, source_text=source_text,
+    datastorage.update_text(text_id=text_id, title=title, tag=tag, source_text=source_text,
                             parsed_text=parsed_text_json, glossary=glossary_json,
                             total_words=total_words, unique_words=unique_words)
 

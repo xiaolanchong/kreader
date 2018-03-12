@@ -32,13 +32,11 @@ class CompositeDictionary:
       articles.append(main_article)
 
       if self.stardict_ru:
-        aux_article = self.stardict_ru.get_definition(word, add_samples)
-        end_of_word = find_nth(aux_article, '\n', 1)
-        articles.append(aux_article[(end_of_word+1):])
+         aux_article = self.stardict_ru.get_definition(word, add_samples)
+         articles.append(aux_article)
 
       if self.stardict_en:
         aux_article = self.stardict_en.get_definition(word, add_samples)
-        #if aux_article:
         articles.append(aux_article)
       return articles
 
@@ -46,11 +44,12 @@ if __name__ == "__main__":
     dc = CompositeDictionary(True)
     res = dc.get_definition('콧수염')
     print(res)
-
     print('-' * 25)
+
     res = dc.get_definition('콧수염', True)
     print(res)
-
     print('-' * 25)
+
     res = dc.stardict_ru.get_definition('자기', False)
     print(res)
+    print('-' * 25)

@@ -31,7 +31,7 @@ class TextTable(Base):
     __tablename__ = "text"
 
     TextId = Column('text_id', Integer, primary_key=True, autoincrement=True)
-    UserId = Column('user_id', ForeignKey("user.text_id"), nullable=True)
+    UserId = Column('user_id', ForeignKey("user.user_id"), nullable=True)
     Title = Column('title', String)
     Tag = Column('tag', String, default='')
     SourceText = Column('source_text', UnicodeText)
@@ -141,17 +141,18 @@ class DataStorage:
         glossary = kwargs['glossary']
         total_words = kwargs.get('total_words', 0)
         unique_words = kwargs.get('unique_words', 0)
+        tag = kwargs['tag']
 
-        new_text = TextTable(Title=title, SourceText=source_text,
+        new_text = TextTable(UserId=DataStorage.USER_ID,
+                             Title=title, SourceText=source_text, Tag=tag,
                              ParsedText=parsed_text, Glossary=glossary,
-                             TotalWords=total_words, UniqueWords=unique_words,
-                             Progress=0)
+                             TotalWords=total_words, UniqueWords=unique_words)
         self.session.add(new_text)
         self.session.commit()
         return new_text.TextId
 
     def get_source_text(self, text_id):
-        query_res = self.session.query(TextTable.Title, TextTable.SourceText). \
+        query_res = self.session.query(TextTable.Title, TextTable.SourceText, TextTable.Tag). \
                           filter(TextTable.TextId == text_id). \
                           one_or_none()
         if query_res is None:
@@ -167,11 +168,13 @@ class DataStorage:
         glossary = kwargs['glossary']
         total_words = kwargs.get('total_words', 0)
         unique_words = kwargs.get('unique_words', 0)
+        tag = kwargs['tag']
 
         self.session.query(TextTable).\
             filter(TextTable.TextId == text_id).\
             update({
-                TextTable.Title: title, TextTable.SourceText: source_text,
+                TextTable.Title: title, TextTable.Tag: tag,
+                TextTable.SourceText: source_text,
                 TextTable.ParsedText: parsed_text, TextTable.Glossary: glossary,
                 TextTable.TotalWords: total_words, TextTable.UniqueWords: unique_words})
         self.session.commit()

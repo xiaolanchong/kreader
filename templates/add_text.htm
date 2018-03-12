@@ -3,20 +3,20 @@
 
 {% block content %}
 <h3>New text</h3>
-	<div class="add_text_form m-1">
-		<form action="/submittext" method="post" id="form_submit_text" >
-		    <div class="form-group">
-			    <input type="text" name="title" class="form-control" placeholder="Text title">
-		    </div>
-		    <div class="form-group">
-			    <input type="text" name="tag" class="form-control" placeholder="Optional Anki tag">
-		    </div>			
-		    <div>
-			    <textarea rows="10" cols="" name="submitted_text" class="form-control" placeholder="Enter text..."></textarea> 
-		    </div>
-		    <div>
-			    <button type="submit" form="form_submit_text" value="Add Text" class="btn btn-success mt-2">Add Text</button>
-		    </div>
-		</form>
-	</div>
+<div class="m-2">
+	<form action="/submittext" method="post" id="form_submit_text" >
+		<div class="form-group">
+			<input type="text" name="title" class="form-control" placeholder="Text title">
+		</div>
+		<div class="form-group">
+			<input type="text" name="tag" class="form-control" placeholder="Optional Anki tag">
+		</div>			
+		<div>
+			<textarea rows="10" name="submitted_text" class="form-control" placeholder="Enter text..."></textarea> 
+		</div>
+		<div>
+			<button type="submit" form="form_submit_text" value="Add Text" class="btn btn-success mt-2">Add Text</button>
+		</div>
+	</form>
+</div>
 {% endblock %}
