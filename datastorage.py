@@ -50,6 +50,8 @@ class NewWord(Base):
     TextId = Column('text_id', ForeignKey("text.text_id"), nullable=True)
     WhenAdded = Column('when_added', DateTime)
     Context = Column('context', String)
+    ContextStart = Column('context_start', Integer)
+    ContextWordLen = Column('context_word_len', Integer)
 
 
 class DataStorage:
@@ -77,7 +79,8 @@ class DataStorage:
     # New words
 
     def get_new_words(self, start=0, number=100):
-        query = self.session.query(NewWord.WordId, NewWord.Word, NewWord.WhenAdded, NewWord.Context,
+        query = self.session.query(NewWord.WordId, NewWord.Word, NewWord.WhenAdded,
+                                   NewWord.Context, NewWord.ContextStart, NewWord.ContextWordLen,
                                    TextTable.Title, TextTable.Tag) \
                              .filter(NewWord.UserId == DataStorage.USER_ID) \
                              .outerjoin(TextTable, NewWord.TextId == TextTable.TextId)
@@ -85,14 +88,14 @@ class DataStorage:
             query = query.offset(start)
         if number is not None:
             query = query.limit(number)
-        return query
+        return query.all()
 
-    def add_new_word(self, word, text_id, context):
+    def add_new_word(self, word, text_id, context, context_start, context_word_len):
         if self.word_exists(word):
             raise AttributeError(word + ' already added')
-
-        new_word = NewWord(Word=word, Context=context, UserId=DataStorage.USER_ID, TextId=text_id,
-                           WhenAdded=datetime.datetime.utcnow())
+        new_word = NewWord(Word=word, UserId=DataStorage.USER_ID, TextId=text_id,
+                           WhenAdded=datetime.datetime.utcnow(),
+                           Context=context, ContextStart=context_start, ContextWordLen=context_word_len)
         self.session.add(new_word)
         self.session.commit()
         return new_word.WordId

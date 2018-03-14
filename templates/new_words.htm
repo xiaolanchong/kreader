@@ -71,12 +71,17 @@
 					 <td>
 					   <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#collapseContext_{{ worddesc.id }}" aria-expanded="false" aria-controls="collapseContext">...</button>
 						<a href="#" class="btn btn-outline-secondary btn-sm a_delete"
-							 data-word-id="{{ worddesc.id }}" data-word="{{ worddesc.word }}"">
+							 data-word-id="{{ worddesc.id }}" data-word="{{ worddesc.word }}">
 							<img src="static/images/Delete_small.png" width="8" height="8">
 						</a>
 					   <div class="collapse small" id="collapseContext_{{ worddesc.id }}">
 						   <i>{{ worddesc.title }}</i><br>
-						   {{ worddesc.context }}
+						   
+						   {% if worddesc.context_word|length %}
+							    {{ worddesc.left_context }}<b>{{ worddesc.context_word }}</b>{{ worddesc.right_context }}
+						   {% else %}
+								{{ worddesc.left_context }}
+						   {% endif %}
 					   </div>
 					 </td>
 				 </tr>
@@ -87,32 +92,41 @@
 			
 			
 			{% set words_per_page = 20 %}
-			{% set prev_page_link = "/new_words?start=" + ((start // words_per_page - 1) * words_per_page)|string + "&number=" + words_per_page|string %}
-			{% set next_page_link = "/new_words?start=" + ((start // words_per_page + 1) * words_per_page)|string + "&number=" + words_per_page|string %}
+			{% set current_page = start // words_per_page %}
+			{% set last_page = total // words_per_page %}
+			{% set first_page_link = "/new_words?start=0" + "&number=" + words_per_page|string %}
+			{% set prev_page_link = "/new_words?start=" + ((current_page - 1) * words_per_page)|string + "&number=" + words_per_page|string %}
+			{% set next_page_link = "/new_words?start=" + ((current_page + 1) * words_per_page)|string + "&number=" + words_per_page|string %}
+			{% set last_page_link = "/new_words?start=" + (last_page          * words_per_page)|string + "&number=" + words_per_page|string %}
 			
 			<nav aria-label="Page navigation">
 			  
 			  <ul class="pagination">
 				<li class="page-item disabled"><span class="page-link">{{words_per_page}} words of {{total}} shown</span></li>
-				{% if start >= words_per_page %}
-				<li class="page-item">
-				  <a class="page-link" href="{{ prev_page_link }}" aria-label="Previous">
-					<span aria-hidden="true">&laquo;</span>
-					<span class="sr-only">Previous</span>
-				  </a>
-				</li>
-				<li class="page-item"><a class="page-link" href="{{ prev_page_link }}">{{ start // words_per_page }}</a></li>
+				
+				{% if current_page >= 2 %}
+					<li class="page-item"><a class="page-link" href="{{ first_page_link }}">1</a></li>
 				{% endif %}
-				<li class="page-item active"><a class="page-link" href="#!">{{ start // words_per_page + 1 }}</a></li>
-				{% if start + words_per_page < total %}
-				<li class="page-item"><a class="page-link" href="{{ next_page_link }}">{{ start // words_per_page + 2 }}</a></li>
-				<li class="page-item">
-				  <a class="page-link" href="{{ next_page_link }}" aria-label="Next">
-					<span aria-hidden="true">&raquo;</span>
-					<span class="sr-only">Next</span>
-				  </a>
-				</li>
-			  {% endif %}
+				{% if current_page >= 3 %}
+					<li class="page-item disabled"><a class="page-link">...</a></li>					
+				{% endif %}
+				
+				{% if current_page > 0 %}
+					<li class="page-item"><a class="page-link" href="{{ prev_page_link }}">{{ current_page }}</a></li>
+				{% endif %}
+				
+				<li class="page-item active"><a class="page-link" href="#!">{{ current_page + 1 }}</a></li>
+				
+				{% if current_page < last_page %}
+				    <li class="page-item"><a class="page-link" href="{{ next_page_link }}">{{ current_page + 2 }}</a></li>
+			    {% endif %}
+			  
+				{% if current_page < last_page - 3 %}
+					<li class="page-item disabled"><a class="page-link" href="{{ prev_page_link }}">...</a></li>
+				{% endif %}
+				{% if current_page < last_page - 2 %}
+					<li class="page-item"><a class="page-link" href="{{ last_page_link }}">{{ last_page + 1}}</a></li>
+			    {% endif %}
 				
 			  </ul>
 			  <form action="/download_words" method="get" id="form_download_list" >

@@ -25,7 +25,8 @@ composite_dict = CompositeDictionary(True)
 google_dict = GoogleDictionary()
 
 Textdesc = namedtuple('Textdesc', ['id', 'title', 'total_words', 'unique_words'])
-Worddesc = namedtuple('Worddesc', ['id', 'word', 'hanja', 'definitions', 'context', 'added_min_ago', 'title'])
+Worddesc = namedtuple('Worddesc', ['id', 'word', 'definitions', 'added_min_ago', 'title',
+                                   'left_context', 'context_word', 'right_context'])
 
 
 @app.route("/")
@@ -130,11 +131,28 @@ def settings():
 
 
 def get_new_words(start, number):
-    for word_id, word, when_added, context, title, _ in datastorage.get_new_words(start, number):
+    for word_id, word, when_added, context, context_start, context_word_len, title, _ in \
+            datastorage.get_new_words(start, number):
         added_min_ago = (datetime.datetime.utcnow() - when_added).total_seconds() // 60
         definitions = composite_dict.get_definitions(word)
-        yield Worddesc(id=word_id, word=word, context=context, hanja='', added_min_ago=added_min_ago,
-                       definitions=definitions, title=title)
+        if context_word_len and context_start:
+            left_context = context[:context_start]
+            context_word = context[context_start:context_start+context_word_len]
+            right_context = context[context_start+context_word_len:]
+        else:
+            # fallback mode, no position, try to find
+            idx = context.find(word)
+            if idx != -1:
+                left_context = context[:idx]
+                context_word = context[idx:idx + len(word)]
+                right_context = context[idx + len(word):]
+            else:
+                left_context = context
+                context_word = ''
+                right_context = ''
+        yield Worddesc(id=word_id, word=word, added_min_ago=added_min_ago,
+                       definitions=definitions, title=title,
+                       left_context=left_context, context_word=context_word, right_context=right_context)
 
 
 @app.route("/new_words")
@@ -184,10 +202,12 @@ def add_or_delete_new_word(word):
     else:
         text_id = request.form.get('text_id', None, type=int)
         context = request.form.get('context', '')
+        context_start = request.form.get('context_start', type=int)
+        context_word_len = request.form.get('context_word_len', type=int)
         if len(word) == 0:
             abort(404)
 
-        datastorage.add_new_word(word, text_id, context)
+        datastorage.add_new_word(word, text_id, context, context_start, context_word_len)
     return ''
 
 

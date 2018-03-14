@@ -175,7 +175,12 @@ function display_error(title, message) {
 
 function add_new_word(word, context) {
    $.ajax({ url: '/new_word/' + word, 
-       data: { 'context': context, 'text_id': current_text_id},
+       data: {
+				'context': context[0],
+				'context_start': context[1],
+				'context_word_len': context[2],
+				'text_id': current_text_id,
+			 },
 	   method: 'PUT', 
        success: function(data){
 		  display_ok('', '\'' + word + '\' added.');
@@ -247,11 +252,12 @@ function get_side_context(elem, forward) {
 
 // Extracts a sentence or two from the text, which the current html element belongs to
 function extract_context(elem) {
-	let ahead_context = get_side_context(elem, true);
-	let behind_context = get_side_context(elem, false);
-	let result = behind_context + $(elem).text() + ahead_context;
+	const ahead_context = get_side_context(elem, true);
+	const behind_context = get_side_context(elem, false);
+	const text = $(elem).text();
+	const result = behind_context + text + ahead_context;
 	//console.log(result);
-	return result;
+	return [result, behind_context.length, text.length];
 }
 
 //-------------------- New words page ----------------
