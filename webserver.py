@@ -28,6 +28,9 @@ Textdesc = namedtuple('Textdesc', ['id', 'title', 'total_words', 'unique_words']
 Worddesc = namedtuple('Worddesc', ['id', 'word', 'definitions', 'added_min_ago', 'title',
                                    'left_context', 'context_word', 'right_context'])
 
+@app.teardown_request
+def remove_session(ex=None):
+    datastorage.remove_session()
 
 @app.route("/")
 def start_page():

@@ -1,21 +1,37 @@
 {% set btn_add_text = "active" %}
 {% extends "base.htm" %}
 
+{% block script %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	init_submit_form();
+});
+		
+</script>
+
+{% endblock %}
+
 {% block content %}
 <h3>New text</h3>
 <div class="m-2">
 	<form action="/submittext" method="post" id="form_submit_text" >
 		<div class="form-group">
-			<input type="text" name="title" class="form-control" placeholder="Text title">
+			<input type="text" name="title" id="title" class="form-control" placeholder="Text title (250 symbols max)"
+			       data-toggle="popover" data-trigger="focus" data-content="Too long or empty" />
 		</div>
 		<div class="form-group">
-			<input type="text" name="tag" class="form-control" placeholder="Optional Anki tag">
+			<input type="text" name="tag" id="tag" class="form-control" placeholder="Optional Anki tag (50 symbols max)" 
+			       data-toggle="popover" data-trigger="focus" data-content="Too long"/>
 		</div>			
 		<div>
-			<textarea rows="10" name="submitted_text" class="form-control" placeholder="Enter text..."></textarea> 
+			<textarea rows="10" name="submitted_text" id="text" class="form-control" placeholder="Enter text..."
+			data-toggle="popover" data-trigger="focus" data-content="Too long or empty"
+			></textarea> 
 		</div>
 		<div>
-			<button type="submit" form="form_submit_text" value="Add Text" class="btn btn-success mt-2">Add Text</button>
+			<button type="submit" form="form_submit_text" id="submit_text" value="Add Text" class="btn btn-success mt-2 disabled">Add Text</button>
 		</div>
 	</form>
 </div>

@@ -1,18 +1,29 @@
 {% extends "base.htm" %}
 
+{% block script %}
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		init_submit_form();
+	});
+
+</script>
+
+{% endblock %}
 
 {% block content %}
 <h3>New text</h3>
 <div class="m-2">
 	<form action="/updatetext" method="post" id="form_submit_text" >
 	    <div class="form-group">
-		    <input type="text" name="title" class="form-control" placeholder="Text title" value="{{ title }}">
+		    <input type="text" name="title" id="title" class="form-control" placeholder="Text title" value="{{ title }}">
 	    </div>
 		<div class="form-group">
-			<input type="text" name="tag" class="form-control" placeholder="Optional Anki tag" value="{{ tag }}">
+			<input type="text" name="tag" id="tag" class="form-control" placeholder="Optional Anki tag" value="{{ tag }}">
 		</div>
         <div>
-		    <textarea rows="10" name="submitted_text" class="form-control" placeholder="Enter text...">{{ text }}</textarea>  
+		    <textarea rows="10" name="submitted_text" id="text" class="form-control" placeholder="Enter text...">{{ text }}</textarea>  
         </div>
 	    <div>
 		    <button type="submit" form="form_submit_text" value="Update Text" class="btn btn-success mt-2">Update Text</button>

@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, UnicodeText, DateTime
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
 from sqlalchemy.schema import ForeignKey
 import datetime
 
@@ -53,33 +54,37 @@ class NewWord(Base):
     ContextStart = Column('context_start', Integer)
     ContextWordLen = Column('context_word_len', Integer)
 
+Session = None
 
 class DataStorage:
     USER_ID = 1
 
     def __init__(self, path_to_db):
+        global Session	
         self.engine = create_engine('sqlite:///' + path_to_db)
-        sessionMaker = sessionmaker(bind=self.engine)
-        self.session = sessionMaker()
+        Session = scoped_session(sessionmaker(bind=self.engine))
 
     def create_db(self):
         Base.metadata.bind = self.engine
         Base.metadata.create_all()
 
+    def remove_session(self):
+        Session.remove()
+
     # Settings
 
     def get_preferences(self):
-        result = self.session.query(Preference.Settings).filter(Preference.UserId == DataStorage.USER_ID).one_or_none()
+        result = Session.query(Preference.Settings).filter(Preference.UserId == DataStorage.USER_ID).one_or_none()
         return result[0] if result else None
 
     def set_preferences(self, preference_string):
-        self.session.merge(Preference(UserId=DataStorage.USER_ID, Settings=preference_string))
-        self.session.commit()
+        Session.merge(Preference(UserId=DataStorage.USER_ID, Settings=preference_string))
+        Session.commit()
 
     # New words
 
     def get_new_words(self, start=0, number=100):
-        query = self.session.query(NewWord.WordId, NewWord.Word, NewWord.WhenAdded,
+        query = Session.query(NewWord.WordId, NewWord.Word, NewWord.WhenAdded,
                                    NewWord.Context, NewWord.ContextStart, NewWord.ContextWordLen,
                                    TextTable.Title, TextTable.Tag) \
                              .filter(NewWord.UserId == DataStorage.USER_ID) \
@@ -96,25 +101,25 @@ class DataStorage:
         new_word = NewWord(Word=word, UserId=DataStorage.USER_ID, TextId=text_id,
                            WhenAdded=datetime.datetime.utcnow(),
                            Context=context, ContextStart=context_start, ContextWordLen=context_word_len)
-        self.session.add(new_word)
-        self.session.commit()
+        Session.add(new_word)
+        Session.commit()
         return new_word.WordId
 
     def delete_new_word(self, word_id):
-        self.session.query(NewWord). \
+        Session.query(NewWord). \
                filter(NewWord.WordId == word_id). \
                filter(NewWord.UserId == DataStorage.USER_ID). \
                delete()
 
     def word_exists(self, word):
-        result = self.session.query(NewWord.WordId) \
+        result = Session.query(NewWord.WordId) \
                              .filter(NewWord.UserId == DataStorage.USER_ID) \
                              .filter(NewWord.Word == word) \
                              .one_or_none()
         return result is not None
 
     def get_word_number(self):
-        result = self.session.query(NewWord.WordId) \
+        result = Session.query(NewWord.WordId) \
                              .filter(NewWord.UserId == DataStorage.USER_ID) \
                              .count()
         return result
@@ -122,17 +127,17 @@ class DataStorage:
     # Text
 
     def get_all_text_descs(self):
-        return self.session.query(TextTable.TextId, TextTable.Title,
+        return Session.query(TextTable.TextId, TextTable.Title,
                                   TextTable.TotalWords, TextTable.UniqueWords).all()
 
     def get_parsed_text(self, text_id):
-        res = self.session.query(TextTable.Title, TextTable.ParsedText, TextTable.Glossary). \
+        res = Session.query(TextTable.Title, TextTable.ParsedText, TextTable.Glossary). \
                           filter(TextTable.TextId == text_id). \
                           one()
         return res
 
     def get_parsed_text_no_glossary(self, text_id):
-        res = self.session.query(TextTable.Title, TextTable.ParsedText). \
+        res = Session.query(TextTable.Title, TextTable.ParsedText). \
                           filter(TextTable.TextId == text_id). \
                           one()
         return res
@@ -150,12 +155,12 @@ class DataStorage:
                              Title=title, SourceText=source_text, Tag=tag,
                              ParsedText=parsed_text, Glossary=glossary,
                              TotalWords=total_words, UniqueWords=unique_words)
-        self.session.add(new_text)
-        self.session.commit()
+        Session.add(new_text)
+        Session.commit()
         return new_text.TextId
 
     def get_source_text(self, text_id):
-        query_res = self.session.query(TextTable.Title, TextTable.SourceText, TextTable.Tag). \
+        query_res = Session.query(TextTable.Title, TextTable.SourceText, TextTable.Tag). \
                           filter(TextTable.TextId == text_id). \
                           one_or_none()
         if query_res is None:
@@ -173,17 +178,17 @@ class DataStorage:
         unique_words = kwargs.get('unique_words', 0)
         tag = kwargs['tag']
 
-        self.session.query(TextTable).\
+        Session.query(TextTable).\
             filter(TextTable.TextId == text_id).\
             update({
                 TextTable.Title: title, TextTable.Tag: tag,
                 TextTable.SourceText: source_text,
                 TextTable.ParsedText: parsed_text, TextTable.Glossary: glossary,
                 TextTable.TotalWords: total_words, TextTable.UniqueWords: unique_words})
-        self.session.commit()
+        Session.commit()
 
     def delete_text(self, text_id):
-        self.session.query(TextTable). \
+        Session.query(TextTable). \
                filter(TextTable.TextId == text_id). \
                delete()
 

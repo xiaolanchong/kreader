@@ -322,3 +322,47 @@ function init_settings(font_size, theme) {
    });
 
 }
+
+//-----------------------New text ----------------------
+
+function isTextValid() {
+	const title = $("#title").val();
+	if(title.length == 0 || title.length > 250) {
+		console.log("title bad: " + title);
+		return false;
+	}
+	
+	const text = $("#text").val();
+	if(text.length == 0 || text.length > 100000) {
+		console.log("text bad");
+		return false;
+	}
+	
+	const tag = $("#tag").val();
+	if(tag.length > 50) {
+			console.log("tag bad");
+		return false;
+	}
+	console.log("Ok");
+	return true;
+}
+
+function checkCanSubmitText() {
+	const disable = !isTextValid();
+	$("#submit_text").toggleClass("disabled", disable);
+}
+
+function init_submit_form() {
+	const event_names = "change paste keyup";
+	$("#title").on(event_names, function() {
+		  checkCanSubmitText();
+	   });	
+
+	$("#text").on(event_names, function() {
+		  checkCanSubmitText();
+	   });	
+
+	$("#tag").on(event_names, function() {
+		  checkCanSubmitText();
+	   });
+}
