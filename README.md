@@ -11,3 +11,7 @@ Used technologies:
 - JQuery
 - JQuery UI
 - Bootstrap
+
+*word_extraction.py <input file> <output file> [--tag deck_tag]*
+Extracts words from the input file and list them in format:
+word <TAB> definition <TAB> hanja <TAB> sentence <TAB> tag

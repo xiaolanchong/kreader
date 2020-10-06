@@ -9,6 +9,7 @@ from ktokenizer import KTokenizer, tokenize
 from morph_analyzer import AnnotatedToken
 from ezsajeon import EzSajeon
 from stardictsajeon import StardictRuSajeon
+from extract_utils import strip_definition
 
 ezsajeon = EzSajeon()
 rusajeon = StardictRuSajeon()
@@ -44,12 +45,10 @@ def mash(in_path, out_path, card_tag):
          smart_open(out_path) as fout:
         for line in fin.readlines():
             line_objs = tokenizer.parse(line)
-            #lookedup_words = tokenizer.get_lookedup_words()
             for token in line_objs:
                if isinstance(token, AnnotatedToken) and (token.dictionary_form not in glossary):
                   word = token.dictionary_form
                   glossary.add(word)
-                  #definition = ezsajeon.get_definition(word)
                   definition = rusajeon.get_definition(word, True)
                   hanja = ''
                   m = hanja_re.search(definition)
@@ -61,11 +60,6 @@ def mash(in_path, out_path, card_tag):
                   out_line = '{0}\t{1}\t{2}\t{3}\t{4}\n'.format(
                                  word, definition.strip(), hanja, normalized_line, card_tag)
                   fout.write(out_line)
-               elif len(definition) == 0 and word not in words_no_definition:
-                  print(word + ' : no definition')
-                  words_no_definition.add(word)
-
-           # glossary.update(lookedup_words)
 
     print('Unique words: {0}'.format(len(glossary)))
 
