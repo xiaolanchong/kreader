@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import struct
+import types
 import gzip
 
 
@@ -25,7 +26,7 @@ class IfoFileException(Exception):
 
 
 class IfoFileReader(object):
-    """Read infomation from .ifo file and parse the infomation a dictionary.
+    """Read information from .ifo file and parse the information a dictionary.
     The structure of the dictionary is shown below:
     {key, value}
     """
@@ -50,7 +51,7 @@ class IfoFileReader(object):
             if value != "2.4.2" and value != "3.0.0":
                 raise IfoFileException("Version expected to be either 2.4.2 or 3.0.0, but {!r:s} read!".format(value))
             self._ifo[key] = value
-            # read in other infomation in the file
+            # read in other information in the file
             for line in ifo_file:
                 key, equal, value = line.partition("=")
                 key = key.strip()
@@ -175,6 +176,9 @@ class IdxFileReader(object):
             index.append(self._index_idx[number][1:])
         return index
 
+    def get_all_words(self):
+        return self._word_idx.keys() 
+
 
 class SynFileReader(object):
     """Read infomation from .syn file and form a dictionary as below:
@@ -265,12 +269,11 @@ class DictFileReader(object):
             else:
                 result.append(self._get_entry(size))
         return result
-
     def get_dict_by_index(self, index):
-        """Get the word's dictionary data by it's index infomation.
+        """Get the word's dictionary data by it's index information.
 
         Arguments:
-        - `index`: index of a word entrt in .idx file.'
+        - `index`: index of a word entry in .idx file.'
         Return:
         The specified word's dictionary data, in form of dict as below:
         {type_identifier: infomation, ...}
@@ -283,6 +286,9 @@ class DictFileReader(object):
             return self._get_entry_sametypesequence(size)
         else:
             return self._get_entry(size)
+
+    def get_all_words(self):
+        return self._dict_index.get_all_words()
 
     def _get_entry(self, size):
         result = dict()
@@ -364,6 +370,7 @@ def read_dict_info():
     dict_reader = DictFileReader(dict_file, ifo_reader, idx_reader, True)
     print(dict_reader.get_dict_by_index(31933))
     print(dict_reader.get_dict_by_word("鼻饲法"))
+
 
 # read_ifo_file("stardict-cedict-gb-2.4.2/cedict-gb.ifo")
 # read_idx_file("stardict-cedict-gb-2.4.2/cedict-gb.idx")
