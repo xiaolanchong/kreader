@@ -5,17 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae634da7-bc3d-4218-be75-582e675249b6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kreader.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/kreader.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extract_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/extract_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stardict.py" beforeDir="false" afterPath="$PROJECT_DIR$/stardict.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stardictsajeon.py" beforeDir="false" afterPath="$PROJECT_DIR$/stardictsajeon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_word_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_word_extract.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/word_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/word_extraction.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +16,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1iVQCr8sDNDCVIpefvsmWjMfTsa" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
