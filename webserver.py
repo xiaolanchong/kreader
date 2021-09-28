@@ -50,10 +50,23 @@ def add_text():
 @app.route("/showtext")
 def show_text():
     text_id = request.args.get('id', None, type=int)
+    current_page = request.args.get('page', 1, type=int)
     if text_id:
+        tokens_on_page = 1500
+        page_jump = 5
         title, parsed_text_json = datastorage.get_parsed_text_no_glossary(text_id)
+        text_json = json.loads(parsed_text_json)  # cache ?
+        page_number = (len(text_json) + (tokens_on_page - 1)) // tokens_on_page
+        current_page = max(1, min(current_page, page_number))
+        from_page = max(1, current_page - page_jump)
+        to_page = min(page_number, current_page + page_jump)
+        page_tokens = text_json[tokens_on_page*(current_page - 1):tokens_on_page*current_page]
+        page_tokens_str = json.dumps(page_tokens)
         settings = Settings.load(datastorage)
-        html = render_template('show_text.htm', tokens=parsed_text_json, glossary='',
+        html = render_template('show_text.htm', tokens=page_tokens_str,
+                               current_page=current_page, page_number=page_number,
+                               from_page=from_page, to_page=to_page,
+                               glossary='',
                                title=title, text_id=text_id, **settings)
         return html
     else:
@@ -70,6 +83,7 @@ def submit_text():
     title=request.form['title']
     source_text=request.form['submitted_text']
     sentences = source_text.split('\n')
+    tag = request.form['tag']
 
     parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda : sentences)
     glossary = ''
@@ -77,7 +91,7 @@ def submit_text():
     glossary_json = json.dumps(glossary)
     datastorage.add_text(title=title, source_text=source_text,
                          parsed_text=parsed_text_json, glossary=glossary_json,
-                         total_words=total_words, unique_words=unique_words)
+                         total_words=total_words, unique_words=unique_words, tag=tag)
 
     logging.info('Added text: in size=%i, out chunks=%i, sentence#=%i, '
                  'total words#=%i, unique words#=%i',

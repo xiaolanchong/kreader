@@ -50,6 +50,9 @@
 {% endblock %}
 
 {% block content %}
+	<div id="main_panel">
+		<div class="container">
+			<div class="col-md-auto">
 	{% if textdescs|length %}
         <table class="title-table">
             <thead>
@@ -63,9 +66,9 @@
             <tbody>
                  {% for textdesc in textdescs %}
                      <tr id="{{ textdesc.id  }}">
-                         <td><a href="/showtext?id={{ textdesc.id }}">{{ textdesc.title }}</a></td>
-                         <td>{{ textdesc.total_words }}</td>
-                         <td>{{ textdesc.unique_words }}</td>
+                         <td class="p-1"><a href="/showtext?id={{ textdesc.id }}">{{ textdesc.title }}</a></td>
+                         <td class="small">{{ textdesc.total_words }}</td>
+                         <td class="small">{{ textdesc.unique_words }}</td>
                          <td>
 						    <a href="#" class="btn btn-outline-secondary btn-sm a_delete" data-text-id="{{ textdesc.id  }}" data-text-title="{{ textdesc.title }}">
 								<img src="static/images/Delete_small.png"/>
@@ -81,6 +84,9 @@
 	{% else %}
 	  <h2>No text added</h2>
 	{% endif %}
+			</div>
+		</div>
+	</div>
 	
 <div id="dialog-confirm" title="Delete text?">
   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0"></span>The text will be permanently deleted and cannot be recovered. Are you sure?</p>

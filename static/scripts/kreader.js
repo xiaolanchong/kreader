@@ -4,7 +4,7 @@
 //@param word_info is a dict of { 'class' : 1-4
 //                                'text' : 
 //                                'dict_form :
-//                                'dec_tok'
+//                                'dec_tok' :   dependent tokens, e.g. grammar endings
 //                              }
 //@param theme_class one of text-(light|dark|sepia) classes
 function annotate_word(word_info, theme_class) {
