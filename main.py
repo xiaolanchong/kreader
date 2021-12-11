@@ -8,6 +8,7 @@ from ezsajeon import EzSajeon
 env = Environment(loader=PackageLoader('main', 'templates'))
 template = env.get_template('word_extraction.htm')
 
+
 def get_data(ktokenizer):
     text_objs = []
     with open('hp1_1.txt', encoding='utf8') as f:
@@ -22,6 +23,7 @@ def get_data(ktokenizer):
 
     return [obj.jsonify() for obj in text_objs]
 
+
 def main():
     ezsajeon = EzSajeon()
     ktokenizer = KTokenizer(ezsajeon.get_definition)
@@ -30,6 +32,7 @@ def main():
     html = template.render(text=json.dumps(text_objs, sort_keys=True, indent=3))
     with open('index.htm', mode='w', encoding='utf8') as f:
         f.write(html)
+
 
 if __name__ == '__main__':
     main()

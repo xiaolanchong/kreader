@@ -20,7 +20,6 @@ class TestDictionary(unittest.TestCase):
         pprint(res)
 
 
-
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestDictionary)
     unittest.TextTestRunner(verbosity=2).run(suite)

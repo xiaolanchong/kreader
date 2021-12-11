@@ -6,31 +6,33 @@ from morph_analyzer import *
 
 productive_pos = frozenset(['VerbPrefix', 'Verb', 'Determiner', 'NounPrefix', 'Adjective', 'Noun', 'Adverb'])
 
-non_productive_pos = frozenset(['Punctuation', 'Exclamation', 'KoreanParticle', 'Josa', 'Alpha', 'Conjunction', 'Number', 'Foreign'])
+non_productive_pos = frozenset(['Punctuation', 'Exclamation', 'KoreanParticle', 'Josa', 'Alpha', 'Conjunction',
+                                'Number', 'Foreign'])
 
 ignored_pos = ['Punctuation', 'Alpha', 'Number', 'Foreign']
 
 pos_name = {
-    'Verb'       : POS_VERB,
-    'VerbPrefix' : POS_VERB,
-    'NounPrefix' : POS_NOUN,
-    'Determiner' : POS_DETERMINER,
-    'Adjective'  : POS_ADJECTIVE,
-    'Noun'       : POS_NOUN,
-    'Adverb'     : POS_ADVERB,
-    'Exclamation' : POS_INTERJECTION,
-    'KoreanParticle' : POS_PARTICLE,
-    'Josa'           : POS_PARTICLE,
-    'Conjunction'    : POS_CONJUNCTIVE,
-    'Number'      : POS_NUMBER,
-    'Suffix'      : POS_SUFFIX,
-    'PreEomi'     : POS_ENDING,
-    'Eomi'        : POS_ENDING,
+    'Verb':        POS_VERB,
+    'VerbPrefix':  POS_VERB,
+    'NounPrefix':  POS_NOUN,
+    'Determiner':  POS_DETERMINER,
+    'Adjective':   POS_ADJECTIVE,
+    'Noun':        POS_NOUN,
+    'Adverb':      POS_ADVERB,
+    'Exclamation': POS_INTERJECTION,
+    'KoreanParticle': POS_PARTICLE,
+    'Josa ':          POS_PARTICLE,
+    'Conjunction':  POS_CONJUNCTIVE,
+    'Number':      POS_NUMBER,
+    'Suffix':      POS_SUFFIX,
+    'PreEomi':     POS_ENDING,
+    'Eomi':        POS_ENDING,
 }
 
 
 def is_ignored(pos):
     return pos in ignored_pos
+
 
 def do_words_suit(a, b):
     if a[0] == b[0]:
@@ -44,7 +46,9 @@ def do_words_suit(a, b):
     else:
         return a_letters[0] == b_letters[0]
 
+
 no_stem = ''
+
 
 # The correct solution is dynamic programming matching
 def get_word_to_stem_pairs(words, stems):
@@ -64,6 +68,7 @@ def get_word_to_stem_pairs(words, stems):
         else:
             res.append((word, no_stem))
     return res
+
 
 class TwitterAnalyzer(MorphAnalyzer):
     def __init__(self, dict_lookup_func):
@@ -94,10 +99,9 @@ class TwitterAnalyzer(MorphAnalyzer):
             else:
                 definition = self.get_definition(dictionary_form, pos)
                 obj = AnnotatedToken(text=word,
-                        dictionary_form=dictionary_form,
-                        definition = self.get_definition(dictionary_form, pos),
-                        pos = pos_name.get(pos, pos)
-                        )
+                                     dictionary_form=dictionary_form,
+                                     definition=definition,
+                                     pos=pos_name.get(pos, pos))
 
             current_pos += len(word)
             out.append(obj)
@@ -106,9 +110,9 @@ class TwitterAnalyzer(MorphAnalyzer):
     def get_definition(self, dictionary_form, pos):
         return self.dict_lookup_func(dictionary_form)
 
+
 def test_twitter_output():
-    #text = '그는 목이 거의 없을 정도로 살이 뒤룩뒤룩 찐 몸집이 큰 사내로, 코밑에는 커다란 콧수염을 기르고 있었다.'
-    text = '4번지에 살고 있는 더즐리 부부'
+    # text = '4번지에 살고 있는 더즐리 부부'
     text = '그들은 기이하거나 신비스런 일과는 전혀 무관해 보였다.'
 
     parser = konlpy.tag.Twitter()
@@ -118,6 +122,7 @@ def test_twitter_output():
 
     s = parser.pos(text, norm=True, stem=True)
     print(' '.join([word + '/' + pos for word, pos in s]))
+
 
 if __name__ == '__main__':
     test_twitter_output()

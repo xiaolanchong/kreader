@@ -17,7 +17,7 @@ from googledict import GoogleDictionary
 
 app = Flask(__name__)
 
-datastorage = DataStorage("../_kreader_files/kreader.db")
+datastorage = DataStorage("../kreader_db/kreader.db")
 datastorage.create_db()
 
 ktokenizer = None
@@ -28,15 +28,17 @@ Textdesc = namedtuple('Textdesc', ['id', 'title', 'total_words', 'unique_words']
 Worddesc = namedtuple('Worddesc', ['id', 'word', 'definitions', 'added_min_ago', 'title',
                                    'left_context', 'context_word', 'right_context'])
 
+
 @app.teardown_request
-def remove_session(ex=None):
+def remove_session(_=None):
     datastorage.remove_session()
+
 
 @app.route("/")
 def start_page():
-    textdescs = [Textdesc(id=id, title=title,
-                          total_words=total_words, unique_words=unique_words) for
-                          id, title, total_words, unique_words in datastorage.get_all_text_descs()]
+    textdescs = [Textdesc(id=text_id, title=title,
+                          total_words=total_words, unique_words=unique_words)
+                 for text_id, title, total_words, unique_words in datastorage.get_all_text_descs()]
     html = render_template('main.htm', textdescs=textdescs)
     return html
 
@@ -62,12 +64,12 @@ def show_text():
         to_page = min(page_number, current_page + page_jump)
         page_tokens = text_json[tokens_on_page*(current_page - 1):tokens_on_page*current_page]
         page_tokens_str = json.dumps(page_tokens)
-        settings = Settings.load(datastorage)
+        user_settings = Settings.load(datastorage)
         html = render_template('show_text.htm', tokens=page_tokens_str,
                                current_page=current_page, page_number=page_number,
                                from_page=from_page, to_page=to_page,
                                glossary='',
-                               title=title, text_id=text_id, **settings)
+                               title=title, text_id=text_id, **user_settings)
         return html
     else:
         abort(404)
@@ -80,12 +82,12 @@ def submit_text():
     if ktokenizer is None:
         ktokenizer = KTokenizer(KTokenizer.MECAB)
 
-    title=request.form['title']
-    source_text=request.form['submitted_text']
+    title = request.form['title']
+    source_text = request.form['submitted_text']
     sentences = source_text.split('\n')
     tag = request.form['tag']
 
-    parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda : sentences)
+    parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda: sentences)
     glossary = ''
     parsed_text_json = json.dumps(parsed_text)
     glossary_json = json.dumps(glossary)
@@ -95,8 +97,8 @@ def submit_text():
 
     logging.info('Added text: in size=%i, out chunks=%i, sentence#=%i, '
                  'total words#=%i, unique words#=%i',
-                          len(source_text), len(parsed_text),
-                          len(sentences), total_words, unique_words)
+                 len(source_text), len(parsed_text),
+                 len(sentences), total_words, unique_words)
 
     return redirect('/')
 
@@ -256,11 +258,10 @@ def download_words():
 def get_sound(word):
     abort(402)
     # sound is broken
-    #content, content_type = google_dict.get_sound_file(word, 'ko')
-
-    #response = make_response(content)
-    #response.headers['Content-Type'] = content_type
-    #return response
+    # content, content_type = google_dict.get_sound_file(word, 'ko')
+    # response = make_response(content)
+    # response.headers['Content-Type'] = content_type
+    # return response
 
 
 if __name__ == "__main__":

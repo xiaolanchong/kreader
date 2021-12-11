@@ -5,7 +5,7 @@ import argparse
 import sys
 import contextlib
 
-from ktokenizer import KTokenizer, tokenize
+from ktokenizer import KTokenizer
 from morph_analyzer import AnnotatedToken
 from ezsajeon import EzSajeon
 from stardictsajeon import StardictRuSajeon
@@ -47,7 +47,6 @@ def main():
 
 def mash(in_path, out_path, card_tag):
     glossary = set()
-    words_no_definition = set()
 
     with open(in_path, encoding='utf8') as fin, \
          smart_open(out_path) as fout:
@@ -74,7 +73,8 @@ def mash(in_path, out_path, card_tag):
 
 def main():  
     parser = argparse.ArgumentParser(description='Extracts words with definitions from Korean texts. '
-                                                 'Output format to import into Anki easily: word <TAB> definition <TAB> hanja <TAB> sentence <TAB> tag')
+                                                 'Output format to import into Anki easily: word <TAB> definition '
+                                                 '<TAB> hanja <TAB> sentence <TAB> tag')
     parser.add_argument(dest='input', 
                         help='Korean text file')
     parser.add_argument(nargs='?', dest='output',

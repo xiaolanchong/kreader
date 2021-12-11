@@ -13,20 +13,21 @@ def find_nth(haystack, needle, n):
 
 
 def get_full_dict_name(file_name):
-    return os.path.join(os.path.dirname(__file__), r'..', '_kreader_files', file_name)
-
+    return os.path.join(os.path.dirname(__file__), r'..', 'kreader_dicts', file_name)
 
 
 class StardictBaseSajeon:
     TYPE_TEXT = 'm'
     TYPE_XDXF = 'x'
     TYPE_HTML = 'h'
+
     def __init__(self, dict_dir, dict_name):
         ifo_file = os.path.join(dict_dir, dict_name + ".ifo")
         idx_file = os.path.join(dict_dir, dict_name + ".idx")
         dict_file = os.path.join(dict_dir, dict_name + ".dict.dz")
         ifo_reader = IfoFileReader(ifo_file)
         idx_reader = IdxFileReader(idx_file)
+        self.ifo_reader = ifo_reader
         self.dict_reader = DictFileReader(dict_file, ifo_reader, idx_reader, True)
 
     """
@@ -66,7 +67,6 @@ class StardictBaseSajeon:
 
     def customize(self, article, add_examples):
         return article
-
 
 
 class StardictEnSajeon(StardictBaseSajeon):

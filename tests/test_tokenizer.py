@@ -3,19 +3,15 @@
 import os.path
 import unittest
 import sys
-import pprint
-import time
-import logging
-import datetime
-import time
-import html.parser
+
 sys.path.append(os.path.abspath('..'))
 
 from ktokenizer import KTokenizer, Whitespace as WS, get_word_number
 from morph_analyzer import IgnoredToken as IT, AnnotatedToken as AT, DecomposedToken as D
 
 from morph_analyzer import POS_NOUN, POS_VERB, POS_ADJECTIVE, POS_SUFFIX, \
-                           POS_PARTICLE, POS_ENDING
+    POS_PARTICLE, POS_ENDING
+
 
 def to_str(tokens):
     return [repr(token) for token in tokens]
@@ -47,6 +43,7 @@ def to_str(tokens):
         self.assertEquals(to_str(expected), to_str(res))
 """
 
+
 class TestTokenizer(unittest.TestCase):
     def setUp(self):
         self.tokenizer = KTokenizer(KTokenizer.TWITTER)
@@ -54,7 +51,6 @@ class TestTokenizer(unittest.TestCase):
         self.tokenizer.debug_mode = True
         self.tokenizer_mecab.debug_mode = True
         self.maxDiff = None
-
 
     def testTokenizeMecab(self):
         text = '프리벳가 4번지에'
@@ -73,7 +69,7 @@ class TestTokenizer(unittest.TestCase):
         text = '살아남은'
         res = self.tokenizer.parse(text)
         expected = [
-                    AT(text='살아남은', dictionary_form='살아나다', pos=POS_VERB, decomposed_tokens = [D(POS_ENDING, '은')])]
+            AT(text='살아남은', dictionary_form='살아나다', pos=POS_VERB, decomposed_tokens=[D(POS_ENDING, '은')])]
         self.assertEquals(to_str(expected), to_str(res))
 
     def testNormalized2(self):
@@ -84,7 +80,7 @@ class TestTokenizer(unittest.TestCase):
                     IT('1'),
                     AT(text='장', dictionary_form='장', pos=POS_NOUN),
                     WS(),
-                    AT(text='살아남은', dictionary_form='살아나다', pos=POS_VERB, decomposed_tokens = [D(POS_ENDING, '은')]),
+                    AT(text='살아남은', dictionary_form='살아나다', pos=POS_VERB, decomposed_tokens=[D(POS_ENDING, '은')]),
                     WS(),
                     AT(text='아이', dictionary_form='아이', pos=POS_NOUN)]
         self.assertEquals(to_str(expected), to_str(res))
@@ -97,19 +93,19 @@ class TestTokenizer(unittest.TestCase):
         self.assertEqual(0, num)
 
     def testCompositeIgnored(self):
-         res = self.tokenizer.parse('only ignored tokens')
-         expected = [IT('only ignored tokens')]
-         self.assertEquals(to_str(expected), to_str(res))
-         res = self.tokenizer.parse('only 것 은 tokens')
+        res = self.tokenizer.parse('only ignored tokens')
+        expected = [IT('only ignored tokens')]
+        self.assertEquals(to_str(expected), to_str(res))
+        res = self.tokenizer.parse('only 것 은 tokens')
 
     def testTwiceComposite(self):
         text = '보였다'
         res = self.tokenizer_mecab.parse(text)
         expected = \
             [
-             AT(text='보였다', dictionary_form='보이다', pos=POS_VERB,
-                 decomposed_tokens=[D(POS_ENDING, 'EP'), D(POS_ENDING, '다')]),
-             ]
+                AT(text='보였다', dictionary_form='보이다', pos=POS_VERB,
+                   decomposed_tokens=[D(POS_ENDING, 'EP'), D(POS_ENDING, '다')]),
+            ]
         self.assertEqual(to_str(res), to_str(expected))
 
     def testAdjComposite(self):
@@ -117,9 +113,9 @@ class TestTokenizer(unittest.TestCase):
         res = self.tokenizer_mecab.parse(text)
         expected = \
             [
-             AT(text='스럽게', dictionary_form='스럽다', pos=POS_ADJECTIVE,
-                 decomposed_tokens=[ D(POS_ENDING, '게')]),
-             ]
+                AT(text='스럽게', dictionary_form='스럽다', pos=POS_ADJECTIVE,
+                   decomposed_tokens=[D(POS_ENDING, '게')]),
+            ]
         self.assertEqual(to_str(res), to_str(expected))
 
     def testTripleComposition(self):
@@ -127,10 +123,11 @@ class TestTokenizer(unittest.TestCase):
         res = self.tokenizer_mecab.parse(text)
         expected = \
             [
-             AT(text='주시겠어요', dictionary_form='주다', pos=POS_VERB,
-                  decomposed_tokens=[D(POS_ENDING, '시'), D(POS_ENDING, '겠'), D(POS_ENDING, '어요')])
-             ]
+                AT(text='주시겠어요', dictionary_form='주다', pos=POS_VERB,
+                   decomposed_tokens=[D(POS_ENDING, '시'), D(POS_ENDING, '겠'), D(POS_ENDING, '어요')])
+            ]
         self.assertEqual(to_str(res), to_str(expected))
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(TestTokenizer)

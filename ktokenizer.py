@@ -5,7 +5,7 @@ from collections import Counter
 import re
 
 from morph_analyzer import IgnoredToken, AnnotatedToken, WORD_WHITESPACE, WORD_PARAGRAPH, \
-                            POS_ENDING, composable_pos_set
+    POS_ENDING, composable_pos_set
 
 
 class Whitespace:
@@ -25,21 +25,22 @@ class Paragraph:
         pass
 
     def jsonify(self):
-        return {'class' : WORD_PARAGRAPH}
+        return {'class': WORD_PARAGRAPH}
 
     def __repr__(self):
         return '_P'
+
 
 re_word_counter = re.compile(r"[\w']+", re.UNICODE)
 
 
 def get_word_number(text):
-    re = re_word_counter.findall(text)
-    return len(Counter(re))
+    groups = re_word_counter.findall(text)
+    return len(Counter(groups))
 
 
 def is_composable(pos):
-   return pos in composable_pos_set
+    return pos in composable_pos_set
 
 
 class KTokenizer:
@@ -50,7 +51,7 @@ class KTokenizer:
         self.debug_mode = False
         self.lookedup_words = {}
 
-        if   tokenizer == KTokenizer.TWITTER:
+        if tokenizer == KTokenizer.TWITTER:
             from twitter import TwitterAnalyzer
             self.tokenizer = TwitterAnalyzer(lambda x: x)
         elif tokenizer == KTokenizer.MECAB:
@@ -75,8 +76,8 @@ class KTokenizer:
         for index, token in enumerate(tokens):
             skipped_chars = 0
             while text[current_pos][0] != token.text[0]:
-               current_pos += 1
-               skipped_chars += 1
+                current_pos += 1
+                skipped_chars += 1
 
             if skipped_chars:
                 out.append(Whitespace())  # convert all ws symbols to a space
@@ -87,37 +88,36 @@ class KTokenizer:
         return self.merge_tokens(out)
 
     def process_token(self, cur_token, prev_token, result_tokens):
-      if isinstance(prev_token, AnnotatedToken) and prev_token.pos in composable_pos_set:
-         if isinstance(cur_token, AnnotatedToken) and cur_token.pos == POS_ENDING:
-            prev_token.add_decomposed(cur_token)
-            return prev_token
-         else:
+        if isinstance(prev_token, AnnotatedToken) and prev_token.pos in composable_pos_set:
+            if isinstance(cur_token, AnnotatedToken) and cur_token.pos == POS_ENDING:
+                prev_token.add_decomposed(cur_token)
+                return prev_token
+            else:
+                result_tokens.append(prev_token)
+                return cur_token
+
+        elif isinstance(prev_token, IgnoredToken):
+            if isinstance(cur_token, IgnoredToken) or \
+                    isinstance(cur_token, Whitespace):
+                prev_token.text += cur_token.text
+                return prev_token
+
+            else:
+                result_tokens.append(prev_token)
+                return cur_token
+        else:
             result_tokens.append(prev_token)
             return cur_token
-
-      elif isinstance(prev_token, IgnoredToken):
-         if isinstance(cur_token, IgnoredToken) or \
-            isinstance(cur_token, Whitespace):
-             prev_token.text += cur_token.text
-             return prev_token
-
-         else:
-            result_tokens.append(prev_token)
-            return cur_token
-      else:
-            result_tokens.append(prev_token)
-            return cur_token
-
 
     def merge_tokens(self, tokens):
-      if len(tokens) == 0:
-         return tokens
-      result_tokens = []
-      prev_token = tokens[0]
-      for cur_token in tokens[1:]:
-         prev_token = self.process_token(cur_token, prev_token, result_tokens)
-      result_tokens.append(prev_token)
-      return result_tokens
+        if len(tokens) == 0:
+            return tokens
+        result_tokens = []
+        prev_token = tokens[0]
+        for cur_token in tokens[1:]:
+            prev_token = self.process_token(cur_token, prev_token, result_tokens)
+        result_tokens.append(prev_token)
+        return result_tokens
 
 
 def tokenize(ktokenizer, line_generator):
@@ -126,15 +126,15 @@ def tokenize(ktokenizer, line_generator):
     total_words = 0
 
     for line in line_generator():
-            line_objs = ktokenizer.parse(line)
-#            lookedup_words = ktokenizer.get_lookedup_words()
-            for obj in line_objs:
-               if isinstance(obj, AnnotatedToken):
-                  glossary.add(obj.dictionary_form)
-            total_words += get_word_number(line)
+        line_objs = ktokenizer.parse(line)
+        #            lookedup_words = ktokenizer.get_lookedup_words()
+        for obj in line_objs:
+            if isinstance(obj, AnnotatedToken):
+                glossary.add(obj.dictionary_form)
+        total_words += get_word_number(line)
 
-            text_objs.extend(line_objs)
-            text_objs.append(Paragraph())
+        text_objs.extend(line_objs)
+        text_objs.append(Paragraph())
 
     if len(text_objs):
         text_objs.pop()
@@ -142,6 +142,7 @@ def tokenize(ktokenizer, line_generator):
     unique_words = len(glossary)
 
     return [obj.jsonify() for obj in text_objs], glossary, total_words, unique_words
+
 
 if __name__ == '__main__':
     pass

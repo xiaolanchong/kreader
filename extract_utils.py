@@ -15,6 +15,7 @@ def strip_definition(word, definition):
     return definition, None
 '''
 
+
 def get_defs(lines):
     word_and_def = lines[0].strip(), lines[1].strip()
     index = 2

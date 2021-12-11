@@ -30,8 +30,6 @@ class Settings:
     def save(ds: datastorage.DataStorage, args):
         settings_str = ds.get_preferences()
         db_settings = json.loads(settings_str) if settings_str is not None else {}
-        #print('db_settings', db_settings)
-        #print('argzzz', args.get)
         font_size = args.get('font_size', None, type=int)
         if font_size:
             if not 5 <= font_size <= 32:
@@ -43,5 +41,4 @@ class Settings:
                 raise AttributeError('Unknown theme: ' + theme)
             db_settings['theme'] = theme
         settings_str = json.dumps(db_settings)
-        #print(settings_str)
         ds.set_preferences(settings_str)

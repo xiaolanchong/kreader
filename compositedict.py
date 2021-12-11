@@ -3,6 +3,7 @@
 from ezsajeon import EzSajeon
 from stardictsajeon import StardictRuSajeon, StardictEnSajeon, find_nth
 
+
 class CompositeDictionary:
    def __init__(self, extra_dict):
       self.ezsajeon = EzSajeon()
@@ -20,7 +21,6 @@ class CompositeDictionary:
 
       if self.stardict_en:
         aux_article = self.stardict_en.get_definition(word, add_samples)
-        #if aux_article:
         if main_article[-1] != '\n':
             main_article += '\n'
         main_article += aux_article
@@ -39,6 +39,7 @@ class CompositeDictionary:
         aux_article = self.stardict_en.get_definition(word, add_samples)
         articles.append(aux_article)
       return articles
+
 
 if __name__ == "__main__":
     dc = CompositeDictionary(True)

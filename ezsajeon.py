@@ -2,6 +2,7 @@
 
 import os.path
 
+
 # ezcorean dictionary
 class EzSajeon:
     def __init__(self):
