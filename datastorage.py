@@ -37,7 +37,6 @@ class TextTable(Base):
     Tag = Column('tag', String, default='')
     SourceText = Column('source_text', UnicodeText)
     ParsedText = Column('parsed_text', UnicodeText)
-    Glossary = Column('glossary', UnicodeText)
     TotalWords = Column('total_words', Integer)
     UniqueWords = Column('unique_words', Integer)
 
@@ -131,12 +130,6 @@ class DataStorage:
                                   TextTable.TotalWords, TextTable.UniqueWords).all()
 
     def get_parsed_text(self, text_id):
-        res = Session.query(TextTable.Title, TextTable.ParsedText, TextTable.Glossary). \
-                          filter(TextTable.TextId == text_id). \
-                          one()
-        return res
-
-    def get_parsed_text_no_glossary(self, text_id):
         res = Session.query(TextTable.Title, TextTable.ParsedText). \
                           filter(TextTable.TextId == text_id). \
                           one()
@@ -146,14 +139,13 @@ class DataStorage:
         title = kwargs['title']
         source_text = kwargs['source_text']
         parsed_text = kwargs['parsed_text']
-        glossary = kwargs['glossary']
         total_words = kwargs.get('total_words', 0)
         unique_words = kwargs.get('unique_words', 0)
         tag = kwargs['tag']
 
         new_text = TextTable(UserId=DataStorage.USER_ID,
                              Title=title, SourceText=source_text, Tag=tag,
-                             ParsedText=parsed_text, Glossary=glossary,
+                             ParsedText=parsed_text,
                              TotalWords=total_words, UniqueWords=unique_words)
         Session.add(new_text)
         Session.commit()
@@ -173,7 +165,6 @@ class DataStorage:
         title = kwargs['title']
         source_text = kwargs['source_text']
         parsed_text = kwargs['parsed_text']
-        glossary = kwargs['glossary']
         total_words = kwargs.get('total_words', 0)
         unique_words = kwargs.get('unique_words', 0)
         tag = kwargs['tag']
@@ -183,7 +174,7 @@ class DataStorage:
             update({
                 TextTable.Title: title, TextTable.Tag: tag,
                 TextTable.SourceText: source_text,
-                TextTable.ParsedText: parsed_text, TextTable.Glossary: glossary,
+                TextTable.ParsedText: parsed_text,
                 TextTable.TotalWords: total_words, TextTable.UniqueWords: unique_words})
         Session.commit()
 

@@ -56,7 +56,7 @@ def show_text():
     if text_id:
         tokens_on_page = 1500
         page_jump = 5
-        title, parsed_text_json = datastorage.get_parsed_text_no_glossary(text_id)
+        title, parsed_text_json = datastorage.get_parsed_text(text_id)
         text_json = json.loads(parsed_text_json)  # cache ?
         page_number = (len(text_json) + (tokens_on_page - 1)) // tokens_on_page
         current_page = max(1, min(current_page, page_number))
@@ -68,7 +68,6 @@ def show_text():
         html = render_template('show_text.htm', tokens=page_tokens_str,
                                current_page=current_page, page_number=page_number,
                                from_page=from_page, to_page=to_page,
-                               glossary='',
                                title=title, text_id=text_id, **user_settings)
         return html
     else:
@@ -128,10 +127,8 @@ def update_text():
 
     parsed_text, glossary, total_words, unique_words = tokenize(ktokenizer, lambda: sentences)
     parsed_text_json = json.dumps(parsed_text)
-    glossary = ''
-    glossary_json = json.dumps(glossary)
     datastorage.update_text(text_id=text_id, title=title, tag=tag, source_text=source_text,
-                            parsed_text=parsed_text_json, glossary=glossary_json,
+                            parsed_text=parsed_text_json,
                             total_words=total_words, unique_words=unique_words)
 
     logging.info('Update text: in size=%i, out chunks=%i, sentence#=%i, '

@@ -45,6 +45,8 @@
 {% block content %}
 
 	{% if worddescs|length %}
+  <div class="container">
+      <div class="col-md-auto">
         <table class="title-table">
             <thead>
                  <tr>
@@ -138,6 +140,9 @@
 	{% else %}
 	  <h3 class="m-3">No word added</h3>
 	{% endif %}
+
+    </div>
+  </div>
 	
 <div id="dialog-confirm" title="Delete word?">
   <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0"></span>The word will be permanently deleted and cannot be recovered. Are you sure?</p>

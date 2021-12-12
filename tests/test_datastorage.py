@@ -52,26 +52,20 @@ class TestDataStorage(unittest.TestCase):
 
     def testGetTextById(self):
          expected = 'parsed text0'
-         glossary = "{ 'text0' : 1}"
          title = 'Sample title0'
 
          ds, path = self.create_db()
-         new_id = ds.add_text(title=title, source_text='source text0', parsed_text=expected, glossary=glossary,
+         new_id = ds.add_text(title=title, source_text='source text0', parsed_text=expected,
                               tag='test_text')
 
-         got_title, got_text, got_glossary = ds.get_parsed_text(new_id)
-         self.assertEqual(title, got_title)
-         self.assertEqual(expected, got_text)
-         self.assertEqual(glossary, got_glossary)
-
-         got_title, got_text = ds.get_parsed_text_no_glossary(new_id)
+         got_title, got_text = ds.get_parsed_text(new_id)
          self.assertEqual(title, got_title)
          self.assertEqual(expected, got_text)
 
     def testDeletion(self):
         ds, path = self.create_db()
         new_id = ds.add_text(title='Sample title0', source_text='source text0', parsed_text='parsed text0',
-                             glossary='', tag='test_text')
+                             tag='test_text')
         self.assertEqual(new_id, 1)
         ds.delete_text(new_id)
 

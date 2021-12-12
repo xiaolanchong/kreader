@@ -72,7 +72,7 @@ def get_word_to_stem_pairs(words, stems):
 
 class TwitterAnalyzer(MorphAnalyzer):
     def __init__(self, dict_lookup_func):
-        self.parser = konlpy.tag.Twitter()
+        self.parser = konlpy.tag.Okt()
         self.dict_lookup_func = dict_lookup_func if dict_lookup_func else lambda x: ''
 
     def parse(self, text):

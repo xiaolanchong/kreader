@@ -5,33 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae634da7-bc3d-4218-be75-582e675249b6" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/compositedict.py" beforeDir="false" afterPath="$PROJECT_DIR$/compositedict.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extract_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/extract_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ezsajeon.py" beforeDir="false" afterPath="$PROJECT_DIR$/ezsajeon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jamo.py" beforeDir="false" afterPath="$PROJECT_DIR$/jamo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ktokenizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/ktokenizer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mecab/mecabrc/model.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mecab_analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/mecab_analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/morph_analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/morph_analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_webserver.bat" beforeDir="false" afterPath="$PROJECT_DIR$/run_webserver.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stardict.py" beforeDir="false" afterPath="$PROJECT_DIR$/stardict.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stardictsajeon.py" beforeDir="false" afterPath="$PROJECT_DIR$/stardictsajeon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datastorage.py" beforeDir="false" afterPath="$PROJECT_DIR$/datastorage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.htm" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.htm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/word_extraction.htm" beforeDir="false" afterPath="$PROJECT_DIR$/templates/word_extraction.htm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_datastorage.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_datastorage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_dictionary.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_dictionary.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_mecab.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_mecab.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_tokenizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_tokenizer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_tokenizer_with_dictionary.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_tokenizer_with_dictionary.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_trials.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_trials.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_twitter.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_twitter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_word_extract.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_word_extract.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_twitter.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_twitter_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/twitter.py" beforeDir="false" afterPath="$PROJECT_DIR$/twitter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webserver.py" beforeDir="false" afterPath="$PROJECT_DIR$/webserver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/word_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/word_extraction.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,21 +36,20 @@
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python tests.Python tests in mecab_analyzer.py">
-    <configuration name="test_tokenizer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests in test_tokenizer_with_dictionary.py">
+    <configuration name="test_trials" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="kreader" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
-        <env name="JAVA_HOME" value="c:\Program Files (x86)\Java\jre1.8.0_251\bin" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/test_tokenizer.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/test_trials.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -78,7 +58,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_datastorage.TestDataStorage.testAddText" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests in test_tokenizer_with_dictionary.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="kreader" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -88,25 +68,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datastorage.TestDataStorage.testAddText&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests in mecab_analyzer.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="kreader" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/mecab_analyzer.py&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_tokenizer_with_dictionary.py&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_datastorage.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests in test_trials.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="kreader" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -116,11 +82,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_datastorage.py&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_trials.py&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_dictionary.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests in test_twitter_utils.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="kreader" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -130,24 +96,38 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_dictionary.py&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_twitter_utils.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests in test_word_extract.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="kreader" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_word_extract.py&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.test_tokenizer" />
-      <item itemvalue="Python tests.Python tests for test_datastorage.TestDataStorage.testAddText" />
-      <item itemvalue="Python tests.Python tests in test_datastorage.py" />
-      <item itemvalue="Python tests.Python tests in test_dictionary.py" />
-      <item itemvalue="Python tests.Python tests in mecab_analyzer.py" />
+      <item itemvalue="Python tests.Python tests in test_word_extract.py" />
+      <item itemvalue="Python tests.Python tests in test_twitter_utils.py" />
+      <item itemvalue="Python tests.Python tests in test_trials.py" />
+      <item itemvalue="Python.test_trials" />
+      <item itemvalue="Python tests.Python tests in test_tokenizer_with_dictionary.py" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests in mecab_analyzer.py" />
-        <item itemvalue="Python tests.Python tests in test_dictionary.py" />
-        <item itemvalue="Python tests.Python tests in test_datastorage.py" />
-        <item itemvalue="Python tests.Python tests for test_datastorage.TestDataStorage.testAddText" />
-        <item itemvalue="Python.test_tokenizer" />
+        <item itemvalue="Python tests.Python tests in test_tokenizer_with_dictionary.py" />
+        <item itemvalue="Python.test_trials" />
+        <item itemvalue="Python tests.Python tests in test_trials.py" />
+        <item itemvalue="Python tests.Python tests in test_twitter_utils.py" />
+        <item itemvalue="Python tests.Python tests in test_word_extract.py" />
       </list>
     </recent_temporary>
   </component>
